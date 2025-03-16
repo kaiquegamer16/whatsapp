@@ -2,14 +2,14 @@
 <html>
 <head>
   <title>Chat Público (Beta) - Tema Escuro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Meta tag para viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     /* Tema Escuro Geral */
     body {
       font-family: Arial, sans-serif;
-      background-color: #121212; /* Fundo escuro */
-      color: #fff; /* Texto branco */
+      background-color: #121212;
+      color: #fff;
       margin: 0;
       padding: 0;
       height: 100vh;
@@ -20,19 +20,19 @@
       display: flex;
       flex-direction: column;
       height: 100%;
-      max-width: 800px; /* Largura máxima para o contêiner */
-      margin: 0 auto; /* Centraliza o contêiner */
+      max-width: 800px;
+      margin: 0 auto;
     }
 
     /* Barra superior */
     .chat-header {
-      background-color: #212121; /* Cinza escuro */
+      background-color: #212121;
       color: #fff;
       padding: 10px 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid #333; /* Linha inferior */
+      border-bottom: 1px solid #333;
     }
 
     .chat-header .title {
@@ -44,7 +44,7 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background-color: #555; /* Cinza mais claro */
+      background-color: #555;
       cursor: pointer;
       display: flex;
       justify-content: center;
@@ -73,38 +73,41 @@
       padding: 8px 12px;
       border-radius: 7.5px;
       max-width: 80%;
-      word-break: break-word; /* Garante a quebra de palavras */
-      display: flex;
-      align-items: baseline;
       position: relative;
-      color: #eee;
-      padding-right: 50px; /* Espaço para a hora */
+      display: flex; /* Garante o alinhamento flexível */
+      flex-direction: column; /* Coloca o conteúdo em coluna */
     }
 
     .sent {
-      background-color: #4CAF50; /* Verde */
+      background-color: #4CAF50;
       float: right;
       text-align: right;
+      align-items: flex-end;  /* Alinha o conteúdo à direita */
     }
 
     .received {
-      background-color: #333; /* Cinza */
+      background-color: #333;
       float: left;
       text-align: left;
+      align-items: flex-start; /* Alinha o conteúdo à esquerda */
     }
 
    .message strong {
-      color: #a5d6a7; /* Verde mais claro */
+      color: #a5d6a7;
       margin-right: 5px;
-      word-break: keep-all;
+    }
+
+    /* Estilo para a mensagem (agora separada do nick) */
+    .message-content {
+      word-break: break-word; /* Quebra as linhas */
     }
 
     .chat-input-area {
-      background-color: #333; /* Cinza */
+      background-color: #333;
       padding: 10px;
       display: flex;
       align-items: center;
-      border-top: 1px solid #555; /* Linha superior */
+      border-top: 1px solid #555;
     }
 
     #chatInput {
@@ -122,7 +125,7 @@
     }
 
     #sendButton {
-      background-color: #4CAF50; /* Verde */
+      background-color: #4CAF50;
       color: white;
       border: none;
       width: 40px;
@@ -142,7 +145,7 @@
       position: absolute;
       top: 60px;
       right: 15px;
-      background-color: #333; /* Cinza */
+      background-color: #333;
       border: 1px solid #555;
       border-radius: 5px;
       padding: 10px;
@@ -190,17 +193,17 @@
     }
 
     .edit-profile-box {
-        background-color: #333; /* Cinza */
+        background-color: #333;
         padding: 20px;
         border-radius: 5px;
         width: 80%;
         max-width: 400px;
+        text-align: center; /* Centraliza os elementos */
     }
 
     .edit-profile-box h2 {
       color: #fff;
       margin-bottom: 15px;
-      text-align: center;
     }
 
     .edit-profile-box input[type="text"],
@@ -219,7 +222,7 @@
     }
 
     .edit-profile-box button {
-        background-color: #4CAF50; /* Verde */
+        background-color: #4CAF50;
         color: white;
         border: none;
         padding: 10px 15px;
@@ -230,7 +233,7 @@
     }
 
     .edit-profile-box button:hover {
-        background-color: #388E3C; /* Verde mais escuro */
+        background-color: #388E3C;
     }
 
     /* Estilos para a imagem de perfil */
@@ -248,7 +251,7 @@
     }
 
     .upload-button {
-      background-color: #555; /* Cinza */
+      background-color: #555;
       border: none;
       color: white;
       padding: 10px 20px;
@@ -287,12 +290,12 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.8); /* Fundo semi-transparente */
+        background-color: rgba(0, 0, 0, 0.8);
         display: flex;
         justify-content: center;
         align-items: center;
         z-index: 12;
-        display: none; /*Inicialmente escondida*/
+        display: none;
     }
 
     #welcomeScreen.show {
@@ -300,7 +303,7 @@
     }
 
     #welcomeBox {
-        background-color: #333; /* Cinza */
+        background-color: #333;
         padding: 20px;
         border-radius: 5px;
         width: 80%;
@@ -343,7 +346,7 @@
     }
 
     #welcomeBox .upload-button {
-        background-color: #555; /* Cinza */
+        background-color: #555;
         border: none;
         color: white;
         padding: 10px 20px;
@@ -362,7 +365,7 @@
       }
 
        #welcomeBox button {
-          background-color: #4CAF50; /* Verde */
+          background-color: #4CAF50;
           color: white;
           border: none;
           padding: 10px 15px;
@@ -373,17 +376,15 @@
         }
 
          #welcomeBox button:hover {
-           background-color: #388E3C; /* Verde mais escuro */
+           background-color: #388E3C;
          }
 
     /* Estilo para a hora da mensagem */
     .message-time {
-      position: absolute;
-      bottom: 5px;
-      right: 5px;
       font-size: 0.7em;
       color: #999;
-      white-space: nowrap; /* Impede que a hora quebre para a linha de baixo */
+      white-space: nowrap;
+      margin-left: auto; /* Empurra a hora para a direita */
     }
   </style>
 </head>
@@ -540,10 +541,10 @@
 
       if (userId === currentUserId) {
         messageElement.classList.add('sent');
-        messageElement.innerHTML = `<strong>${nick}:</strong>${message}<span class="message-time">${formatTime(timestamp)}</span>`; //Nome e mensagem do lado do estilo do whatsapp
+        messageElement.innerHTML = `<strong>${nick}:</strong><div class="message-content">${message}</div><span class="message-time">${formatTime(timestamp)}</span>`; //Nome e mensagem do lado do estilo do whatsapp
       } else {
         messageElement.classList.add('received');
-        messageElement.innerHTML = `<strong>${nick}:</strong>${message}<span class="message-time">${formatTime(timestamp)}</span>`;  //Exibe o Nick
+        messageElement.innerHTML = `<strong>${nick}:</strong><div class="message-content">${message}</div><span class="message-time">${formatTime(timestamp)}</span>`;  //Exibe o Nick
         //Toca o som se não for a própria mensagem
         notificationSound.play().catch(error => console.error("Erro ao tocar notificação:", error));
       }
