@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat Público (Beta) - Tema Escuro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Meta tag para viewport -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* Tema Escuro Geral */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212; /* Fundo escuro */
+      color: #fff; /* Texto branco */
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-width: 800px; /* Largura máxima para o contêiner */
+      margin: 0 auto; /* Centraliza o contêiner */
+    }
+
+    /* Barra superior */
+    .chat-header {
+      background-color: #212121; /* Cinza escuro */
+      color: #fff;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333; /* Linha inferior */
+    }
+
+    .chat-header .title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .profile-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #555; /* Cinza mais claro */
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      color: #fff;
+      overflow: hidden;
+      border: 1px solid #777;
+    }
+
+    .profile-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .chat-messages {
+      flex-grow: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .message {
+      clear: both;
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 7.5px;
+      max-width: 80%;
+      word-break: break-word;
+      display: flex;
+      align-items: baseline;
+      position: relative;
+    }
+
+    .sent {
+      background-color: #4CAF50; /* Verde */
+      float: right;
+      text-align: right;
+    }
+
+    .received {
+      background-color: #333; /* Cinza */
+      float: left;
+      text-align: left;
+    }
+
+   .message strong {
+      color: #a5d6a7; /* Verde mais claro */
+      margin-right: 5px;
+      word-break: keep-all;
+    }
+
+    .chat-input-area {
+      background-color: #333; /* Cinza */
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      border-top: 1px solid #555; /* Linha superior */
+    }
+
+    #chatInput {
+      flex-grow: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 20px;
+      margin-right: 10px;
+      background-color: #444;
+      color: #fff;
+    }
+
+    #chatInput::placeholder {
+      color: #999;
+    }
+
+    #sendButton {
+      background-color: #4CAF50; /* Verde */
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #sendButton i {
+      margin: auto;
+    }
+
+    .profile-menu {
+      position: absolute;
+      top: 60px;
+      right: 15px;
+      background-color: #333; /* Cinza */
+      border: 1px solid #555;
+      border-radius: 5px;
+      padding: 10px;
+      width: 200px;
+      display: none;
+      z-index: 10;
+    }
+
+    .profile-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .profile-menu li {
+      padding: 8px 10px;
+      cursor: pointer;
+      color: #eee;
+    }
+
+    .profile-menu li:hover {
+      background-color: #444;
+    }
+
+    .profile-menu.show {
+      display: block;
+    }
+
+    /* Tela de edição de perfil */
+    .edit-profile-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 11;
+    }
+
+    .edit-profile-container.show {
+        display: flex;
+    }
+
+    .edit-profile-box {
+        background-color: #333; /* Cinza */
+        padding: 20px;
+        border-radius: 5px;
+        width: 80%;
+        max-width: 400px;
+    }
+
+    .edit-profile-box h2 {
+      color: #fff;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .edit-profile-box input[type="text"],
+    .edit-profile-box input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        background-color: #444;
+        color: #fff;
+    }
+
+    .edit-profile-box input[type="text"]::placeholder {
+      color: #999;
+    }
+
+    .edit-profile-box button {
+        background-color: #4CAF50; /* Verde */
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+
+    .edit-profile-box button:hover {
+        background-color: #388E3C; /* Verde mais escuro */
+    }
+
+    /* Estilos para a imagem de perfil */
+    #profileImagePreview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 2px solid #777;
+    }
+
+    #profileImageInput {
+      display: none;
+    }
+
+    .upload-button {
+      background-color: #555; /* Cinza */
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    .upload-button:hover {
+      background-color: #777;
+    }
+
+    /* Estilos para as mensagens de aviso */
+    .beta-message {
+        color: #999;
+        font-style: italic;
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    /* Estilo para o "digitando..." */
+    #typingIndicator {
+        font-style: italic;
+        color: #999;
+    }
+
+    /* Tela de boas vindas */
+    #welcomeScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8); /* Fundo semi-transparente */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 12;
+        display: none; /*Inicialmente escondida*/
+    }
+
+    #welcomeScreen.show {
+        display: flex;
+    }
+
+    #welcomeBox {
+        background-color: #333; /* Cinza */
+        padding: 20px;
+        border-radius: 5px;
+        width: 80%;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    #welcomeBox h2 {
+        color: #fff;
+        margin-bottom: 15px;
+    }
+
+    #welcomeBox p {
+        color: #eee;
+        margin-bottom: 20px;
+    }
+
+    #welcomeProfileImagePreview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 2px solid #777;
+    }
+
+     #welcomeBox input[type="text"],
+     #welcomeBox input[type="file"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #555;
+        border-radius: 4px;
+        background-color: #444;
+        color: #fff;
+    }
+
+    #welcomeBox input[type="text"]::placeholder {
+      color: #999;
+    }
+
+    #welcomeBox .upload-button {
+        background-color: #555; /* Cinza */
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+
+      #welcomeBox .upload-button:hover {
+        background-color: #777;
+      }
+
+       #welcomeBox button {
+          background-color: #4CAF50; /* Verde */
+          color: white;
+          border: none;
+          padding: 10px 15px;
+          border-radius: 4px;
+          cursor: pointer;
+          width: 100%;
+          transition: background-color 0.3s ease;
+        }
+
+         #welcomeBox button:hover {
+           background-color: #388E3C; /* Verde mais escuro */
+         }
+
+    /* Estilo para a hora da mensagem */
+    .message-time {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      font-size: 0.7em;
+      color: #999;
+      white-space: nowrap; /* Impede que a hora quebre para a linha de baixo */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="title">Chat Público</div>
+      <div class="profile-icon" id="profileIcon">
+        <img src="https://via.placeholder.com/100" id="headerProfileImage" alt="Foto de Perfil">
+      </div>
+    </div>
+
+    <div class="chat-messages" id="messages">
+        <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
+        <div class="beta-message">Novas funcionalidades serão adicionadas em breve!</div>
+    </div>
+    <div id="typingIndicator"></div>
+
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Digite sua mensagem">
+      <button id="sendButton">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+
+    <div class="profile-menu" id="profileMenu">
+      <ul>
+        <li id="editProfileOption">Editar Perfil</li>
+        <li id="clearChatOption">Limpar Chat</li>
+      </ul>
+    </div>
+
+     <!-- Tela de edição de perfil (escondida inicialmente) -->
+    <div class="edit-profile-container" id="editProfileContainer">
+        <div class="edit-profile-box">
+            <h2>Editar Perfil</h2>
+
+            <img id="profileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem" />
+
+            <label for="profileImageInput" class="upload-button">Escolher Foto</label>
+            <input type="file" id="profileImageInput" accept="image/*">
+
+            <input type="text" id="newNickInput" placeholder="Seu Nick">
+            <button id="saveProfileButton">Salvar</button>
+        </div>
+    </div>
+
+      <!-- Tela de boas vindas -->
+    <div id="welcomeScreen">
+        <div id="welcomeBox">
+            <h2>Bem-vindo(a)!</h2>
+            <p>Para começar a usar o chat, defina seu nick e imagem de perfil.</p>
+
+            <img id="welcomeProfileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem" />
+            <label for="welcomeProfileImageInput" class="upload-button">Escolher Foto</label>
+            <input type="file" id="welcomeProfileImageInput" accept="image/*">
+
+            <input type="text" id="welcomeNickInput" placeholder="Seu Nick">
+            <button id="saveWelcomeButton">Entrar no Chat</button>
+        </div>
+    </div>
+      <!-- Elemento de áudio para a notificação -->
+    <audio id="notificationSound" preload="auto">
+      <source src="notifica.mp3" type="audio/mp3">
+      Seu navegador não suporta o elemento de áudio.
+    </audio>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
+      authDomain: "banco-5a678.firebaseapp.com",
+      projectId: "banco-5a678",
+      storageBucket: "banco-5a678.firebasestorage.app",
+      messagingSenderId: "943801310064",
+      appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+      measurementId: "G-DEER2QFNXL"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const messagesRef = ref(database, 'messages');
+    const typingRef = ref(database, 'typing'); //Referência para o "digitando..."
+    const messagesDiv = document.getElementById('messages');
+    const chatInput = document.getElementById('chatInput');
+    const sendButton = document.getElementById('sendButton');
+    const profileIcon = document.getElementById('profileIcon');
+    const profileMenu = document.getElementById('profileMenu');
+    const typingIndicator = document.getElementById('typingIndicator'); //Elemento "digitando..."
+    const notificationSound = document.getElementById('notificationSound'); //Elemento de áudio
+
+    //Elementos da tela de boas vindas
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const welcomeNickInput = document.getElementById('welcomeNickInput');
+    const welcomeProfileImageInput = document.getElementById('welcomeProfileImageInput');
+    const welcomeProfileImagePreview = document.getElementById('welcomeProfileImagePreview');
+    const saveWelcomeButton = document.getElementById('saveWelcomeButton');
+
+    // Elementos de Imagem de Perfil
+    const headerProfileImage = document.getElementById('headerProfileImage');
+    const editProfileOption = document.getElementById('editProfileOption');
+    const clearChatOption = document.getElementById('clearChatOption'); //Opção Limpar Chat
+    const editProfileContainer = document.getElementById('editProfileContainer');
+    const newNickInput = document.getElementById('newNickInput');
+    const saveProfileButton = document.getElementById('saveProfileButton');
+    const profileImageInput = document.getElementById('profileImageInput');
+    const profileImagePreview = document.getElementById('profileImagePreview');
+
+    // Variáveis Globais
+    let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
+    let currentProfileImageBase64 = localStorage.getItem('profileImage') || null;
+    let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
+    let conversationStarted = localStorage.getItem('conversationStarted') || null;
+
+    //Funções de formatação de data e hora
+    const formatDate = (timestamp) => {
+      const date = new Date(timestamp);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+
+    const formatTime = (timestamp) => {
+      const date = new Date(timestamp);
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
+    };
+
+    //Salva o userId no localStorage ao gerar um novo
+    if (!localStorage.getItem('userId')) {
+      localStorage.setItem('userId', currentUserId);
+    }
+
+    //Carrega a imagem e o nick salvos ao carregar a página
+    if (currentProfileImageBase64) {
+      headerProfileImage.src = currentProfileImageBase64;
+      profileImagePreview.src = currentProfileImageBase64;
+    }
+
+    //Função para gerar um ID de usuário aleatório (simulação)
+    function generateUserId() {
+      return Math.random().toString(36).substring(2, 15);
+    }
+
+    function displayMessage(userId, nick, message, timestamp) { //Agora recebe o Nick e o timestamp
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message');
+
+      if (userId === currentUserId) {
+        messageElement.classList.add('sent');
+        messageElement.innerHTML = `<strong>${nick}:</strong>${message}<span class="message-time">${formatTime(timestamp)}</span>`; //Nome e mensagem do lado do estilo do whatsapp
+      } else {
+        messageElement.classList.add('received');
+        messageElement.innerHTML = `<strong>${nick}:</strong>${message}<span class="message-time">${formatTime(timestamp)}</span>`;  //Exibe o Nick
+        //Toca o som se não for a própria mensagem
+        notificationSound.play().catch(error => console.error("Erro ao tocar notificação:", error));
+      }
+
+      messagesDiv.appendChild(messageElement);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    onValue(messagesRef, (snapshot) => {
+       messagesDiv.innerHTML = '';
+
+      if(!conversationStarted){ //Verifica se a data já foi definida
+          conversationStarted = Date.now(); //Define a data atual
+          localStorage.setItem('conversationStarted', conversationStarted); //Salva no localStorage
+      }
+
+      messagesDiv.innerHTML = `
+        <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
+        <div class="beta-message">Data de início da conversa: ${formatDate(parseInt(conversationStarted))}</div>
+      `;
+
+      const data = snapshot.val();
+      if (data) {
+        for (let key in data) {
+          displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp); //Passa o nick e o timestamp
+        }
+      }
+    });
+
+    sendButton.addEventListener('click', () => {
+      const messageText = chatInput.value;
+      if (messageText) {
+        push(messagesRef, {
+          userId: currentUserId,
+          nick: currentNick, //Salva o nick com a mensagem
+          message: messageText,
+          timestamp: Date.now() //Salva a data/hora
+        });
+        chatInput.value = '';
+
+        //Limpa o "digitando..." ao enviar a mensagem
+        set(ref(database, `typing/${currentUserId}`), null);
+      }
+    });
+
+    // Evento para mostrar/esconder o menu de perfil
+    profileIcon.addEventListener('click', () => {
+      profileMenu.classList.toggle('show');
+    });
+
+    // Fechar o menu ao clicar fora dele
+    document.addEventListener('click', (event) => {
+      if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
+        profileMenu.classList.remove('show');
+      }
+    });
+
+    // Evento para "Editar Perfil"
+    editProfileOption.addEventListener('click', () => {
+        profileMenu.classList.remove('show');
+        editProfileContainer.classList.add('show');
+        newNickInput.value = currentNick;
+    });
+
+    // Evento para "Salvar" na tela de edição de perfil
+    saveProfileButton.addEventListener('click', () => {
+      const newNick = newNickInput.value;
+
+       //Verifica se o Nick foi alterado
+       if(newNick !== currentNick){
+         currentNick = newNick;
+         localStorage.setItem('nick', newNick);
+         alert('Nick atualizado para: ' + newNick);
+       }
+
+        editProfileContainer.classList.remove('show');
+    });
+
+    // Evento para processar a imagem selecionada
+    profileImageInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+          currentProfileImageBase64 = e.target.result;
+          profileImagePreview.src = currentProfileImageBase64;
+          headerProfileImage.src = currentProfileImageBase64;
+          localStorage.setItem('profileImage', currentProfileImageBase64);
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+     // Fechar a tela de edição de perfil ao clicar fora dela
+     editProfileContainer.addEventListener('click', (event) => {
+        if (event.target === editProfileContainer) {
+            editProfileContainer.classList.remove('show');
+        }
+    });
+
+    //Evento para "Limpar Chat"
+    clearChatOption.addEventListener('click', () => {
+      profileMenu.classList.remove('show');
+      if (confirm('Tem certeza que deseja limpar o chat?')) {
+        //Limpa as mensagens do Firebase (simulação)
+        set(messagesRef, null)
+        .then(() => {
+          alert('Chat limpo com sucesso!');
+        })
+        .catch((error) => {
+          alert('Ocorreu um erro ao limpar o chat: ' + error.message);
+        });
+      }
+    });
+
+    //Controle do "digitando..."
+   chatInput.addEventListener('input', () => {
+     if (chatInput.value) {
+       //Envia "digitando..." para o Firebase
+       set(ref(database, `typing/${currentUserId}`), currentNick);
+     } else {
+       //Remove o "digitando..."
+       set(ref(database, `typing/${currentUserId}`), null);
+     }
+   });
+
+    //Remove o "digitando..." ao perder o foco
+   chatInput.addEventListener('blur', () => {
+      set(ref(database, `typing/${currentUserId}`), null);
+   });
+
+    //Monitora o "digitando..." de outros usuários
+    onValue(typingRef, (snapshot) => {
+     const data = snapshot.val();
+     let typingUsers = [];
+
+     if (data) {
+       //Cria uma lista dos usuários que estão digitando
+       typingUsers = Object.entries(data) //Convertendo o objeto em array de [key, value]
+         .filter(([key, nick]) => nick !== null && key !== currentUserId) //Filtrando para não mostrar o usuário atual
+         .map(([key, nick]) => nick); //Pegando apenas os Nicks
+
+         if (typingUsers.length > 0) {
+           typingIndicator.textContent = `${typingUsers.join(', ')} está digitando...`;
+         } else {
+           typingIndicator.textContent = '';
+         }
+       } else {
+         typingIndicator.textContent = '';
+       }
+     });
+
+     //Carrega a imagem e o nick salvos ao carregar a página
+     if (currentProfileImageBase64) {
+       headerProfileImage.src = currentProfileImageBase64;
+       profileImagePreview.src = currentProfileImageBase64;
+     }
+
+     //Exibe tela de boas vindas se não tiver Nick
+     const init = () => {
+         headerProfileImage.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
+         profileImagePreview.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
+
+         if (!currentNick) {
+           welcomeScreen.classList.add('show');
+         }
+
+         //Salva as configurações da tela de boas vindas
+         saveWelcomeButton.addEventListener('click', () => {
+           currentNick = welcomeNickInput.value;
+           currentProfileImageBase64 = localStorage.getItem('profileImage');
+
+           //Persiste os dados
+           localStorage.setItem('nick', currentNick);
+           localStorage.setItem('profileImage', currentProfileImageBase64);
+           welcomeScreen.classList.remove('show');
+
+         });
+
+         //Evento para processar a imagem na tela de boas vindas
+         welcomeProfileImageInput.addEventListener('change', (event) => {
+           const file = event.target.files[0];
+           if (file) {
+             const reader = new FileReader();
+
+             reader.onload = function(e) {
+               localStorage.setItem('profileImage', e.target.result); //Salva no localStorage
+               welcomeProfileImagePreview.src = e.target.result;
+             }
+
+             reader.readAsDataURL(file);
+           }
+         });
+       };
+
+     init();
+  </script>
+</body>
+</html>
