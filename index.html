@@ -19,7 +19,7 @@
     .chat-container {
       display: flex;
       flex-direction: column;
-      height: 95%;
+      height: 100%;
       max-width: 800px;
       margin: 0 auto;
     }
@@ -393,13 +393,20 @@
       margin-left: auto;
     }
 
-  /* Estilos para as reações */
+   /* Estilos para as reações */
   .reaction-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
     display: none;
+    width: 100%; /* Garante que o painel ocupa toda a largura da mensagem */
+    justify-content: center; /* Centraliza horizontalmente */
   }
+
   .message:hover .reaction-container {
-    display: flex;
+    display: flex; /* Exibe as reações ao passar o mouse */
   }
+
     /* Painel de reações */
   .emoji-panel {
     background-color: #444;
@@ -407,18 +414,14 @@
     border-radius: 5px;
     padding: 5px;
     z-index: 1;
-    position: relative; /* Use relative positioning */
-    display: none;
     overflow-x: auto; /* Adiciona rolagem horizontal */
     white-space: nowrap; /* Impede que os emojis quebrem para a linha de baixo */
-    margin-top: 5px;
-   width: 90%;  Limita a largura do painel
-   margin-left: auto;  Centraliza horizontalmente
-   margin-right: auto;
-   justify-content: center; /*Centralizando horizontalmente*/
+   display: flex;
+    justify-content: center; /* Centraliza horizontalmente os emojis */
 }
+
   .emoji-panel.show {
-    display: flex;
+    display: flex; /*Exibe o painel de emojis*/
   }
 
   .emoji-option {
@@ -433,6 +436,7 @@
     color: #FF5722; /* Laranja avermelhado */
     font-style: italic;
   }
+
   /*Reação de emoji posicionada do lado da mensagem */
   .reactions {
     display: flex;
@@ -440,6 +444,7 @@
     bottom: -5px;
     left: 10px;
   }
+
   .reactions span {
     background-color: rgba(0, 0, 0, 0.7);
     border-radius: 10px;
@@ -612,30 +617,30 @@
         //Toca o som se não for a própria mensagem
         notificationSound.play().catch(error => console.error("Erro ao tocar notificação:", error));
       }
-       //Criar o painel de reações
-          const reactionContainer = document.createElement('div');
-        reactionContainer.className = 'reaction-container';
+      // Criar o painel de reações
+     const reactionContainer = document.createElement('div');
+     reactionContainer.className = 'reaction-container';
 
-         const emojiPanel = document.createElement('div');
-          emojiPanel.className = 'emoji-panel';
-          emojis.forEach(emoji => {
-           const emojiOption = document.createElement('span');
-           emojiOption.className = 'emoji-option';
-           emojiOption.textContent = emoji;
-           emojiOption.addEventListener('click', () => {
-             const reactionElement = document.createElement('span');
-             reactionElement.textContent = emoji;
-             reactionElement.className = 'reactions'
-            reactionContainer.appendChild(reactionElement);
-            emojiPanel.classList.remove('show');
-           });
-           emojiPanel.appendChild(emojiOption);
-         });
-         reactionContainer.appendChild(emojiPanel)
-            messageElement.addEventListener('click', () => {
-           emojiPanel.classList.toggle('show');
+       const emojiPanel = document.createElement('div');
+       emojiPanel.className = 'emoji-panel';
+       emojis.forEach(emoji => {
+         const emojiOption = document.createElement('span');
+         emojiOption.className = 'emoji-option';
+         emojiOption.textContent = emoji;
+         emojiOption.addEventListener('click', () => {
+           const reactionElement = document.createElement('span');
+           reactionElement.textContent = emoji;
+           reactionElement.className = 'reactions'
+         reactionContainer.appendChild(reactionElement);
+         emojiPanel.classList.remove('show');
         });
+         emojiPanel.appendChild(emojiOption);
+       });
+         reactionContainer.appendChild(emojiPanel)
 
+         messageElement.addEventListener('click', () => {
+           emojiPanel.classList.toggle('show');
+         });
            messageElement.appendChild(reactionContainer);
            messagesDiv.appendChild(messageElement);
            messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -647,7 +652,6 @@
         conversationStarted = Date.now(); //Define a data atual
         localStorage.setItem('conversationStarted', conversationStarted); //Salva no localStorage
       }
-
       messagesDiv.innerHTML = `
         <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
         <div class="beta-message">Data de início da conversa: ${formatDate(parseInt(conversationStarted))}</div>
@@ -704,7 +708,6 @@
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-
         reader.onload = function(e) {
           currentProfileImageBase64 = e.target.result;
           profileImagePreview.src = currentProfileImageBase64;
