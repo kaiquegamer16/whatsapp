@@ -19,7 +19,7 @@
     .chat-container {
       display: flex;
       flex-direction: column;
-      height: 95%;
+      height: 100%;
       max-width: 800px;
       margin: 0 auto;
     }
@@ -74,32 +74,34 @@
       border-radius: 7.5px;
       max-width: 80%;
       position: relative;
-      display: flex; /* Garante o alinhamento flexível */
-      flex-direction: column; /* Coloca o conteúdo em coluna */
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start; /* Alinha os elementos à esquerda */
     }
 
     .sent {
-      background-color: #4CAF50;
+      background-color: #2E7D32; /* Verde mais escuro */
       float: right;
       text-align: right;
-      align-items: flex-end;  /* Alinha o conteúdo à direita */
+      align-items: flex-end;
     }
 
     .received {
       background-color: #333;
       float: left;
       text-align: left;
-      align-items: flex-start; /* Alinha o conteúdo à esquerda */
+      align-items: flex-start;
     }
 
    .message strong {
       color: #a5d6a7;
       margin-right: 5px;
+      word-break: keep-all;
     }
 
     /* Estilo para a mensagem (agora separada do nick) */
     .message-content {
-      word-break: break-word; /* Quebra as linhas */
+      word-break: break-word;
     }
 
     .chat-input-area {
@@ -110,6 +112,7 @@
       border-top: 1px solid #555;
     }
 
+   /* Utilizando textarea para o campo de mensagem */
     #chatInput {
       flex-grow: 1;
       padding: 8px;
@@ -118,6 +121,9 @@
       margin-right: 10px;
       background-color: #444;
       color: #fff;
+      resize: vertical; /* Permite redimensionar verticalmente */
+      min-height: 50px; /* Altura mínima */
+      overflow: auto;
     }
 
     #chatInput::placeholder {
@@ -202,8 +208,8 @@
     }
 
     .edit-profile-box h2 {
-      color: #fff;
-      margin-bottom: 15px;
+        color: #fff;
+        margin-bottom: 15px;
     }
 
     .edit-profile-box input[type="text"],
@@ -291,7 +297,7 @@
         width: 100%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.8);
-        display: flex;
+        display: none;
         justify-content: center;
         align-items: center;
         z-index: 12;
@@ -384,8 +390,63 @@
       font-size: 0.7em;
       color: #999;
       white-space: nowrap;
-      margin-left: auto; /* Empurra a hora para a direita */
+      margin-left: auto;
     }
+
+  /* Estilos para as reações */
+  .reaction-container {
+    display: none;
+  }
+  .message:hover .reaction-container {
+    display: flex;
+  }
+    /* Painel de reações */
+  .emoji-panel {
+    background-color: #444;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 5px;
+    z-index: 1;
+    position: relative; /* Use relative positioning */
+    display: none;
+    overflow-x: auto; /* Adiciona rolagem horizontal */
+    white-space: nowrap; /* Impede que os emojis quebrem para a linha de baixo */
+    margin-top: 5px;
+   width: 90%;  Limita a largura do painel
+   margin-left: auto;  Centraliza horizontalmente
+   margin-right: auto;
+   justify-content: center; /*Centralizando horizontalmente*/
+}
+  .emoji-panel.show {
+    display: flex;
+  }
+
+  .emoji-option {
+    font-size: 1.5em;
+    cursor: pointer;
+    margin: 3px;
+    display: inline-block; /* Permite a rolagem horizontal */
+  }
+
+  /* Estilo da mensagem de denúncia */
+  .report-message {
+    color: #FF5722; /* Laranja avermelhado */
+    font-style: italic;
+  }
+  /*Reação de emoji posicionada do lado da mensagem */
+  .reactions {
+    display: flex;
+    position: absolute;
+    bottom: -5px;
+    left: 10px;
+  }
+  .reactions span {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 2px 5px;
+    margin-right: 3px;
+    font-size: 0.8em;
+  }
   </style>
 </head>
 <body>
@@ -405,7 +466,7 @@
     <div id="typingIndicator"></div>
 
     <div class="chat-input-area">
-      <input type="text" id="chatInput" placeholder="Digite sua mensagem">
+     <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
       <button id="sendButton">
         <i class="fas fa-paper-plane"></i>
       </button>
@@ -502,6 +563,8 @@
     let currentProfileImageBase64 = localStorage.getItem('profileImage') || null;
     let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
     let conversationStarted = localStorage.getItem('conversationStarted') || null;
+    //Array de emojis (As opções da imagem)
+    const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
 
     //Funções de formatação de data e hora
     const formatDate = (timestamp) => {
@@ -535,7 +598,7 @@
       return Math.random().toString(36).substring(2, 15);
     }
 
-    function displayMessage(userId, nick, message, timestamp) { //Agora recebe o Nick e o timestamp
+    function displayMessage(userId, nick, message, timestamp, key) { //Agora recebe o Nick e o timestamp
       const messageElement = document.createElement('div');
       messageElement.classList.add('message');
 
@@ -545,20 +608,44 @@
       } else {
         messageElement.classList.add('received');
         messageElement.innerHTML = `<strong>${nick}:</strong><div class="message-content">${message}</div><span class="message-time">${formatTime(timestamp)}</span>`;  //Exibe o Nick
+
         //Toca o som se não for a própria mensagem
         notificationSound.play().catch(error => console.error("Erro ao tocar notificação:", error));
       }
+       //Criar o painel de reações
+          const reactionContainer = document.createElement('div');
+        reactionContainer.className = 'reaction-container';
 
-      messagesDiv.appendChild(messageElement);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+         const emojiPanel = document.createElement('div');
+          emojiPanel.className = 'emoji-panel';
+          emojis.forEach(emoji => {
+           const emojiOption = document.createElement('span');
+           emojiOption.className = 'emoji-option';
+           emojiOption.textContent = emoji;
+           emojiOption.addEventListener('click', () => {
+             const reactionElement = document.createElement('span');
+             reactionElement.textContent = emoji;
+             reactionElement.className = 'reactions'
+            reactionContainer.appendChild(reactionElement);
+            emojiPanel.classList.remove('show');
+           });
+           emojiPanel.appendChild(emojiOption);
+         });
+         reactionContainer.appendChild(emojiPanel)
+            messageElement.addEventListener('click', () => {
+           emojiPanel.classList.toggle('show');
+        });
+
+           messageElement.appendChild(reactionContainer);
+           messagesDiv.appendChild(messageElement);
+           messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
-
     onValue(messagesRef, (snapshot) => {
-       messagesDiv.innerHTML = '';
+      messagesDiv.innerHTML = '';
 
       if(!conversationStarted){ //Verifica se a data já foi definida
-          conversationStarted = Date.now(); //Define a data atual
-          localStorage.setItem('conversationStarted', conversationStarted); //Salva no localStorage
+        conversationStarted = Date.now(); //Define a data atual
+        localStorage.setItem('conversationStarted', conversationStarted); //Salva no localStorage
       }
 
       messagesDiv.innerHTML = `
@@ -569,60 +656,49 @@
       const data = snapshot.val();
       if (data) {
         for (let key in data) {
-          displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp); //Passa o nick e o timestamp
+          displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp,key);
         }
       }
     });
-
     sendButton.addEventListener('click', () => {
-      const messageText = chatInput.value;
-      if (messageText) {
-        push(messagesRef, {
-          userId: currentUserId,
-          nick: currentNick, //Salva o nick com a mensagem
-          message: messageText,
-          timestamp: Date.now() //Salva a data/hora
-        });
-        chatInput.value = '';
-
-        //Limpa o "digitando..." ao enviar a mensagem
-        set(ref(database, `typing/${currentUserId}`), null);
-      }
+     const messageText = chatInput.value;
+     if (messageText) {
+       push(messagesRef, {
+         userId: currentUserId,
+         nick: currentNick, //Salva o nick com a mensagem
+         message: messageText,
+         timestamp: Date.now() //Salva a data/hora
+       });
+       chatInput.value = '';
+       set(ref(database, `typing/${currentUserId}`), null);
+     }
     });
-
     // Evento para mostrar/esconder o menu de perfil
     profileIcon.addEventListener('click', () => {
       profileMenu.classList.toggle('show');
     });
-
     // Fechar o menu ao clicar fora dele
     document.addEventListener('click', (event) => {
       if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
         profileMenu.classList.remove('show');
       }
     });
-
     // Evento para "Editar Perfil"
     editProfileOption.addEventListener('click', () => {
-        profileMenu.classList.remove('show');
-        editProfileContainer.classList.add('show');
-        newNickInput.value = currentNick;
+       profileMenu.classList.remove('show');
+       editProfileContainer.classList.add('show');
+       newNickInput.value = currentNick;
     });
-
     // Evento para "Salvar" na tela de edição de perfil
     saveProfileButton.addEventListener('click', () => {
       const newNick = newNickInput.value;
-
-       //Verifica se o Nick foi alterado
        if(newNick !== currentNick){
          currentNick = newNick;
          localStorage.setItem('nick', newNick);
          alert('Nick atualizado para: ' + newNick);
        }
-
         editProfileContainer.classList.remove('show');
     });
-
     // Evento para processar a imagem selecionada
     profileImageInput.addEventListener('change', (event) => {
       const file = event.target.files[0];
@@ -633,19 +709,17 @@
           currentProfileImageBase64 = e.target.result;
           profileImagePreview.src = currentProfileImageBase64;
           headerProfileImage.src = currentProfileImageBase64;
-          localStorage.setItem('profileImage', currentProfileImageBase64);
+          localStorage.setItem('profileImage', e.target.result);
         }
         reader.readAsDataURL(file);
       }
     });
-
      // Fechar a tela de edição de perfil ao clicar fora dela
      editProfileContainer.addEventListener('click', (event) => {
-        if (event.target === editProfileContainer) {
-            editProfileContainer.classList.remove('show');
-        }
-    });
-
+      if (event.target === editProfileContainer) {
+       editProfileContainer.classList.remove('show');
+       }
+     });
     //Evento para "Limpar Chat"
     clearChatOption.addEventListener('click', () => {
       profileMenu.classList.remove('show');
@@ -660,7 +734,6 @@
         });
       }
     });
-
     //Controle do "digitando..."
    chatInput.addEventListener('input', () => {
      if (chatInput.value) {
@@ -671,23 +744,19 @@
        set(ref(database, `typing/${currentUserId}`), null);
      }
    });
-
     //Remove o "digitando..." ao perder o foco
    chatInput.addEventListener('blur', () => {
       set(ref(database, `typing/${currentUserId}`), null);
    });
-
     //Monitora o "digitando..." de outros usuários
     onValue(typingRef, (snapshot) => {
      const data = snapshot.val();
      let typingUsers = [];
-
      if (data) {
        //Cria uma lista dos usuários que estão digitando
        typingUsers = Object.entries(data) //Convertendo o objeto em array de [key, value]
          .filter(([key, nick]) => nick !== null && key !== currentUserId) //Filtrando para não mostrar o usuário atual
          .map(([key, nick]) => nick); //Pegando apenas os Nicks
-
          if (typingUsers.length > 0) {
            typingIndicator.textContent = `${typingUsers.join(', ')} está digitando...`;
          } else {
@@ -697,34 +766,27 @@
          typingIndicator.textContent = '';
        }
      });
-
      //Carrega a imagem e o nick salvos ao carregar a página
      if (currentProfileImageBase64) {
        headerProfileImage.src = currentProfileImageBase64;
        profileImagePreview.src = currentProfileImageBase64;
      }
-
      //Exibe tela de boas vindas se não tiver Nick
      const init = () => {
          headerProfileImage.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
          profileImagePreview.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
-
          if (!currentNick) {
            welcomeScreen.classList.add('show');
          }
-
          //Salva as configurações da tela de boas vindas
          saveWelcomeButton.addEventListener('click', () => {
            currentNick = welcomeNickInput.value;
            currentProfileImageBase64 = localStorage.getItem('profileImage');
-
            //Persiste os dados
            localStorage.setItem('nick', currentNick);
            localStorage.setItem('profileImage', currentProfileImageBase64);
            welcomeScreen.classList.remove('show');
-
          });
-
          //Evento para processar a imagem na tela de boas vindas
          welcomeProfileImageInput.addEventListener('change', (event) => {
            const file = event.target.files[0];
@@ -735,13 +797,11 @@
                localStorage.setItem('profileImage', e.target.result); //Salva no localStorage
                welcomeProfileImagePreview.src = e.target.result;
              }
-
              reader.readAsDataURL(file);
            }
          });
        };
-
-     init();
+       init();
   </script>
 </body>
 </html>
