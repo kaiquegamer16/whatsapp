@@ -19,7 +19,7 @@
     .chat-container {
       display: flex;
       flex-direction: column;
-      height: 95%;
+      height: 100%;
       max-width: 800px; /* Largura máxima para o contêiner */
       margin: 0 auto; /* Centraliza o contêiner */
     }
@@ -73,10 +73,12 @@
       padding: 8px 12px;
       border-radius: 7.5px;
       max-width: 80%;
-      word-break: break-word;
+      word-break: break-word; /* Garante a quebra de palavras */
       display: flex;
       align-items: baseline;
       position: relative;
+      color: #eee;
+      padding-right: 50px; /* Espaço para a hora */
     }
 
     .sent {
