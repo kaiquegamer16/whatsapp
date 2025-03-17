@@ -1,707 +1,837 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chat Público (Beta) - Tema Escuro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-/* Estilos Globais */
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #181818;
-  color: #e0e0e0;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  height: 85%;
-  width: 90%;
-  max-width: 500px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  background-color: #2c2c2c;
-}
-
-/* Cabeçalho do Chat */
-.chat-header {
-  background-color: #3e3e3e;
-  color: #e0e0e0;
-  padding: 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #444;
-}
-
-.chat-header .title {
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.profile-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #555;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  border: 2px solid #777;
-}
-
-.profile-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* Área de Mensagens */
-.chat-messages {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background-color: #1e1e1e;
-}
-
-.message {
-  margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 10px;
-  max-width: 70%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.sent {
-  background-color: #2e7d32;
-  align-self: flex-end;
-  color: #fff;
-}
-
-.received {
-  background-color: #3e3e3e;
-  align-self: flex-start;
-  color: #e0e0e0;
-}
-
-.message strong {
-  color: #a5d6a7;
-  margin-right: 5px;
-}
-
-.message-content {
-  word-break: break-word;
-}
-
-/* Área de Input de Mensagem */
-.chat-input-area {
-  background-color: #3e3e3e;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  border-top: 1px solid #444;
-}
-
-#chatInput {
-  flex-grow: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 25px;
-  margin-right: 10px;
-  background-color: #4f4f4f;
-  color: #e0e0e0;
-  resize: none;
-  min-height: 40px;
-}
-
-#chatInput::placeholder {
-  color: #999;
-}
-
-#sendButton,
-#emojiButton,
-#createGroupButton,
-#viewGroupsButton {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: 5px;
-}
-
-#sendButton i,
-#emojiButton i,
-#createGroupButton i,
-#viewGroupsButton i {
-  margin: auto;
-}
-
-/* Menu de Perfil */
-.profile-menu {
-  position: absolute;
-  top: 65px;
-  right: 15px;
-  background-color: #3e3e3e;
-  border: 1px solid #555;
-  border-radius: 5px;
-  padding: 10px;
-  width: 200px;
-  display: none;
-  z-index: 10;
-}
-
-.profile-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.profile-menu li {
-  padding: 10px;
-  cursor: pointer;
-  color: #e0e0e0;
-  border-radius: 5px;
-}
-
-.profile-menu li:hover {
-  background-color: #4f4f4f;
-}
-
-.profile-menu.show {
-  display: block;
-}
-
-/* Tela de Edição de Perfil */
-.edit-profile-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 11;
-}
-
-.edit-profile-container.show {
-  display: flex;
-}
-
-.edit-profile-box {
-  background-color: #3e3e3e;
-  padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-}
-
-.edit-profile-box h2 {
-  color: #e0e0e0;
-  margin-bottom: 15px;
-}
-
-.edit-profile-box input[type="text"],
-.edit-profile-box input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #555;
-  border-radius: 5px;
-  background-color: #4f4f4f;
-  color: #e0e0e0;
-}
-
-.edit-profile-box input[type="text"]::placeholder {
-  color: #999;
-}
-
-.edit-profile-box button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.edit-profile-box button:hover {
-  background-color: #388e3c;
-}
-
-/* Estilos para a imagem de perfil */
-#profileImagePreview {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
-  border: 2px solid #777;
-}
-
-#profileImageInput {
-  display: none;
-}
-
-.upload-button {
-  background-color: #555;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.upload-button:hover {
-  background-color: #777;
-}
-
-/* Estilos para as mensagens de aviso */
-.beta-message {
-  color: #999;
-  font-style: italic;
-  text-align: center;
-  margin: 10px 0;
-}
-
-/* Estilo para o "digitando..." */
-#typingIndicator {
-  font-style: italic;
-  color: #999;
-  text-align: center;
-  margin-top: 10px;
-}
-
-/* Tela de boas vindas */
-#welcomeScreen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 12;
-}
-
-#welcomeScreen.show {
-  display: flex;
-}
-
-#welcomeBox {
-  background-color: #3e3e3e;
-  padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-}
-
-#welcomeBox h2 {
-  color: #e0e0e0;
-  margin-bottom: 15px;
-}
-
-#welcomeBox p {
-  color: #e0e0e0;
-  margin-bottom: 20px;
-}
-
-#welcomeProfileImagePreview {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
-  border: 2px solid #777;
-}
-
-#welcomeBox input[type="text"],
-#welcomeBox input[type="file"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #555;
-  border-radius: 5px;
-  background-color: #4f4f4f;
-  color: #e0e0e0;
-}
-
-#welcomeBox input[type="text"]::placeholder {
-  color: #999;
-}
-
-#welcomeBox .upload-button {
-  background-color: #555;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-#welcomeBox .upload-button:hover {
-  background-color: #777;
-}
-
-#welcomeBox button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-#welcomeBox button:hover {
-  background-color: #388e3c;
-}
-
-/* Estilo para a hora da mensagem */
-.message-time {
-  font-size: 0.8em;
-  color: #999;
-  margin-left: auto;
-}
-
-/* Estilos para as reações */
-.reaction-container {
-  display: none;
-  position: relative;
-  margin-top: 5px;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.message:hover .reaction-container {
-  display: flex;
-}
-
-/* Painel de reações */
-.emoji-panel {
-  background-color: #4f4f4f;
-  border: 1px solid #555;
-  border-radius: 5px;
-  padding: 5px;
-  z-index: 1;
-  overflow-x: auto;
-  white-space: nowrap;
-  display: flex;
-  justify-content: center;
-}
-
-.emoji-panel.show {
-  display: flex;
-}
-
-.emoji-option {
-  font-size: 1.5em;
-  cursor: pointer;
-  margin: 3px;
-  display: inline-block;
-}
-
-/* Estilo da mensagem de denúncia */
-.report-message {
-  color: #ff5722;
-  font-style: italic;
-}
-
-/* Reação de emoji posicionada do lado da mensagem */
-.reactions {
-  position: relative;
-  padding: 2px;
-}
-
-/* Painel de Emojis para Envio */
-#emojiPicker {
-  position: absolute;
-  bottom: 60px;
-  left: 0;
-  width: 100%;
-  background-color: #3e3e3e;
-  border: 1px solid #555;
-  border-radius: 5px;
-  padding: 10px;
-  display: none;
-  overflow-x: auto;
-  white-space: nowrap;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-}
-
-#emojiPicker.show {
-  display: flex;
-}
-
-#emojiPicker span {
-  font-size: 2em;
-  cursor: pointer;
-  margin: 5px;
-}
-
-/* Estilos para o painel de atualizações */
-.update-panel {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #3e3e3e;
-  border: 1px solid #555;
-  border-radius: 5px;
-  padding: 20px;
-  width: 300px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  z-index: 13;
-}
-
-.update-panel h3 {
-  color: #e0e0e0;
-  margin-bottom: 10px;
-}
-
-.update-panel ul {
-  list-style: none;
-  padding: 0;
-}
-
-.update-panel li {
-  color: #e0e0e0;
-  margin-bottom: 5px;
-}
-
-.update-panel .close-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  text-align: center;
-  transition: background-color 0.3s ease;
-}
-
-.update-panel .close-button:hover {
-  background-color: #388e3c;
-}
-
-/* Estilos para o painel de criação de grupos */
-.create-group-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 14;
-}
-
-.create-group-container.show {
-  display: flex;
-}
-
-.create-group-box {
-  background-color: #3e3e3e;
-  padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-}
-
-.create-group-box h2 {
-  color: #e0e0e0;
-  margin-bottom: 15px;
-}
-
-.create-group-box input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #555;
-  border-radius: 5px;
-  background-color: #4f4f4f;
-  color: #e0e0e0;
-}
-
-.create-group-box input[type="text"]::placeholder {
-  color: #999;
-}
-
-.create-group-box button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s ease;
-}
-
-.create-group-box button:hover {
-  background-color: #388e3c;
-}
-
-/* Estilos para a lista de grupos */
-.group-list-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 15;
-}
-
-.group-list-container.show {
-  display: flex;
-}
-
-.group-list-box {
-  background-color: #3e3e3e;
-  padding: 20px;
-  border-radius: 8px;
-  width: 80%;
-  max-width: 400px;
-  text-align: center;
-}
-
-.group-list-box h2 {
-  color: #e0e0e0;
-  margin-bottom: 15px;
-}
-
-.group-list-box ul {
-  list-style: none;
-  padding: 0;
-}
-
-.group-list-box li {
-  color: #e0e0e0;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.group-list-box button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.group-list-box button:hover {
-  background-color: #388e3c;
-}
-
-.group-list-box .delete-button {
-  background-color: #f44336;
-}
-
-.group-list-box .delete-button:hover {
-  background-color: #e57373;
-}
-  </style>
+    <title>Chat Público (Beta) - Tema Escuro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <style>
+        /* Estilos Globais */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #181818;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Garante que o body ocupe pelo menos a altura da tela */
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 85vh; /* Usando vh para ocupar 85% da altura da tela */
+            width: 90%;
+            max-width: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            background-color: #2c2c2c;
+        }
+
+        /* Cabeçalho do Chat */
+        .chat-header {
+            background-color: #3e3e3e;
+            color: #e0e0e0;
+            padding: 1em; /* Usando em para tamanhos relativos à fonte */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+
+        .chat-header .title {
+            font-weight: bold;
+            font-size: 1.2em; /* Tamanho da fonte em relação ao body */
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #555;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 2px solid #777;
+        }
+
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Área de Mensagens */
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1em; /* Espaçamento interno */
+            overflow-y: auto;
+            background-color: #1e1e1e;
+            /* Adicionado para a imagem de fundo */
+            background-image: var(--chat-background-image);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .message {
+            margin-bottom: 0.8em; /* Espaçamento entre mensagens */
+            padding: 0.7em; /* Espaçamento interno nas mensagens */
+            border-radius: 10px;
+            max-width: 70%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sent {
+            background-color: #2e7d32;
+            align-self: flex-end;
+            color: #fff;
+        }
+
+        .received {
+            background-color: #3e3e3e;
+            align-self: flex-start;
+            color: #e0e0e0;
+        }
+
+        .message strong {
+            color: #a5d6a7;
+            margin-right: 0.3em; /* Espaçamento do nick */
+        }
+
+        .message-content {
+            word-break: break-word;
+        }
+
+        /* Área de Input de Mensagem */
+        .chat-input-area {
+            background-color: #3e3e3e;
+            padding: 1em; /* Espaçamento interno */
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #444;
+        }
+
+        #chatInput {
+            flex-grow: 1;
+            padding: 0.7em; /* Espaçamento interno */
+            border: none;
+            border-radius: 25px;
+            margin-right: 0.5em; /* Espaçamento do botão */
+            background-color: #4f4f4f;
+            color: #e0e0e0;
+            resize: none;
+            min-height: 40px;
+        }
+
+        #chatInput::placeholder {
+            color: #999;
+        }
+
+        #sendButton,
+        #emojiButton,
+        #createGroupButton,
+        #viewGroupsButton {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 0.3em; /* Espaçamento entre botões */
+        }
+
+        #sendButton i,
+        #emojiButton i,
+        #createGroupButton i,
+        #viewGroupsButton i {
+            margin: auto;
+        }
+
+        /* Menu de Perfil */
+        .profile-menu {
+            position: absolute;
+            top: 65px;
+            right: 15px;
+            background-color: #3e3e3e;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            width: 200px;
+            display: none;
+            z-index: 10;
+        }
+
+        .profile-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-menu li {
+            padding: 10px;
+            cursor: pointer;
+            color: #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .profile-menu li:hover {
+            background-color: #4f4f4f;
+        }
+
+        .profile-menu.show {
+            display: block;
+        }
+
+        /* Tela de Edição de Perfil */
+        .edit-profile-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 11;
+        }
+
+        .edit-profile-container.show {
+            display: flex;
+        }
+
+        .edit-profile-box {
+            background-color: #3e3e3e;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .edit-profile-box h2 {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        .edit-profile-box input[type="text"],
+        .edit-profile-box input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #4f4f4f;
+            color: #e0e0e0;
+        }
+
+        .edit-profile-box input[type="text"]::placeholder {
+            color: #999;
+        }
+
+        .edit-profile-box button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-profile-box button:hover {
+            background-color: #388e3c;
+        }
+
+        /* Estilos para a imagem de perfil */
+        #profileImagePreview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid #777;
+        }
+
+        #profileImageInput {
+            display: none;
+        }
+
+        .upload-button {
+            background-color: #555;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .upload-button:hover {
+            background-color: #777;
+        }
+
+        /* Estilos para as mensagens de aviso */
+        .beta-message {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        /* Estilo para o "digitando..." */
+        #typingIndicator {
+            font-style: italic;
+            color: #999;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Tela de boas vindas */
+        #welcomeScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 12;
+        }
+
+        #welcomeScreen.show {
+            display: flex;
+        }
+
+        #welcomeBox {
+            background-color: #3e3e3e;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        #welcomeBox h2 {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        #welcomeBox p {
+            color: #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        #welcomeProfileImagePreview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid #777;
+        }
+
+        #welcomeBox input[type="text"],
+        #welcomeBox input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #4f4f4f;
+            color: #e0e0e0;
+        }
+
+        #welcomeBox input[type="text"]::placeholder {
+            color: #999;
+        }
+
+        #welcomeBox .upload-button {
+            background-color: #555;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        #welcomeBox .upload-button:hover {
+            background-color: #777;
+        }
+
+        #welcomeBox button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        #welcomeBox button:hover {
+            background-color: #388e3c;
+        }
+
+        /* Estilo para a hora da mensagem */
+        .message-time {
+            font-size: 0.8em;
+            color: #999;
+            margin-left: auto;
+        }
+
+        /* Estilos para as reações */
+        .reaction-container {
+            display: none;
+            position: relative;
+            margin-top: 5px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .message:hover .reaction-container {
+            display: flex;
+        }
+
+        /* Painel de reações */
+        .emoji-panel {
+            background-color: #4f4f4f;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 5px;
+            z-index: 1;
+            overflow-x: auto;
+            white-space: nowrap;
+            display: flex;
+            justify-content: center;
+        }
+
+        .emoji-panel.show {
+            display: flex;
+        }
+
+        .emoji-option {
+            font-size: 1.5em;
+            cursor: pointer;
+            margin: 3px;
+            display: inline-block;
+        }
+
+        /* Estilo da mensagem de denúncia */
+        .report-message {
+            color: #ff5722;
+            font-style: italic;
+        }
+
+        /* Reação de emoji posicionada do lado da mensagem */
+        .reactions {
+            position: relative;
+            padding: 2px;
+        }
+
+        /* Painel de Emojis para Envio */
+        #emojiPicker {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            width: 100%;
+            background-color: #3e3e3e;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+            overflow-x: auto;
+            white-space: nowrap;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+
+        #emojiPicker.show {
+            display: flex;
+        }
+
+        #emojiPicker span {
+            font-size: 2em;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        /* Estilos para o painel de atualizações */
+        .update-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #3e3e3e;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 13;
+        }
+
+        .update-panel h3 {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .update-panel ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .update-panel li {
+            color: #e0e0e0;
+            margin-bottom: 5px;
+        }
+
+        .update-panel .close-button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .update-panel .close-button:hover {
+            background-color: #388e3c;
+        }
+
+        /* Estilos para o painel de criação de grupos */
+        .create-group-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 14;
+        }
+
+        .create-group-container.show {
+            display: flex;
+        }
+
+        .create-group-box {
+            background-color: #3e3e3e;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .create-group-box h2 {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        .create-group-box input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #4f4f4f;
+            color: #e0e0e0;
+        }
+
+        .create-group-box input[type="text"]::placeholder {
+            color: #999;
+        }
+
+        .create-group-box button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .create-group-box button:hover {
+            background-color: #388e3c;
+        }
+
+        /* Estilos para a lista de grupos */
+        .group-list-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 15;
+        }
+
+        .group-list-container.show {
+            display: flex;
+        }
+
+        .group-list-box {
+            background-color: #3e3e3e;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .group-list-box h2 {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+
+        .group-list-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .group-list-box li {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .group-list-box button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .group-list-box button:hover {
+            background-color: #388e3c;
+        }
+
+        .group-list-box .delete-button {
+            background-color: #f44336;
+        }
+
+        .group-list-box .delete-button:hover {
+            background-color: #e57373;
+        }
+
+        /* Painel de Configurações */
+        #settingsPanel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 16;
+        }
+
+        #settingsPanel.show {
+            display: flex;
+        }
+
+        #settingsBox {
+            background-color: #3e3e3e;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 400px;
+            text-align: left; /* Alinha o texto à esquerda dentro da caixa */
+        }
+
+        #settingsBox h2 {
+            color: #e0e0e0;
+            margin-bottom: 15px;
+            text-align: center; /* Centraliza o título */
+        }
+
+        #settingsBox label {
+            color: #e0e0e0;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #settingsBox input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        #settingsBox #backgroundImageInput {
+            display: none; /* Esconde o input de arquivo */
+        }
+
+        #settingsBox .upload-button {
+            background-color: #555;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        #settingsBox .upload-button:hover {
+            background-color: #777;
+        }
+
+        #settingsBox .close-button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            margin-top: 15px;
+            text-align: center; /* Garante que o botão "Fechar" esteja centralizado */
+        }
+
+        #settingsBox .close-button:hover {
+            background-color: #388e3c;
+        }
+
+        /* Estilos para o modo escuro */
+        body.dark-mode {
+            background-color: #000;
+            color: #fff;
+        }
+
+        body.dark-mode .chat-container {
+            background-color: #333;
+        }
+
+        body.dark-mode .chat-header {
+            background-color: #444;
+            border-bottom: 1px solid #555;
+        }
+
+        body.dark-mode .chat-input-area {
+            background-color: #444;
+            border-top: 1px solid #555;
+        }
+
+        body.dark-mode #chatInput {
+            background-color: #555;
+            color: #fff;
+        }
+
+        body.dark-mode .profile-menu {
+            background-color: #444;
+            border: 1px solid #666;
+        }
+
+        body.dark-mode .profile-menu li:hover {
+            background-color: #666;
+        }
+
+        body.dark-mode #settingsBox {
+            background-color: #444;
+        }
+
+    </style>
 </head>
 <body>
-  <div class="chat-container">
+<div class="chat-container">
     <div class="chat-header">
-      <div class="title">Chat Público</div>
-      <div class="profile-icon" id="profileIcon">
-        <img src="https://via.placeholder.com/100" id="headerProfileImage" alt="Foto de Perfil">
-      </div>
+        <div class="title">Chat Público</div>
+        <div class="profile-icon" id="profileIcon">
+            <img src="https://via.placeholder.com/100" id="headerProfileImage" alt="Foto de Perfil">
+        </div>
     </div>
     <div class="chat-messages" id="messages">
         <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
     </div>
     <div id="typingIndicator"></div>
     <div class="chat-input-area">
-         <button id="emojiButton"><i class="far fa-smile"></i></button>
-         <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
-         <button id="sendButton">
-           <i class="fas fa-paper-plane"></i>
-         </button>
-         <button id="createGroupButton"><i class="fas fa-users"></i></button>
-         <button id="viewGroupsButton"><i class="fas fa-list"></i></button>
-         <!-- Painel de Emojis -->
-         <div id="emojiPicker">
-            <span>😀</span> <span>😂</span> <span>😊</span> <span>🤔</span> <span>👍</span> <span>❤️</span> <span>😎</span> <span>😭</span>
-         </div>
-      </div>
-    <div class="profile-menu" id="profileMenu">
-      <ul>
-        <li id="editProfileOption">Editar Perfil</li>
-        <li id="clearChatOption">Limpar Chat</li>
-      </ul>
+        <button id="emojiButton"><i class="far fa-smile"></i></button>
+        <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
+        <button id="sendButton">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+        <button id="createGroupButton"><i class="fas fa-users"></i></button>
+        <button id="viewGroupsButton"><i class="fas fa-list"></i></button>
+        <!-- Painel de Emojis -->
+        <div id="emojiPicker">
+            <span>😀</span> <span>😂</span> <span>😊</span> <span>🤔</span> <span>👍</span> <span>❤️</span> <span>😎</span>
+            <span>😭</span>
+        </div>
     </div>
-     <!-- Tela de edição de perfil (escondida inicialmente) -->
+    <div class="profile-menu" id="profileMenu">
+        <ul>
+            <li id="editProfileOption">Editar Perfil</li>
+            <li id="clearChatOption">Limpar Chat</li>
+            <li id="settingsOption">Configurações</li>
+        </ul>
+    </div>
+    <!-- Tela de edição de perfil (escondida inicialmente) -->
     <div class="edit-profile-container" id="editProfileContainer">
         <div class="edit-profile-box">
             <h2>Editar Perfil</h2>
-            <img id="profileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem" />
+            <img id="profileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem"/>
             <label for="profileImageInput" class="upload-button">Escolher Foto</label>
             <input type="file" id="profileImageInput" accept="image/*">
             <input type="text" id="newNickInput" placeholder="Seu Nick">
             <button id="saveProfileButton">Salvar</button>
         </div>
     </div>
-      <!-- Tela de boas vindas -->
+    <!-- Tela de boas vindas -->
     <div id="welcomeScreen">
         <div id="welcomeBox">
             <h2>Bem-vindo(a)!</h2>
             <p>Para começar a usar o chat, defina seu nick e imagem de perfil.</p>
-            <img id="welcomeProfileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem" />
+            <img id="welcomeProfileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem"/>
             <label for="welcomeProfileImageInput" class="upload-button">Escolher Foto</label>
             <input type="file" id="welcomeProfileImageInput" accept="image/*">
             <input type="text" id="welcomeNickInput" placeholder="Seu Nick">
@@ -710,17 +840,17 @@ body {
     </div>
     <!-- Painel de Atualizações -->
     <div class="update-panel" id="updatePanel">
-      <h3>Novas Funcionalidades</h3>
-      <ul>
-        <li>✅ Adicionado painel de emojis para enviar mensagens.</li>
-        <li>✅ Reações às mensagens (estilo WhatsApp).</li>
-        <li>✅ Tema escuro aprimorado.</li>
-        <li>✅ Edição de mensagens enviadas.</li>
-        <li>✅ Criação de grupos.</li>
-        <li>✅ Lista de grupos com opções de editar e deletar.</li>
-        <li>✅ Correções de bugs e melhorias de desempenho.</li>
-      </ul>
-      <button class="close-button" id="closeUpdatePanel">Fechar</button>
+        <h3>Novas Funcionalidades</h3>
+        <ul>
+            <li>✅ Adicionado painel de emojis para enviar mensagens.</li>
+            <li>✅ Reações às mensagens (estilo WhatsApp).</li>
+            <li>✅ Tema escuro aprimorado.</li>
+            <li>✅ Edição de mensagens enviadas.</li>
+            <li>✅ Criação de grupos.</li>
+            <li>✅ Lista de grupos com opções de editar e deletar.</li>
+            <li>✅ Correções de bugs e melhorias de desempenho.</li>
+        </ul>
+        <button class="close-button" id="closeUpdatePanel">Fechar</button>
     </div>
     <!-- Painel de Criação de Grupos -->
     <div class="create-group-container" id="createGroupContainer">
@@ -735,28 +865,44 @@ body {
         <div class="group-list-box">
             <h2>Grupos</h2>
             <ul id="groupList">
-              <!-- Grupos serão listados aqui -->
+                <!-- Grupos serão listados aqui -->
             </ul>
         </div>
     </div>
-      <!-- Elemento de áudio para a notificação -->
+    <!-- Painel de Configurações -->
+    <div id="settingsPanel">
+        <div id="settingsBox">
+            <h2>Configurações</h2>
+            <label><input type="checkbox" id="notificationSetting">Notificações</label>
+            <label><input type="checkbox" id="darkModeSetting">Modo Escuro</label>
+            <label><input type="checkbox" id="enterToSend">Enter Envia Mensagem</label>
+            <!-- Adicionando a opção de imagem de fundo -->
+            <label for="backgroundImageInput" class="upload-button">Imagem de Fundo</label>
+            <input type="file" id="backgroundImageInput" accept="image/*">
+            <button class="close-button" id="closeSettingsPanel">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Elemento de áudio para a notificação -->
     <audio id="notificationSound" preload="auto">
-      <source src="notifica.mp3" type="audio/mp3">
-      Seu navegador não suporta o elemento de áudio.
+        <source src="notifica.mp3" type="audio/mp3">
+        Seu navegador não suporta o elemento de áudio.
     </audio>
-  </div>
-  <script type="module">
+</div>
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
     const firebaseConfig = {
-      apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
-      authDomain: "banco-5a678.firebaseapp.com",
-      projectId: "banco-5a678",
-      storageBucket: "banco-5a678.firebasestorage.app",
-      messagingSenderId: "943801310064",
-      appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
-      measurementId: "G-DEER2QFNXL"
+        apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
+        authDomain: "banco-5a678.firebaseapp.com",
+        projectId: "banco-5a678",
+        storageBucket: "banco-5a678.firebasestorage.app",
+        messagingSenderId: "943801310064",
+        appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+        measurementId: "G-DEER2QFNXL"
     };
+
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     const messagesRef = ref(database, 'messages');
@@ -769,8 +915,8 @@ body {
     const profileMenu = document.getElementById('profileMenu');
     const typingIndicator = document.getElementById('typingIndicator'); //Elemento "digitando..."
     const notificationSound = document.getElementById('notificationSound'); //Elemento de áudio
-     const emojiButton = document.getElementById('emojiButton'); //Botão de Emoji
-      const emojiPicker = document.getElementById('emojiPicker'); //Painel de Emojis
+    const emojiButton = document.getElementById('emojiButton'); //Botão de Emoji
+    const emojiPicker = document.getElementById('emojiPicker'); //Painel de Emojis
     //Elementos da tela de boas vindas
     const welcomeScreen = document.getElementById('welcomeScreen');
     const welcomeNickInput = document.getElementById('welcomeNickInput');
@@ -798,6 +944,15 @@ body {
     const groupListContainer = document.getElementById('groupListContainer');
     const groupList = document.getElementById('groupList');
     const viewGroupsButton = document.getElementById('viewGroupsButton');
+    // Elementos do Painel de Configurações
+    const settingsPanel = document.getElementById('settingsPanel');
+    const settingsOption = document.getElementById('settingsOption');
+    const closeSettingsPanel = document.getElementById('closeSettingsPanel');
+    const notificationSetting = document.getElementById('notificationSetting');
+    const darkModeSetting = document.getElementById('darkModeSetting');
+    const enterToSend = document.getElementById('enterToSend');
+    const backgroundImageInput = document.getElementById('backgroundImageInput');
+
     // Variáveis Globais
     let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
     let currentProfileImageBase64 = localStorage.getItem('profileImage') || null;
@@ -805,369 +960,449 @@ body {
     let conversationStarted = localStorage.getItem('conversationStarted') || null;
     let currentGroupId = null;
     //Array de emojis (As opções da imagem)
-      const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
+    const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
     //Funções de formatação de data e hora
     const formatDate = (timestamp) => {
-      const date = new Date(timestamp);
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
+        const date = new Date(timestamp);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
     };
     const formatTime = (timestamp) => {
-      const date = new Date(timestamp);
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
+        const date = new Date(timestamp);
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${hours}:${minutes}`;
     };
     //Salva o userId no localStorage ao gerar um novo
     if (!localStorage.getItem('userId')) {
-      localStorage.setItem('userId', currentUserId);
+        localStorage.setItem('userId', currentUserId);
     }
     //Carrega a imagem e o nick salvos ao carregar a página
     if (currentProfileImageBase64) {
-      headerProfileImage.src = currentProfileImageBase64;
-      profileImagePreview.src = currentProfileImageBase64;
+        headerProfileImage.src = currentProfileImageBase64;
+        profileImagePreview.src = currentProfileImageBase64;
     }
     //Função para gerar um ID de usuário aleatório (simulação)
     function generateUserId() {
-      return Math.random().toString(36).substring(2, 15);
+        return Math.random().toString(36).substring(2, 15);
     }
     function displayMessage(userId, nick, message, timestamp, key, reactions) { //Agora recebe o Nick e o timestamp
-       const messageElement = document.createElement('div');
-       messageElement.classList.add('message');
-       if (userId === currentUserId) {
-         messageElement.classList.add('sent');
-       } else {
-         messageElement.classList.add('received');
-       }
-  /*
-   *  Adicionado o elemento de conteúdo da mensagem e formatado a exibição
-   */
-       const messageContent = document.createElement('div');
-       messageContent.className = 'message-content';
-       messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
-       messageElement.appendChild(messageContent)
-    // Criar contêiner para as reações
-     const reactionContainer = document.createElement('div');
-          reactionContainer.className = 'reaction-container';
-    // Criar o painel de emojis
-     const emojiPanel = document.createElement('div');
-         emojiPanel.className = 'emoji-panel';
-         emojis.forEach(emoji => {
-          const emojiOption = document.createElement('span');
-           emojiOption.className = 'emoji-option';
-           emojiOption.textContent = emoji;
-           emojiOption.addEventListener('click', () => {
-     update(ref(database, `messages/${currentGroupId}/${key}`), {
-       reactions: {
-         [currentUserId]: emoji
-          }
-        })
-         emojiPanel.classList.remove('show');
-       });
-       emojiPanel.appendChild(emojiOption);
-     });
-         reactionContainer.appendChild(emojiPanel)
-       messageElement.addEventListener('click', () => {
-        emojiPanel.classList.toggle('show');
-       });
-           //Adicionado Reações
-         if (reactions && reactions[currentUserId]) {
-          const reactionElement = document.createElement('span');
-          reactionElement.textContent = reactions[currentUserId];
-           reactionElement.className = 'reactions';
-         messageElement.appendChild(reactionElement);
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        if (userId === currentUserId) {
+            messageElement.classList.add('sent');
+        } else {
+            messageElement.classList.add('received');
         }
-           messageElement.appendChild(reactionContainer);
-           // Adicionar botão de edição para mensagens enviadas
-           if (userId === currentUserId) {
-             const editButton = document.createElement('button');
-             editButton.textContent = 'Editar';
-             editButton.classList.add('edit-button');
-             editButton.addEventListener('click', () => {
-               const newMessage = prompt('Editar mensagem:', message);
-               if (newMessage && newMessage !== message) {
-                 update(ref(database, `messages/${currentGroupId}/${key}`), {
-                   message: newMessage,
-                   timestamp: Date.now()
-                 });
-               }
-             });
-             messageElement.appendChild(editButton);
-           }
-           messagesDiv.appendChild(messageElement);
-           messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-    function loadMessages(groupId) {
-      currentGroupId = groupId;
-      messagesDiv.innerHTML = '';
-      const messagesGroupRef = ref(database, `messages/${groupId}`);
-      onValue(messagesGroupRef, (snapshot) => {
-        messagesDiv.innerHTML = '';
-        const data = snapshot.val();
-        if (data) {
-          for (let key in data) {
-            displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp, key, data[key].reactions);
-          }
+        /*
+         *  Adicionado o elemento de conteúdo da mensagem e formatado a exibição
+         */
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
+        messageElement.appendChild(messageContent)
+        // Criar contêiner para as reações
+        const reactionContainer = document.createElement('div');
+        reactionContainer.className = 'reaction-container';
+        // Criar o painel de emojis
+        const emojiPanel = document.createElement('div');
+        emojiPanel.className = 'emoji-panel';
+        emojis.forEach(emoji => {
+            const emojiOption = document.createElement('span');
+            emojiOption.className = 'emoji-option';
+            emojiOption.textContent = emoji;
+            emojiOption.addEventListener('click', () => {
+                update(ref(database, `messages/${currentGroupId}/${key}`), {
+                    reactions: {
+                        [currentUserId]: emoji
+                    }
+                })
+                emojiPanel.classList.remove('show');
+            });
+            emojiPanel.appendChild(emojiOption);
+        });
+        reactionContainer.appendChild(emojiPanel)
+        messageElement.addEventListener('click', () => {
+            emojiPanel.classList.toggle('show');
+        });
+        //Adicionado Reações
+        if (reactions && reactions[currentUserId]) {
+            const reactionElement = document.createElement('span');
+            reactionElement.textContent = reactions[currentUserId];
+            reactionElement.className = 'reactions';
+            messageElement.appendChild(reactionElement);
         }
-      });
-    }
-    function loadGroups() {
-      onValue(groupsRef, (snapshot) => {
-        const data = snapshot.val();
-        groupList.innerHTML = '';
-        if (data) {
-          for (let key in data) {
-            const li = document.createElement('li');
-            li.textContent = data[key].name;
+        messageElement.appendChild(reactionContainer);
+        // Adicionar botão de edição para mensagens enviadas
+        if (userId === currentUserId) {
             const editButton = document.createElement('button');
             editButton.textContent = 'Editar';
             editButton.classList.add('edit-button');
             editButton.addEventListener('click', () => {
-              const newGroupName = prompt('Editar nome do grupo:', data[key].name);
-              if (newGroupName && newGroupName !== data[key].name) {
-                update(ref(database, `groups/${key}`), {
-                  name: newGroupName
-                });
-              }
+                const newMessage = prompt('Editar mensagem:', message);
+                if (newMessage && newMessage !== message) {
+                    update(ref(database, `messages/${currentGroupId}/${key}`), {
+                        message: newMessage,
+                        timestamp: Date.now()
+                    });
+                }
             });
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = '🗑️';
-            deleteButton.classList.add('delete-button');
-            deleteButton.addEventListener('click', () => {
-              if (confirm('Tem certeza que deseja deletar este grupo?')) {
-                remove(ref(database, `groups/${key}`));
-                remove(ref(database, `messages/${key}`));
-              }
-            });
-            li.appendChild(editButton);
-            li.appendChild(deleteButton);
-            li.addEventListener('click', () => {
-              loadMessages(key);
-              groupListContainer.classList.remove('show');
-            });
-            groupList.appendChild(li);
-          }
+            messageElement.appendChild(editButton);
         }
-      });
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+    function loadMessages(groupId) {
+        currentGroupId = groupId;
+        messagesDiv.innerHTML = '';
+        const messagesGroupRef = ref(database, `messages/${groupId}`);
+        onValue(messagesGroupRef, (snapshot) => {
+            messagesDiv.innerHTML = '';
+            const data = snapshot.val();
+            if (data) {
+                for (let key in data) {
+                    displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp, key, data[key].reactions);
+                }
+            }
+        });
+    }
+    function loadGroups() {
+        onValue(groupsRef, (snapshot) => {
+            const data = snapshot.val();
+            groupList.innerHTML = '';
+            if (data) {
+                for (let key in data) {
+                    const li = document.createElement('li');
+                    li.textContent = data[key].name;
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Editar';
+                    editButton.classList.add('edit-button');
+                    editButton.addEventListener('click', () => {
+                        const newGroupName = prompt('Editar nome do grupo:', data[key].name);
+                        if (newGroupName && newGroupName !== data[key].name) {
+                            update(ref(database, `groups/${key}`), {
+                                name: newGroupName
+                            });
+                        }
+                    });
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '🗑️';
+                    deleteButton.classList.add('delete-button');
+                    deleteButton.addEventListener('click', () => {
+                        if (confirm('Tem certeza que deseja deletar este grupo?')) {
+                            remove(ref(database, `groups/${key}`));
+                            remove(ref(database, `messages/${key}`));
+                        }
+                    });
+                    li.appendChild(editButton);
+                    li.appendChild(deleteButton);
+                    li.addEventListener('click', () => {
+                        loadMessages(key);
+                        groupListContainer.classList.remove('show');
+                    });
+                    groupList.appendChild(li);
+                }
+            }
+        });
     }
     sendButton.addEventListener('click', () => {
-     const messageText = chatInput.value;
-     if (messageText && currentGroupId) {
-       push(ref(database, `messages/${currentGroupId}`), {
-         userId: currentUserId,
-         nick: currentNick, //Salva o nick com a mensagem
-         message: messageText,
-         timestamp: Date.now() //Salva a data/hora
-       });
-       chatInput.value = '';
-       set(ref(database, `typing/${currentUserId}`), null);
-     } else {
-       alert('Selecione um grupo para enviar a mensagem.');
-     }
+        const messageText = chatInput.value;
+        if (messageText && currentGroupId) {
+            push(ref(database, `messages/${currentGroupId}`), {
+                userId: currentUserId,
+                nick: currentNick, //Salva o nick com a mensagem
+                message: messageText,
+                timestamp: Date.now() //Salva a data/hora
+            });
+            chatInput.value = '';
+            set(ref(database, `typing/${currentUserId}`), null);
+        } else {
+            alert('Selecione um grupo para enviar a mensagem.');
+        }
     });
     // Evento para mostrar/esconder o menu de perfil
     profileIcon.addEventListener('click', () => {
-      profileMenu.classList.toggle('show');
+        profileMenu.classList.toggle('show');
     });
+
+    // Evento para mostrar o painel de configurações
+    settingsOption.addEventListener('click', () => {
+        profileMenu.classList.remove('show');
+        settingsPanel.classList.add('show');
+    });
+
+    // Evento para fechar o painel de configurações
+    closeSettingsPanel.addEventListener('click', () => {
+        settingsPanel.classList.remove('show');
+    });
+
     // Fechar o menu ao clicar fora dele
     document.addEventListener('click', (event) => {
-      if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
-        profileMenu.classList.remove('show');
-      }
+        if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
+            profileMenu.classList.remove('show');
+        }
+        if (event.target === settingsPanel) {
+            settingsPanel.classList.remove('show');
+        }
     });
+
     // Evento para "Editar Perfil"
     editProfileOption.addEventListener('click', () => {
-       profileMenu.classList.remove('show');
-       editProfileContainer.classList.add('show');
-       newNickInput.value = currentNick;
+        profileMenu.classList.remove('show');
+        editProfileContainer.classList.add('show');
+        newNickInput.value = currentNick;
     });
     // Evento para "Salvar" na tela de edição de perfil
     saveProfileButton.addEventListener('click', () => {
-      const newNick = newNickInput.value;
-       if(newNick !== currentNick){
-         currentNick = newNick;
-         localStorage.setItem('nick', newNick);
-         alert('Nick atualizado para: ' + newNick);
-       }
+        const newNick = newNickInput.value;
+        if (newNick !== currentNick) {
+            currentNick = newNick;
+            localStorage.setItem('nick', newNick);
+            alert('Nick atualizado para: ' + newNick);
+        }
         editProfileContainer.classList.remove('show');
     });
     // Evento para processar a imagem selecionada
     profileImageInput.addEventListener('change', (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          currentProfileImageBase64 = e.target.result;
-          profileImagePreview.src = currentProfileImageBase64;
-          headerProfileImage.src = currentProfileImageBase64;
-          localStorage.setItem('profileImage', e.target.result);
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                currentProfileImageBase64 = e.target.result;
+                profileImagePreview.src = currentProfileImageBase64;
+                headerProfileImage.src = currentProfileImageBase64;
+                localStorage.setItem('profileImage', e.target.result);
+            }
+            reader.readAsDataURL(file);
         }
-        reader.readAsDataURL(file);
-      }
     });
-     // Fechar a tela de edição de perfil ao clicar fora dela
-     editProfileContainer.addEventListener('click', (event) => {
-      if (event.target === editProfileContainer) {
-       editProfileContainer.classList.remove('show');
-       }
-     });
+    // Fechar a tela de edição de perfil ao clicar fora dela
+    editProfileContainer.addEventListener('click', (event) => {
+        if (event.target === editProfileContainer) {
+            editProfileContainer.classList.remove('show');
+        }
+    });
     //Evento para "Limpar Chat"
     clearChatOption.addEventListener('click', () => {
-      profileMenu.classList.remove('show');
-      if (confirm('Tem certeza que deseja limpar o chat?')) {
-        //Limpa as mensagens do Firebase (simulação)
-        set(ref(database, `messages/${currentGroupId}`), null)
-        .then(() => {
-          alert('Chat limpo com sucesso!');
-        })
-        .catch((error) => {
-          alert('Ocorreu um erro ao limpar o chat: ' + error.message);
-        });
-      }
+        profileMenu.classList.remove('show');
+        if (confirm('Tem certeza que deseja limpar o chat?')) {
+            //Limpa as mensagens do Firebase (simulação)
+            set(ref(database, `messages/${currentGroupId}`), null)
+                .then(() => {
+                    alert('Chat limpo com sucesso!');
+                })
+                .catch((error) => {
+                    alert('Ocorreu um erro ao limpar o chat: ' + error.message);
+                });
+        }
     });
     //Controle do "digitando..."
-   chatInput.addEventListener('input', () => {
-     if (chatInput.value) {
-       //Envia "digitando..." para o Firebase
-       set(ref(database, `typing/${currentUserId}`), currentNick);
-     } else {
-       //Remove o "digitando..."
-       set(ref(database, `typing/${currentUserId}`), null);
-     }
-   });
+    chatInput.addEventListener('input', () => {
+        if (chatInput.value) {
+            //Envia "digitando..." para o Firebase
+            set(ref(database, `typing/${currentUserId}`), currentNick);
+        } else {
+            //Remove o "digitando..."
+            set(ref(database, `typing/${currentUserId}`), null);
+        }
+    });
     //Remove o "digitando..." ao perder o foco
-   chatInput.addEventListener('blur', () => {
-      set(ref(database, `typing/${currentUserId}`), null);
-   });
+    chatInput.addEventListener('blur', () => {
+        set(ref(database, `typing/${currentUserId}`), null);
+    });
     //Monitora o "digitando..." de outros usuários
     onValue(typingRef, (snapshot) => {
-     const data = snapshot.val();
-     let typingUsers = [];
-     if (data) {
-       //Cria uma lista dos usuários que estão digitando
-       typingUsers = Object.entries(data) //Convertendo o objeto em array de [key, value]
-         .filter(([key, nick]) => nick !== null && key !== currentUserId) //Filtrando para não mostrar o usuário atual
-         .map(([key, nick]) => nick); //Pegando apenas os Nicks
-         if (typingUsers.length > 0) {
-           typingIndicator.textContent = `${typingUsers.join(', ')} está digitando...`;
-         } else {
-           typingIndicator.textContent = '';
-         }
-       } else {
-         typingIndicator.textContent = '';
-       }
-     });
-     //Carrega a imagem e o nick salvos ao carregar a página
-if (currentProfileImageBase64) {
-  headerProfileImage.src = currentProfileImageBase64;
-  profileImagePreview.src = currentProfileImageBase64;
-}
-
-//Exibe tela de boas vindas se não tiver Nick
-const init = () => {
-  headerProfileImage.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
-  profileImagePreview.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
-
-  if (!currentNick) {
-    welcomeScreen.classList.add('show');
-  }
-
-  //Salva as configurações da tela de boas vindas
-  saveWelcomeButton.addEventListener('click', () => {
-    const newNick = welcomeNickInput.value.trim();
-    if (!newNick) {
-      alert('Por favor, insira um Nick.');
-      return;
+        const data = snapshot.val();
+        let typingUsers = [];
+        if (data) {
+            //Cria uma lista dos usuários que estão digitando
+            typingUsers = Object.entries(data) //Convertendo o objeto em array de [key, value]
+                .filter(([key, nick]) => nick !== null && key !== currentUserId) //Filtrando para não mostrar o usuário atual
+                .map(([key, nick]) => nick); //Pegando apenas os Nicks
+            if (typingUsers.length > 0) {
+                typingIndicator.textContent = `${typingUsers.join(', ')} está digitando...`;
+            } else {
+                typingIndicator.textContent = '';
+            }
+        } else {
+            typingIndicator.textContent = '';
+        }
+    });
+    //Carrega a imagem e o nick salvos ao carregar a página
+    if (currentProfileImageBase64) {
+        headerProfileImage.src = currentProfileImageBase64;
+        profileImagePreview.src = currentProfileImageBase64;
     }
 
-    currentNick = newNick;
-    currentProfileImageBase64 = localStorage.getItem('profileImage');
+    //Exibe tela de boas vindas se não tiver Nick
+    const init = () => {
+        headerProfileImage.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
+        profileImagePreview.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
 
-    //Persiste os dados
-    localStorage.setItem('nick', currentNick);
-    localStorage.setItem('profileImage', currentProfileImageBase64);
+        if (!currentNick) {
+            welcomeScreen.classList.add('show');
+        }
 
-    welcomeScreen.classList.remove('show');
-  });
+        //Salva as configurações da tela de boas vindas
+        saveWelcomeButton.addEventListener('click', () => {
+            const newNick = welcomeNickInput.value.trim();
+            if (!newNick) {
+                alert('Por favor, insira um Nick.');
+                return;
+            }
 
-  //Evento para processar a imagem na tela de boas vindas
-  welcomeProfileImageInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        localStorage.setItem('profileImage', e.target.result); //Salva no localStorage
-        welcomeProfileImagePreview.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-};
+            currentNick = newNick;
+            currentProfileImageBase64 = localStorage.getItem('profileImage');
 
-init();
+            //Persiste os dados
+            localStorage.setItem('nick', currentNick);
+            localStorage.setItem('profileImage', currentProfileImageBase64);
 
-// Evento para mostrar/esconder o painel de emojis
-emojiButton.addEventListener('click', () => {
-  emojiPicker.classList.toggle('show');
-});
+            welcomeScreen.classList.remove('show');
+        });
 
-// Adiciona os emojis ao textarea
-emojiPicker.querySelectorAll('span').forEach((emoji) => {
-  emoji.addEventListener('click', () => {
-    chatInput.value += emoji.textContent;
-    emojiPicker.classList.remove('show');
-  });
-});
+        //Evento para processar a imagem na tela de boas vindas
+        welcomeProfileImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    localStorage.setItem('profileImage', e.target.result); //Salva no localStorage
+                    welcomeProfileImagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    };
 
-// Evento para fechar o painel de atualizações
-closeUpdatePanel.addEventListener('click', () => {
-  updatePanel.style.display = 'none';
-});
+    init();
 
-// Exibe o painel de atualizações ao carregar a página
-updatePanel.style.display = 'block';
+    // Evento para mostrar/esconder o painel de emojis
+    emojiButton.addEventListener('click', () => {
+        emojiPicker.classList.toggle('show');
+    });
 
-// Evento para mostrar o painel de criação de grupos
-createGroupButton.addEventListener('click', () => {
-  createGroupContainer.classList.add('show');
-});
+    // Adiciona os emojis ao textarea
+    emojiPicker.querySelectorAll('span').forEach((emoji) => {
+        emoji.addEventListener('click', () => {
+            chatInput.value += emoji.textContent;
+            emojiPicker.classList.remove('show');
+        });
+    });
 
-// Evento para criar um grupo
-createGroupButtonConfirm.addEventListener('click', () => {
-  const groupName = groupNameInput.value.trim();
-  if (!groupName) {
-    alert('Por favor, insira um nome para o grupo.');
-    return;
-  }
+    // Evento para fechar o painel de atualizações
+    closeUpdatePanel.addEventListener('click', () => {
+        updatePanel.style.display = 'none';
+    });
 
-  push(groupsRef, {
-    name: groupName,
-  }).then((snapshot) => {
-    loadMessages(snapshot.key);
-    createGroupContainer.classList.remove('show');
-    groupNameInput.value = ''; // Limpa o campo de entrada
-  });
-});
+    // Exibe o painel de atualizações ao carregar a página
+    updatePanel.style.display = 'block';
 
-// Fechar a tela de criação de grupos ao clicar fora dela
-createGroupContainer.addEventListener('click', (event) => {
-  if (event.target === createGroupContainer) {
-    createGroupContainer.classList.remove('show');
-  }
-});
+    // Evento para mostrar o painel de criação de grupos
+    createGroupButton.addEventListener('click', () => {
+        createGroupContainer.classList.add('show');
+    });
 
-// Evento para mostrar a lista de grupos
-viewGroupsButton.addEventListener('click', () => {
-  groupListContainer.classList.add('show');
-  loadGroups();
-});
+    // Evento para criar um grupo
+    createGroupButtonConfirm.addEventListener('click', () => {
+        const groupName = groupNameInput.value.trim();
+        if (!groupName) {
+            alert('Por favor, insira um nome para o grupo.');
+            return;
+        }
 
-// Fechar a tela de lista de grupos ao clicar fora dela
-groupListContainer.addEventListener('click', (event) => {
-  if (event.target === groupListContainer) {
-    groupListContainer.classList.remove('show');
-  }
-});
+        push(groupsRef, {
+            name: groupName,
+        }).then((snapshot) => {
+            loadMessages(snapshot.key);
+            createGroupContainer.classList.remove('show');
+            groupNameInput.value = ''; // Limpa o campo de entrada
+        });
+    });
+
+    // Fechar a tela de criação de grupos ao clicar fora dela
+    createGroupContainer.addEventListener('click', (event) => {
+        if (event.target === createGroupContainer) {
+            createGroupContainer.classList.remove('show');
+        }
+    });
+
+    // Evento para mostrar a lista de grupos
+    viewGroupsButton.addEventListener('click', () => {
+        groupListContainer.classList.add('show');
+        loadGroups();
+    });
+
+    // Fechar a tela de lista de grupos ao clicar fora dela
+    groupListContainer.addEventListener('click', (event) => {
+        if (event.target === groupListContainer) {
+            groupListContainer.classList.remove('show');
+        }
+    });
+
+    // Carregar as configurações salvas
+    const loadSettings = () => {
+        notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
+        darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
+        enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
+        //Carregar imagem de fundo
+        const backgroundImage = localStorage.getItem('backgroundImage');
+        if (backgroundImage) {
+            document.documentElement.style.setProperty('--chat-background-image', `url(${backgroundImage})`);
+        }
+        applySettings(); // Aplicar as configurações carregadas
+    };
+
+    // Aplicar as configurações
+    const applySettings = () => {
+        // Modo Escuro
+        if (darkModeSetting.checked) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+        //Notificações
+        //Lógica de notificação aqui (pode usar a API de notificação do navegador)
+    };
+
+    // Salvar as configurações
+    const saveSettings = () => {
+        localStorage.setItem('notificationSetting', notificationSetting.checked);
+        localStorage.setItem('darkModeSetting', darkModeSetting.checked);
+        localStorage.setItem('enterToSend', enterToSend.checked);
+        applySettings(); //Aplicar as configurações ao salvar
+    };
+    // Eventos para salvar as configurações quando os checkboxes mudarem
+    notificationSetting.addEventListener('change', saveSettings);
+    darkModeSetting.addEventListener('change', saveSettings);
+    enterToSend.addEventListener('change', saveSettings);
+
+    // Evento para "Enter Envia"
+    chatInput.addEventListener('keydown', (event) => {
+        if (enterToSend.checked && event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendButton.click();
+        }
+    });
+
+    // Evento para processar a imagem de fundo
+    backgroundImageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imageUrl = e.target.result;
+                localStorage.setItem('backgroundImage', imageUrl);
+                document.documentElement.style.setProperty('--chat-background-image', `url(${imageUrl})`);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Carregar as configurações ao iniciar o aplicativo
+    loadSettings();
 </script>
+</body>
+</html>
