@@ -129,7 +129,7 @@ body {
   color: #999;
 }
 
-#sendButton, #emojiButton {
+#sendButton, #emojiButton, #createGroupButton {
   background-color: #4caf50;
   color: white;
   border: none;
@@ -140,9 +140,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left: 5px;
 }
 
-#sendButton i, #emojiButton i {
+#sendButton i, #emojiButton i, #createGroupButton i {
   margin: auto;
 }
 
@@ -472,6 +473,113 @@ body {
   margin: 5px;
 }
 
+/* Estilos para o painel de atualizações */
+.update-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #3e3e3e;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 13;
+}
+
+.update-panel h3 {
+  color: #e0e0e0;
+  margin-bottom: 10px;
+}
+
+.update-panel ul {
+  list-style: none;
+  padding: 0;
+}
+
+.update-panel li {
+  color: #e0e0e0;
+  margin-bottom: 5px;
+}
+
+.update-panel .close-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.update-panel .close-button:hover {
+  background-color: #388e3c;
+}
+
+/* Estilos para o painel de criação de grupos */
+.create-group-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 14;
+}
+
+.create-group-container.show {
+  display: flex;
+}
+
+.create-group-box {
+  background-color: #3e3e3e;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.create-group-box h2 {
+  color: #e0e0e0;
+  margin-bottom: 15px;
+}
+
+.create-group-box input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  border-radius: 5px;
+  background-color: #4f4f4f;
+  color: #e0e0e0;
+}
+
+.create-group-box input[type="text"]::placeholder {
+  color: #999;
+}
+
+.create-group-box button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.create-group-box button:hover {
+  background-color: #388e3c;
+}
+
   </style>
 </head>
 <body>
@@ -486,14 +594,6 @@ body {
 
     <div class="chat-messages" id="messages">
         <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
-       <div class="beta-message">Novas funcionalidades:
-           <ul>
-               <li>✅ Adicionado painel de emojis para enviar mensagens.</li>
-               <li>✅ Reações às mensagens (estilo WhatsApp).</li>
-               <li>✅ Tema escuro aprimorado.</li>
-               <li>✅ Edição de mensagens enviadas.</li>
-           </ul>
-       </div>
     </div>
     <div id="typingIndicator"></div>
 
@@ -503,6 +603,7 @@ body {
          <button id="sendButton">
            <i class="fas fa-paper-plane"></i>
          </button>
+         <button id="createGroupButton"><i class="fas fa-users"></i></button>
          <!-- Painel de Emojis -->
          <div id="emojiPicker">
             <span>😀</span> <span>😂</span> <span>😊</span> <span>🤔</span> <span>👍</span> <span>❤️</span> <span>😎</span> <span>😭</span>
@@ -545,6 +646,30 @@ body {
             <button id="saveWelcomeButton">Entrar no Chat</button>
         </div>
     </div>
+
+    <!-- Painel de Atualizações -->
+    <div class="update-panel" id="updatePanel">
+      <h3>Novas Funcionalidades</h3>
+      <ul>
+        <li>✅ Adicionado painel de emojis para enviar mensagens.</li>
+        <li>✅ Reações às mensagens (estilo WhatsApp).</li>
+        <li>✅ Tema escuro aprimorado.</li>
+        <li>✅ Edição de mensagens enviadas.</li>
+        <li>✅ Criação de grupos.</li>
+        <li>✅ Correções de bugs e melhorias de desempenho.</li>
+      </ul>
+      <button class="close-button" id="closeUpdatePanel">Fechar</button>
+    </div>
+
+    <!-- Painel de Criação de Grupos -->
+    <div class="create-group-container" id="createGroupContainer">
+        <div class="create-group-box">
+            <h2>Criar Grupo</h2>
+            <input type="text" id="groupNameInput" placeholder="Nome do Grupo">
+            <button id="createGroupButtonConfirm">Criar</button>
+        </div>
+    </div>
+
       <!-- Elemento de áudio para a notificação -->
     <audio id="notificationSound" preload="auto">
       <source src="notifica.mp3" type="audio/mp3">
@@ -595,6 +720,16 @@ body {
     const saveProfileButton = document.getElementById('saveProfileButton');
     const profileImageInput = document.getElementById('profileImageInput');
     const profileImagePreview = document.getElementById('profileImagePreview');
+
+    // Elementos do Painel de Atualizações
+    const updatePanel = document.getElementById('updatePanel');
+    const closeUpdatePanel = document.getElementById('closeUpdatePanel');
+
+    // Elementos do Painel de Criação de Grupos
+    const createGroupContainer = document.getElementById('createGroupContainer');
+    const groupNameInput = document.getElementById('groupNameInput');
+    const createGroupButtonConfirm = document.getElementById('createGroupButtonConfirm');
+    const createGroupButton = document.getElementById('createGroupButton');
 
     // Variáveis Globais
     let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
@@ -713,15 +848,6 @@ body {
     messagesDiv.innerHTML = `
       <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
       <div class="beta-message">Data de início da conversa: ${formatDate(parseInt(conversationStarted))}</div>
-      <div class="beta-message">Novas funcionalidades:
-        <ul>
-          <li>✅ Adicionado painel de emojis para enviar mensagens.</li>
-          <li>✅ Reações às mensagens (estilo WhatsApp).</li>
-          <li>✅ Tema escuro aprimorado.</li>
-          <li>✅ Edição de mensagens enviadas.</li>
-          <li>✅ Correções de bugs e melhorias de desempenho.</li>
-        </ul>
-      </div>
     `;
       const data = snapshot.val();
       if (data) {
@@ -882,6 +1008,36 @@ body {
        chatInput.value += emoji.textContent;
        emojiPicker.classList.remove('show');
         });
+    });
+
+    // Evento para fechar o painel de atualizações
+    closeUpdatePanel.addEventListener('click', () => {
+      updatePanel.style.display = 'none';
+    });
+
+    // Exibe o painel de atualizações ao carregar a página
+    updatePanel.style.display = 'block';
+
+    // Evento para mostrar o painel de criação de grupos
+    createGroupButton.addEventListener('click', () => {
+      createGroupContainer.classList.add('show');
+    });
+
+    // Evento para criar um grupo
+    createGroupButtonConfirm.addEventListener('click', () => {
+      const groupName = groupNameInput.value;
+      if (groupName) {
+        // Lógica para criar um grupo no Firebase
+        alert('Grupo criado com sucesso: ' + groupName);
+        createGroupContainer.classList.remove('show');
+      }
+    });
+
+    // Fechar a tela de criação de grupos ao clicar fora dela
+    createGroupContainer.addEventListener('click', (event) => {
+      if (event.target === createGroupContainer) {
+        createGroupContainer.classList.remove('show');
+      }
     });
   </script>
 </body>
