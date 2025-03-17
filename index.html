@@ -5,484 +5,473 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-    /* Tema Escuro Geral */
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #121212;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .chat-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    /* Barra superior */
-    .chat-header {
-      background-color: #212121;
-      color: #fff;
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #333;
-    }
-
-    .chat-header .title {
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    .profile-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: #555;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 20px;
-      color: #fff;
-      overflow: hidden;
-      border: 1px solid #777;
-    }
-
-    .profile-icon img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .chat-messages {
-      flex-grow: 1;
-      padding: 10px;
-      overflow-y: auto;
-    }
-
-    .message {
-      clear: both;
-      margin-bottom: 10px;
-      padding: 8px 12px;
-      border-radius: 7.5px;
-      max-width: 80%;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start; /* Alinha os elementos à esquerda */
-    }
-
-    .sent {
-      background-color: #2E7D32; /* Verde mais escuro */
-      float: right;
-      text-align: right;
-      align-items: flex-end;
-    }
-
-    .received {
-      background-color: #333;
-      float: left;
-      text-align: left;
-      align-items: flex-start;
-    }
-
-   .message strong {
-      color: #a5d6a7;
-      margin-right: 5px;
-      word-break: keep-all;
-    }
-
-    /* Estilo para a mensagem (agora separada do nick) */
-    .message-content {
-      word-break: break-word;
-    }
-
-    .chat-input-area {
-      background-color: #333;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      border-top: 1px solid #555;
-    }
-
-   /* Utilizando textarea para o campo de mensagem */
-    #chatInput {
-      flex-grow: 1;
-      padding: 8px;
-      border: none;
-      border-radius: 20px;
-      margin-right: 10px;
-      background-color: #444;
-      color: #fff;
-      resize: vertical; /* Permite redimensionar verticalmente */
-      min-height: 50px; /* Altura mínima */
-      overflow: auto;
-    }
-
-    #chatInput::placeholder {
-      color: #999;
-    }
-
-    #sendButton {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #sendButton i {
-      margin: auto;
-    }
-
-    .profile-menu {
-      position: absolute;
-      top: 60px;
-      right: 15px;
-      background-color: #333;
-      border: 1px solid #555;
-      border-radius: 5px;
-      padding: 10px;
-      width: 200px;
-      display: none;
-      z-index: 10;
-    }
-
-    .profile-menu ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .profile-menu li {
-      padding: 8px 10px;
-      cursor: pointer;
-      color: #eee;
-    }
-
-    .profile-menu li:hover {
-      background-color: #444;
-    }
-
-    .profile-menu.show {
-      display: block;
-    }
-
-    /* Tela de edição de perfil */
-    .edit-profile-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 11;
-    }
-
-    .edit-profile-container.show {
-        display: flex;
-    }
-
-    .edit-profile-box {
-        background-color: #333;
-        padding: 20px;
-        border-radius: 5px;
-        width: 80%;
-        max-width: 400px;
-        text-align: center; /* Centraliza os elementos */
-    }
-
-    .edit-profile-box h2 {
-        color: #fff;
-        margin-bottom: 15px;
-    }
-
-    .edit-profile-box input[type="text"],
-    .edit-profile-box input[type="file"] {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #555;
-        border-radius: 4px;
-        background-color: #444;
-        color: #fff;
-    }
-
-    .edit-profile-box input[type="text"]::placeholder {
-      color: #999;
-    }
-
-    .edit-profile-box button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 4px;
-        cursor: pointer;
-        width: 100%;
-        transition: background-color 0.3s ease;
-    }
-
-    .edit-profile-box button:hover {
-        background-color: #388E3C;
-    }
-
-    /* Estilos para a imagem de perfil */
-    #profileImagePreview {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 10px;
-      border: 2px solid #777;
-    }
-
-    #profileImageInput {
-      display: none;
-    }
-
-    .upload-button {
-      background-color: #555;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
-    }
-
-    .upload-button:hover {
-      background-color: #777;
-    }
-
-    /* Estilos para as mensagens de aviso */
-    .beta-message {
-        color: #999;
-        font-style: italic;
-        text-align: center;
-        margin: 10px 0;
-    }
-
-    /* Estilo para o "digitando..." */
-    #typingIndicator {
-        font-style: italic;
-        color: #999;
-    }
-
-    /* Tela de boas vindas */
-    #welcomeScreen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 12;
-        display: none;
-    }
-
-    #welcomeScreen.show {
-        display: flex;
-    }
-
-    #welcomeBox {
-        background-color: #333;
-        padding: 20px;
-        border-radius: 5px;
-        width: 80%;
-        max-width: 400px;
-        text-align: center;
-    }
-
-    #welcomeBox h2 {
-        color: #fff;
-        margin-bottom: 15px;
-    }
-
-    #welcomeBox p {
-        color: #eee;
-        margin-bottom: 20px;
-    }
-
-    #welcomeProfileImagePreview {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-bottom: 10px;
-      border: 2px solid #777;
-    }
-
-     #welcomeBox input[type="text"],
-     #welcomeBox input[type="file"] {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
-        border: 1px solid #555;
-        border-radius: 4px;
-        background-color: #444;
-        color: #fff;
-    }
-
-    #welcomeBox input[type="text"]::placeholder {
-      color: #999;
-    }
-
-    #welcomeBox .upload-button {
-        background-color: #555;
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin-bottom: 10px;
-        cursor: pointer;
-        border-radius: 5px;
-        transition: background-color 0.3s ease;
-      }
-
-      #welcomeBox .upload-button:hover {
-        background-color: #777;
-      }
-
-       #welcomeBox button {
-          background-color: #4CAF50;
-          color: white;
-          border: none;
-          padding: 10px 15px;
-          border-radius: 4px;
-          cursor: pointer;
-          width: 100%;
-          transition: background-color 0.3s ease;
-        }
-
-         #welcomeBox button:hover {
-           background-color: #388E3C;
-         }
-
-    /* Estilo para a hora da mensagem */
-    .message-time {
-      font-size: 0.7em;
-      color: #999;
-      white-space: nowrap;
-      margin-left: auto;
-    }
-
-   /* Estilos para as reações */
-  .reaction-container {
-    display: none;
-    position: relative;
-    margin-top: 5px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .message:hover .reaction-container {
-    display: flex;
-  }
-
-    /* Painel de reações */
-  .emoji-panel {
-    background-color: #444;
-    border: 1px solid #555;
-    border-radius: 5px;
-    padding: 5px;
-    z-index: 1;
-    overflow-x: auto;
-    white-space: nowrap;
-    display: flex;
-    justify-content: center;
+  /* Estilos Globais */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #181818;
+  color: #e0e0e0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-  .emoji-panel.show {
-    display: flex;
-  }
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 85%;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  background-color: #2c2c2c;
+}
 
-  .emoji-option {
-    font-size: 1.5em;
-    cursor: pointer;
-    margin: 3px;
-    display: inline-block;
-  }
+/* Cabeçalho do Chat */
+.chat-header {
+  background-color: #3e3e3e;
+  color: #e0e0e0;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #444;
+}
 
-  /* Estilo da mensagem de denúncia */
-  .report-message {
-    color: #FF5722;
-    font-style: italic;
-  }
-  /*Reação de emoji posicionada do lado da mensagem */
-   .reactions {
-    position: relative;
-    padding: 2px;
-  }
-        /* Painel de Emojis para Envio */
-    #emojiPicker {
-      position: absolute;
-      bottom: 50px; /* Adjust as needed */
-      left: 0;
-      width: 100%;
-      background-color: #333;
-      border: 1px solid #555;
-      border-radius: 5px;
-      padding: 10px;
-      display: none;
-      overflow-x: auto;
-      white-space: nowrap;
-      justify-content: center;
-      align-items: center;
-      z-index: 2;
-    }
-    #emojiPicker.show {
-       display: flex;
-    }
+.chat-header .title {
+  font-weight: bold;
+  font-size: 18px;
+}
 
-    #emojiPicker span {
-      font-size: 2em;
-      cursor: pointer;
-      margin: 5px;
-    }
- /* Botão de emoji */
-   #emojiButton {
-    background-color: #555;
-    color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-   #emojiButton i {
-    margin: auto;
-  }
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #555;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid #777;
+}
+
+.profile-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Área de Mensagens */
+.chat-messages {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #1e1e1e;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 70%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.sent {
+  background-color: #2e7d32;
+  align-self: flex-end;
+  color: #fff;
+}
+
+.received {
+  background-color: #3e3e3e;
+  align-self: flex-start;
+  color: #e0e0e0;
+}
+
+.message strong {
+  color: #a5d6a7;
+  margin-right: 5px;
+}
+
+.message-content {
+  word-break: break-word;
+}
+
+/* Área de Input de Mensagem */
+.chat-input-area {
+  background-color: #3e3e3e;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #444;
+}
+
+#chatInput {
+  flex-grow: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 25px;
+  margin-right: 10px;
+  background-color: #4f4f4f;
+  color: #e0e0e0;
+  resize: none;
+  min-height: 40px;
+}
+
+#chatInput::placeholder {
+  color: #999;
+}
+
+#sendButton, #emojiButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#sendButton i, #emojiButton i {
+  margin: auto;
+}
+
+/* Menu de Perfil */
+.profile-menu {
+  position: absolute;
+  top: 65px;
+  right: 15px;
+  background-color: #3e3e3e;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 10px;
+  width: 200px;
+  display: none;
+  z-index: 10;
+}
+
+.profile-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-menu li {
+  padding: 10px;
+  cursor: pointer;
+  color: #e0e0e0;
+  border-radius: 5px;
+}
+
+.profile-menu li:hover {
+  background-color: #4f4f4f;
+}
+
+.profile-menu.show {
+  display: block;
+}
+
+/* Tela de Edição de Perfil */
+.edit-profile-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 11;
+}
+
+.edit-profile-container.show {
+  display: flex;
+}
+
+.edit-profile-box {
+  background-color: #3e3e3e;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.edit-profile-box h2 {
+  color: #e0e0e0;
+  margin-bottom: 15px;
+}
+
+.edit-profile-box input[type="text"],
+.edit-profile-box input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  border-radius: 5px;
+  background-color: #4f4f4f;
+  color: #e0e0e0;
+}
+
+.edit-profile-box input[type="text"]::placeholder {
+  color: #999;
+}
+
+.edit-profile-box button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+.edit-profile-box button:hover {
+  background-color: #388e3c;
+}
+
+/* Estilos para a imagem de perfil */
+#profileImagePreview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid #777;
+}
+
+#profileImageInput {
+  display: none;
+}
+
+.upload-button {
+  background-color: #555;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.upload-button:hover {
+  background-color: #777;
+}
+
+/* Estilos para as mensagens de aviso */
+.beta-message {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* Estilo para o "digitando..." */
+#typingIndicator {
+  font-style: italic;
+  color: #999;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Tela de boas vindas */
+#welcomeScreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 12;
+}
+
+#welcomeScreen.show {
+  display: flex;
+}
+
+#welcomeBox {
+  background-color: #3e3e3e;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+#welcomeBox h2 {
+  color: #e0e0e0;
+  margin-bottom: 15px;
+}
+
+#welcomeBox p {
+  color: #e0e0e0;
+  margin-bottom: 20px;
+}
+
+#welcomeProfileImagePreview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid #777;
+}
+
+#welcomeBox input[type="text"],
+#welcomeBox input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #555;
+  border-radius: 5px;
+  background-color: #4f4f4f;
+  color: #e0e0e0;
+}
+
+#welcomeBox input[type="text"]::placeholder {
+  color: #999;
+}
+
+#welcomeBox .upload-button {
+  background-color: #555;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+#welcomeBox .upload-button:hover {
+  background-color: #777;
+}
+
+#welcomeBox button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+}
+
+#welcomeBox button:hover {
+  background-color: #388e3c;
+}
+
+/* Estilo para a hora da mensagem */
+.message-time {
+  font-size: 0.8em;
+  color: #999;
+  margin-left: auto;
+}
+
+/* Estilos para as reações */
+.reaction-container {
+  display: none;
+  position: relative;
+  margin-top: 5px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.message:hover .reaction-container {
+  display: flex;
+}
+
+/* Painel de reações */
+.emoji-panel {
+  background-color: #4f4f4f;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 5px;
+  z-index: 1;
+  overflow-x: auto;
+  white-space: nowrap;
+  display: flex;
+  justify-content: center;
+}
+
+.emoji-panel.show {
+  display: flex;
+}
+
+.emoji-option {
+  font-size: 1.5em;
+  cursor: pointer;
+  margin: 3px;
+  display: inline-block;
+}
+
+/* Estilo da mensagem de denúncia */
+.report-message {
+  color: #ff5722;
+  font-style: italic;
+}
+
+/* Reação de emoji posicionada do lado da mensagem */
+.reactions {
+  position: relative;
+  padding: 2px;
+}
+
+/* Painel de Emojis para Envio */
+#emojiPicker {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  width: 100%;
+  background-color: #3e3e3e;
+  border: 1px solid #555;
+  border-radius: 5px;
+  padding: 10px;
+  display: none;
+  overflow-x: auto;
+  white-space: nowrap;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+#emojiPicker.show {
+  display: flex;
+}
+
+#emojiPicker span {
+  font-size: 2em;
+  cursor: pointer;
+  margin: 5px;
+}
+
   </style>
 </head>
 <body>
@@ -502,6 +491,7 @@
                <li>✅ Adicionado painel de emojis para enviar mensagens.</li>
                <li>✅ Reações às mensagens (estilo WhatsApp).</li>
                <li>✅ Tema escuro aprimorado.</li>
+               <li>✅ Edição de mensagens enviadas.</li>
            </ul>
        </div>
     </div>
@@ -649,6 +639,11 @@
     function displayMessage(userId, nick, message, timestamp, key, reactions) { //Agora recebe o Nick e o timestamp
        const messageElement = document.createElement('div');
        messageElement.classList.add('message');
+       if (userId === currentUserId) {
+         messageElement.classList.add('sent');
+       } else {
+         messageElement.classList.add('received');
+       }
   /*
    *  Adicionado o elemento de conteúdo da mensagem e formatado a exibição
    */
@@ -688,6 +683,24 @@
          messageElement.appendChild(reactionElement);
         }
            messageElement.appendChild(reactionContainer);
+
+           // Adicionar botão de edição para mensagens enviadas
+           if (userId === currentUserId) {
+             const editButton = document.createElement('button');
+             editButton.textContent = 'Editar';
+             editButton.classList.add('edit-button');
+             editButton.addEventListener('click', () => {
+               const newMessage = prompt('Editar mensagem:', message);
+               if (newMessage && newMessage !== message) {
+                 update(ref(database, `messages/${key}`), {
+                   message: newMessage,
+                   timestamp: Date.now()
+                 });
+               }
+             });
+             messageElement.appendChild(editButton);
+           }
+
            messagesDiv.appendChild(messageElement);
            messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
@@ -705,6 +718,7 @@
           <li>✅ Adicionado painel de emojis para enviar mensagens.</li>
           <li>✅ Reações às mensagens (estilo WhatsApp).</li>
           <li>✅ Tema escuro aprimorado.</li>
+          <li>✅ Edição de mensagens enviadas.</li>
           <li>✅ Correções de bugs e melhorias de desempenho.</li>
         </ul>
       </div>
