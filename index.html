@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-  /* Estilos Globais */
+/* Estilos Globais */
 body {
   font-family: 'Arial', sans-serif;
   background-color: #181818;
@@ -129,7 +129,10 @@ body {
   color: #999;
 }
 
-#sendButton, #emojiButton, #createGroupButton {
+#sendButton,
+#emojiButton,
+#createGroupButton,
+#viewGroupsButton {
   background-color: #4caf50;
   color: white;
   border: none;
@@ -143,7 +146,10 @@ body {
   margin-left: 5px;
 }
 
-#sendButton i, #emojiButton i, #createGroupButton i {
+#sendButton i,
+#emojiButton i,
+#createGroupButton i,
+#viewGroupsButton i {
   margin: auto;
 }
 
@@ -646,11 +652,9 @@ body {
 .group-list-box .delete-button:hover {
   background-color: #e57373;
 }
-
   </style>
 </head>
 <body>
-
   <div class="chat-container">
     <div class="chat-header">
       <div class="title">Chat Público</div>
@@ -658,12 +662,10 @@ body {
         <img src="https://via.placeholder.com/100" id="headerProfileImage" alt="Foto de Perfil">
       </div>
     </div>
-
     <div class="chat-messages" id="messages">
         <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
     </div>
     <div id="typingIndicator"></div>
-
     <div class="chat-input-area">
          <button id="emojiButton"><i class="far fa-smile"></i></button>
          <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
@@ -677,44 +679,35 @@ body {
             <span>😀</span> <span>😂</span> <span>😊</span> <span>🤔</span> <span>👍</span> <span>❤️</span> <span>😎</span> <span>😭</span>
          </div>
       </div>
-
     <div class="profile-menu" id="profileMenu">
       <ul>
         <li id="editProfileOption">Editar Perfil</li>
         <li id="clearChatOption">Limpar Chat</li>
       </ul>
     </div>
-
      <!-- Tela de edição de perfil (escondida inicialmente) -->
     <div class="edit-profile-container" id="editProfileContainer">
         <div class="edit-profile-box">
             <h2>Editar Perfil</h2>
-
             <img id="profileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem" />
-
             <label for="profileImageInput" class="upload-button">Escolher Foto</label>
             <input type="file" id="profileImageInput" accept="image/*">
-
             <input type="text" id="newNickInput" placeholder="Seu Nick">
             <button id="saveProfileButton">Salvar</button>
         </div>
     </div>
-
       <!-- Tela de boas vindas -->
     <div id="welcomeScreen">
         <div id="welcomeBox">
             <h2>Bem-vindo(a)!</h2>
             <p>Para começar a usar o chat, defina seu nick e imagem de perfil.</p>
-
             <img id="welcomeProfileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem" />
             <label for="welcomeProfileImageInput" class="upload-button">Escolher Foto</label>
             <input type="file" id="welcomeProfileImageInput" accept="image/*">
-
             <input type="text" id="welcomeNickInput" placeholder="Seu Nick">
             <button id="saveWelcomeButton">Entrar no Chat</button>
         </div>
     </div>
-
     <!-- Painel de Atualizações -->
     <div class="update-panel" id="updatePanel">
       <h3>Novas Funcionalidades</h3>
@@ -729,7 +722,6 @@ body {
       </ul>
       <button class="close-button" id="closeUpdatePanel">Fechar</button>
     </div>
-
     <!-- Painel de Criação de Grupos -->
     <div class="create-group-container" id="createGroupContainer">
         <div class="create-group-box">
@@ -738,7 +730,6 @@ body {
             <button id="createGroupButtonConfirm">Criar</button>
         </div>
     </div>
-
     <!-- Painel de Lista de Grupos -->
     <div class="group-list-container" id="groupListContainer">
         <div class="group-list-box">
@@ -748,18 +739,15 @@ body {
             </ul>
         </div>
     </div>
-
       <!-- Elemento de áudio para a notificação -->
     <audio id="notificationSound" preload="auto">
       <source src="notifica.mp3" type="audio/mp3">
       Seu navegador não suporta o elemento de áudio.
     </audio>
   </div>
-
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
-
     const firebaseConfig = {
       apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
       authDomain: "banco-5a678.firebaseapp.com",
@@ -769,7 +757,6 @@ body {
       appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
       measurementId: "G-DEER2QFNXL"
     };
-
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     const messagesRef = ref(database, 'messages');
@@ -790,7 +777,6 @@ body {
     const welcomeProfileImageInput = document.getElementById('welcomeProfileImageInput');
     const welcomeProfileImagePreview = document.getElementById('welcomeProfileImagePreview');
     const saveWelcomeButton = document.getElementById('saveWelcomeButton');
-
     // Elementos de Imagem de Perfil
     const headerProfileImage = document.getElementById('headerProfileImage');
     const editProfileOption = document.getElementById('editProfileOption');
@@ -800,22 +786,18 @@ body {
     const saveProfileButton = document.getElementById('saveProfileButton');
     const profileImageInput = document.getElementById('profileImageInput');
     const profileImagePreview = document.getElementById('profileImagePreview');
-
     // Elementos do Painel de Atualizações
     const updatePanel = document.getElementById('updatePanel');
     const closeUpdatePanel = document.getElementById('closeUpdatePanel');
-
     // Elementos do Painel de Criação de Grupos
     const createGroupContainer = document.getElementById('createGroupContainer');
     const groupNameInput = document.getElementById('groupNameInput');
     const createGroupButtonConfirm = document.getElementById('createGroupButtonConfirm');
     const createGroupButton = document.getElementById('createGroupButton');
-
     // Elementos do Painel de Lista de Grupos
     const groupListContainer = document.getElementById('groupListContainer');
     const groupList = document.getElementById('groupList');
     const viewGroupsButton = document.getElementById('viewGroupsButton');
-
     // Variáveis Globais
     let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
     let currentProfileImageBase64 = localStorage.getItem('profileImage') || null;
@@ -824,7 +806,6 @@ body {
     let currentGroupId = null;
     //Array de emojis (As opções da imagem)
       const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
-
     //Funções de formatação de data e hora
     const formatDate = (timestamp) => {
       const date = new Date(timestamp);
@@ -833,30 +814,25 @@ body {
       const year = date.getFullYear();
       return `${day}/${month}/${year}`;
     };
-
     const formatTime = (timestamp) => {
       const date = new Date(timestamp);
       const hours = date.getHours().toString().padStart(2, '0');
       const minutes = date.getMinutes().toString().padStart(2, '0');
       return `${hours}:${minutes}`;
     };
-
     //Salva o userId no localStorage ao gerar um novo
     if (!localStorage.getItem('userId')) {
       localStorage.setItem('userId', currentUserId);
     }
-
     //Carrega a imagem e o nick salvos ao carregar a página
     if (currentProfileImageBase64) {
       headerProfileImage.src = currentProfileImageBase64;
       profileImagePreview.src = currentProfileImageBase64;
     }
-
     //Função para gerar um ID de usuário aleatório (simulação)
     function generateUserId() {
       return Math.random().toString(36).substring(2, 15);
     }
-
     function displayMessage(userId, nick, message, timestamp, key, reactions) { //Agora recebe o Nick e o timestamp
        const messageElement = document.createElement('div');
        messageElement.classList.add('message');
@@ -904,7 +880,6 @@ body {
          messageElement.appendChild(reactionElement);
         }
            messageElement.appendChild(reactionContainer);
-
            // Adicionar botão de edição para mensagens enviadas
            if (userId === currentUserId) {
              const editButton = document.createElement('button');
@@ -921,11 +896,9 @@ body {
              });
              messageElement.appendChild(editButton);
            }
-
            messagesDiv.appendChild(messageElement);
            messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
-
     function loadMessages(groupId) {
       currentGroupId = groupId;
       messagesDiv.innerHTML = '';
@@ -940,7 +913,6 @@ body {
         }
       });
     }
-
     function loadGroups() {
       onValue(groupsRef, (snapshot) => {
         const data = snapshot.val();
@@ -949,7 +921,6 @@ body {
           for (let key in data) {
             const li = document.createElement('li');
             li.textContent = data[key].name;
-
             const editButton = document.createElement('button');
             editButton.textContent = 'Editar';
             editButton.classList.add('edit-button');
@@ -961,7 +932,6 @@ body {
                 });
               }
             });
-
             const deleteButton = document.createElement('button');
             deleteButton.textContent = '🗑️';
             deleteButton.classList.add('delete-button');
@@ -971,7 +941,6 @@ body {
                 remove(ref(database, `messages/${key}`));
               }
             });
-
             li.appendChild(editButton);
             li.appendChild(deleteButton);
             li.addEventListener('click', () => {
@@ -983,7 +952,6 @@ body {
         }
       });
     }
-
     sendButton.addEventListener('click', () => {
      const messageText = chatInput.value;
      if (messageText && currentGroupId) {
@@ -999,7 +967,6 @@ body {
        alert('Selecione um grupo para enviar a mensagem.');
      }
     });
-
     // Evento para mostrar/esconder o menu de perfil
     profileIcon.addEventListener('click', () => {
       profileMenu.classList.toggle('show');
@@ -1093,99 +1060,114 @@ body {
        }
      });
      //Carrega a imagem e o nick salvos ao carregar a página
-     if (currentProfileImageBase64) {
-       headerProfileImage.src = currentProfileImageBase64;
-       profileImagePreview.src = currentProfileImageBase64;
-     }
-     //Exibe tela de boas vindas se não tiver Nick
-     const init = () => {
-         headerProfileImage.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
-         profileImagePreview.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
-         if (!currentNick) {
-           welcomeScreen.classList.add('show');
-         }
-         //Salva as configurações da tela de boas vindas
-         saveWelcomeButton.addEventListener('click', () => {
-           currentNick = welcomeNickInput.value;
-           currentProfileImageBase64 = localStorage.getItem('profileImage');
-           //Persiste os dados
-           localStorage.setItem('nick', currentNick);
-           localStorage.setItem('profileImage', currentProfileImageBase64);
-           welcomeScreen.classList.remove('show');
-         });
-         //Evento para processar a imagem na tela de boas vindas
-         welcomeProfileImageInput.addEventListener('change', (event) => {
-           const file = event.target.files[0];
-           if (file) {
-             const reader = new FileReader();
+if (currentProfileImageBase64) {
+  headerProfileImage.src = currentProfileImageBase64;
+  profileImagePreview.src = currentProfileImageBase64;
+}
 
-             reader.onload = function(e) {
-               localStorage.setItem('profileImage', e.target.result); //Salva no localStorage
-               welcomeProfileImagePreview.src = e.target.result;
-             }
-             reader.readAsDataURL(file);
-           }
-         });
-       };
-       init();
+//Exibe tela de boas vindas se não tiver Nick
+const init = () => {
+  headerProfileImage.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
+  profileImagePreview.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
 
-        // Evento para mostrar/esconder o painel de emojis
-    emojiButton.addEventListener('click', () => {
-      emojiPicker.classList.toggle('show');
-    });
-   // Adiciona os emojis ao textarea
-    emojiPicker.querySelectorAll('span').forEach(emoji => {
-       emoji.addEventListener('click', () => {
-       chatInput.value += emoji.textContent;
-       emojiPicker.classList.remove('show');
-        });
-    });
+  if (!currentNick) {
+    welcomeScreen.classList.add('show');
+  }
 
-    // Evento para fechar o painel de atualizações
-    closeUpdatePanel.addEventListener('click', () => {
-      updatePanel.style.display = 'none';
-    });
+  //Salva as configurações da tela de boas vindas
+  saveWelcomeButton.addEventListener('click', () => {
+    const newNick = welcomeNickInput.value.trim();
+    if (!newNick) {
+      alert('Por favor, insira um Nick.');
+      return;
+    }
 
-    // Exibe o painel de atualizações ao carregar a página
-    updatePanel.style.display = 'block';
+    currentNick = newNick;
+    currentProfileImageBase64 = localStorage.getItem('profileImage');
 
-    // Evento para mostrar o painel de criação de grupos
-    createGroupButton.addEventListener('click', () => {
-      createGroupContainer.classList.add('show');
-    });
+    //Persiste os dados
+    localStorage.setItem('nick', currentNick);
+    localStorage.setItem('profileImage', currentProfileImageBase64);
 
-    // Evento para criar um grupo
-    createGroupButtonConfirm.addEventListener('click', () => {
-      const groupName = groupNameInput.value;
-      if (groupName) {
-        push(groupsRef, {
-          name: groupName
-        }).then((snapshot) => {
-          loadMessages(snapshot.key);
-          createGroupContainer.classList.remove('show');
-        });
-      }
-    });
+    welcomeScreen.classList.remove('show');
+  });
 
-    // Fechar a tela de criação de grupos ao clicar fora dela
-    createGroupContainer.addEventListener('click', (event) => {
-      if (event.target === createGroupContainer) {
-        createGroupContainer.classList.remove('show');
-      }
-    });
+  //Evento para processar a imagem na tela de boas vindas
+  welcomeProfileImageInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        localStorage.setItem('profileImage', e.target.result); //Salva no localStorage
+        welcomeProfileImagePreview.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+};
 
-    // Evento para mostrar a lista de grupos
-    viewGroupsButton.addEventListener('click', () => {
-      groupListContainer.classList.add('show');
-      loadGroups();
-    });
+init();
 
-    // Fechar a tela de lista de grupos ao clicar fora dela
-    groupListContainer.addEventListener('click', (event) => {
-      if (event.target === groupListContainer) {
-        groupListContainer.classList.remove('show');
-      }
-    });
-  </script>
-</body>
-</html>
+// Evento para mostrar/esconder o painel de emojis
+emojiButton.addEventListener('click', () => {
+  emojiPicker.classList.toggle('show');
+});
+
+// Adiciona os emojis ao textarea
+emojiPicker.querySelectorAll('span').forEach((emoji) => {
+  emoji.addEventListener('click', () => {
+    chatInput.value += emoji.textContent;
+    emojiPicker.classList.remove('show');
+  });
+});
+
+// Evento para fechar o painel de atualizações
+closeUpdatePanel.addEventListener('click', () => {
+  updatePanel.style.display = 'none';
+});
+
+// Exibe o painel de atualizações ao carregar a página
+updatePanel.style.display = 'block';
+
+// Evento para mostrar o painel de criação de grupos
+createGroupButton.addEventListener('click', () => {
+  createGroupContainer.classList.add('show');
+});
+
+// Evento para criar um grupo
+createGroupButtonConfirm.addEventListener('click', () => {
+  const groupName = groupNameInput.value.trim();
+  if (!groupName) {
+    alert('Por favor, insira um nome para o grupo.');
+    return;
+  }
+
+  push(groupsRef, {
+    name: groupName,
+  }).then((snapshot) => {
+    loadMessages(snapshot.key);
+    createGroupContainer.classList.remove('show');
+    groupNameInput.value = ''; // Limpa o campo de entrada
+  });
+});
+
+// Fechar a tela de criação de grupos ao clicar fora dela
+createGroupContainer.addEventListener('click', (event) => {
+  if (event.target === createGroupContainer) {
+    createGroupContainer.classList.remove('show');
+  }
+});
+
+// Evento para mostrar a lista de grupos
+viewGroupsButton.addEventListener('click', () => {
+  groupListContainer.classList.add('show');
+  loadGroups();
+});
+
+// Fechar a tela de lista de grupos ao clicar fora dela
+groupListContainer.addEventListener('click', (event) => {
+  if (event.target === groupListContainer) {
+    groupListContainer.classList.remove('show');
+  }
+});
+</script>
