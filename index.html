@@ -580,6 +580,73 @@ body {
   background-color: #388e3c;
 }
 
+/* Estilos para a lista de grupos */
+.group-list-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 15;
+}
+
+.group-list-container.show {
+  display: flex;
+}
+
+.group-list-box {
+  background-color: #3e3e3e;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.group-list-box h2 {
+  color: #e0e0e0;
+  margin-bottom: 15px;
+}
+
+.group-list-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.group-list-box li {
+  color: #e0e0e0;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.group-list-box button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.group-list-box button:hover {
+  background-color: #388e3c;
+}
+
+.group-list-box .delete-button {
+  background-color: #f44336;
+}
+
+.group-list-box .delete-button:hover {
+  background-color: #e57373;
+}
+
   </style>
 </head>
 <body>
@@ -604,6 +671,7 @@ body {
            <i class="fas fa-paper-plane"></i>
          </button>
          <button id="createGroupButton"><i class="fas fa-users"></i></button>
+         <button id="viewGroupsButton"><i class="fas fa-list"></i></button>
          <!-- Painel de Emojis -->
          <div id="emojiPicker">
             <span>😀</span> <span>😂</span> <span>😊</span> <span>🤔</span> <span>👍</span> <span>❤️</span> <span>😎</span> <span>😭</span>
@@ -656,6 +724,7 @@ body {
         <li>✅ Tema escuro aprimorado.</li>
         <li>✅ Edição de mensagens enviadas.</li>
         <li>✅ Criação de grupos.</li>
+        <li>✅ Lista de grupos com opções de editar e deletar.</li>
         <li>✅ Correções de bugs e melhorias de desempenho.</li>
       </ul>
       <button class="close-button" id="closeUpdatePanel">Fechar</button>
@@ -670,6 +739,16 @@ body {
         </div>
     </div>
 
+    <!-- Painel de Lista de Grupos -->
+    <div class="group-list-container" id="groupListContainer">
+        <div class="group-list-box">
+            <h2>Grupos</h2>
+            <ul id="groupList">
+              <!-- Grupos serão listados aqui -->
+            </ul>
+        </div>
+    </div>
+
       <!-- Elemento de áudio para a notificação -->
     <audio id="notificationSound" preload="auto">
       <source src="notifica.mp3" type="audio/mp3">
@@ -679,7 +758,7 @@ body {
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, set, update } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
@@ -694,6 +773,7 @@ body {
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     const messagesRef = ref(database, 'messages');
+    const groupsRef = ref(database, 'groups');
     const typingRef = ref(database, 'typing'); //Referência para o "digitando..."
     const messagesDiv = document.getElementById('messages');
     const chatInput = document.getElementById('chatInput');
@@ -731,11 +811,17 @@ body {
     const createGroupButtonConfirm = document.getElementById('createGroupButtonConfirm');
     const createGroupButton = document.getElementById('createGroupButton');
 
+    // Elementos do Painel de Lista de Grupos
+    const groupListContainer = document.getElementById('groupListContainer');
+    const groupList = document.getElementById('groupList');
+    const viewGroupsButton = document.getElementById('viewGroupsButton');
+
     // Variáveis Globais
     let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
     let currentProfileImageBase64 = localStorage.getItem('profileImage') || null;
     let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
     let conversationStarted = localStorage.getItem('conversationStarted') || null;
+    let currentGroupId = null;
     //Array de emojis (As opções da imagem)
       const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
 
@@ -797,7 +883,7 @@ body {
            emojiOption.className = 'emoji-option';
            emojiOption.textContent = emoji;
            emojiOption.addEventListener('click', () => {
-     update(ref(database, `messages/${key}`), {
+     update(ref(database, `messages/${currentGroupId}/${key}`), {
        reactions: {
          [currentUserId]: emoji
           }
@@ -827,7 +913,7 @@ body {
              editButton.addEventListener('click', () => {
                const newMessage = prompt('Editar mensagem:', message);
                if (newMessage && newMessage !== message) {
-                 update(ref(database, `messages/${key}`), {
+                 update(ref(database, `messages/${currentGroupId}/${key}`), {
                    message: newMessage,
                    timestamp: Date.now()
                  });
@@ -839,27 +925,69 @@ body {
            messagesDiv.appendChild(messageElement);
            messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
-    onValue(messagesRef, (snapshot) => {
-    messagesDiv.innerHTML = '';
-    if(!conversationStarted){ //Verifica se a data já foi definida
-        conversationStarted = Date.now(); //Define a data atual
-        localStorage.setItem('conversationStarted', conversationStarted); //Salva no localStorage
-      }
-    messagesDiv.innerHTML = `
-      <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
-      <div class="beta-message">Data de início da conversa: ${formatDate(parseInt(conversationStarted))}</div>
-    `;
-      const data = snapshot.val();
-      if (data) {
-         for (let key in data) {
-         displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp, key, data[key].reactions);
-         }
-      }
-    });
+
+    function loadMessages(groupId) {
+      currentGroupId = groupId;
+      messagesDiv.innerHTML = '';
+      const messagesGroupRef = ref(database, `messages/${groupId}`);
+      onValue(messagesGroupRef, (snapshot) => {
+        messagesDiv.innerHTML = '';
+        const data = snapshot.val();
+        if (data) {
+          for (let key in data) {
+            displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp, key, data[key].reactions);
+          }
+        }
+      });
+    }
+
+    function loadGroups() {
+      onValue(groupsRef, (snapshot) => {
+        const data = snapshot.val();
+        groupList.innerHTML = '';
+        if (data) {
+          for (let key in data) {
+            const li = document.createElement('li');
+            li.textContent = data[key].name;
+
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Editar';
+            editButton.classList.add('edit-button');
+            editButton.addEventListener('click', () => {
+              const newGroupName = prompt('Editar nome do grupo:', data[key].name);
+              if (newGroupName && newGroupName !== data[key].name) {
+                update(ref(database, `groups/${key}`), {
+                  name: newGroupName
+                });
+              }
+            });
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '🗑️';
+            deleteButton.classList.add('delete-button');
+            deleteButton.addEventListener('click', () => {
+              if (confirm('Tem certeza que deseja deletar este grupo?')) {
+                remove(ref(database, `groups/${key}`));
+                remove(ref(database, `messages/${key}`));
+              }
+            });
+
+            li.appendChild(editButton);
+            li.appendChild(deleteButton);
+            li.addEventListener('click', () => {
+              loadMessages(key);
+              groupListContainer.classList.remove('show');
+            });
+            groupList.appendChild(li);
+          }
+        }
+      });
+    }
+
     sendButton.addEventListener('click', () => {
      const messageText = chatInput.value;
-     if (messageText) {
-       push(messagesRef, {
+     if (messageText && currentGroupId) {
+       push(ref(database, `messages/${currentGroupId}`), {
          userId: currentUserId,
          nick: currentNick, //Salva o nick com a mensagem
          message: messageText,
@@ -867,8 +995,11 @@ body {
        });
        chatInput.value = '';
        set(ref(database, `typing/${currentUserId}`), null);
+     } else {
+       alert('Selecione um grupo para enviar a mensagem.');
      }
     });
+
     // Evento para mostrar/esconder o menu de perfil
     profileIcon.addEventListener('click', () => {
       profileMenu.classList.toggle('show');
@@ -920,7 +1051,7 @@ body {
       profileMenu.classList.remove('show');
       if (confirm('Tem certeza que deseja limpar o chat?')) {
         //Limpa as mensagens do Firebase (simulação)
-        set(messagesRef, null)
+        set(ref(database, `messages/${currentGroupId}`), null)
         .then(() => {
           alert('Chat limpo com sucesso!');
         })
@@ -1027,9 +1158,12 @@ body {
     createGroupButtonConfirm.addEventListener('click', () => {
       const groupName = groupNameInput.value;
       if (groupName) {
-        // Lógica para criar um grupo no Firebase
-        alert('Grupo criado com sucesso: ' + groupName);
-        createGroupContainer.classList.remove('show');
+        push(groupsRef, {
+          name: groupName
+        }).then((snapshot) => {
+          loadMessages(snapshot.key);
+          createGroupContainer.classList.remove('show');
+        });
       }
     });
 
@@ -1037,6 +1171,19 @@ body {
     createGroupContainer.addEventListener('click', (event) => {
       if (event.target === createGroupContainer) {
         createGroupContainer.classList.remove('show');
+      }
+    });
+
+    // Evento para mostrar a lista de grupos
+    viewGroupsButton.addEventListener('click', () => {
+      groupListContainer.classList.add('show');
+      loadGroups();
+    });
+
+    // Fechar a tela de lista de grupos ao clicar fora dela
+    groupListContainer.addEventListener('click', (event) => {
+      if (event.target === groupListContainer) {
+        groupListContainer.classList.remove('show');
       }
     });
   </script>
