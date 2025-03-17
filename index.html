@@ -19,7 +19,7 @@
     .chat-container {
       display: flex;
       flex-direction: column;
-      height: 95%;
+      height: 100%;
       max-width: 800px;
       margin: 0 auto;
     }
@@ -145,6 +145,16 @@
 
     #sendButton i {
       margin: auto;
+    }
+      /* Botão de emoji */
+    #emojiButton {
+        background-color: transparent;
+        border: none;
+        color: #999; /* Cor clara */
+        font-size: 1.5em;
+        cursor: pointer;
+        padding: 0;
+        margin-right: 5px;
     }
 
     .profile-menu {
@@ -393,7 +403,7 @@
       margin-left: auto;
     }
 
-   /* Estilos para as reações */
+  /* Estilos para as reações */
   .reaction-container {
     display: none;
     position: relative; /* Use relative positioning */
@@ -422,7 +432,7 @@
     top: 100%; /* Para aparecer abaixo da mensagem */
     left: 50%;
     transform: translateX(-50%); /* Centraliza horizontalmente */
-  }
+}
 
   .emoji-panel.show {
     display: flex;
@@ -435,23 +445,47 @@
     display: inline-block;
   }
 
-  /* Estilo da mensagem de denúncia */
-  .report-message {
-    color: #FF5722; /* Laranja avermelhado */
-    font-style: italic;
+    /* Estilo para o painel de emojis */
+    .emoji-options-panel {
+        position: absolute;
+        bottom: 50px; /* Ajusta a posição */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        border: 1px solid #555;
+        border-radius: 5px;
+        padding: 10px;
+        display: none;
+        z-index: 1;
+        width: 80%;
+        max-width: 500px; /* Limita a largura */
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+  /* Estilo para exibir o painel de emojis */
+  .emoji-options-panel.show {
+     display: flex;
+      justify-content: space-around; /* Distribuir emojis igualmente */
+      align-items: center;
+
   }
- /*Reação de emoji posicionada do lado da mensagem */
-  .reactions {
-   display: flex;
-   position: relative; /* Para que fique abaixo do texto e com o tamanho correto */
-   bottom: 0px;
-   left: 0px;
-   background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente */
-    border-radius: 10px;
-    padding: 2px 5px;
-    margin-right: 3px;
-    font-size: 0.8em;
-  }
+
+    /* Estilo para um botão de emoji individual */
+    .emoji-option-button {
+        background-color: transparent;
+        border: none;
+        color: #eee;
+        font-size: 2em;
+        cursor: pointer;
+        margin: 5px;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .emoji-option-button:hover {
+        transform: scale(1.2); /* Aumenta ligeiramente ao passar o mouse */
+    }
+
   </style>
 </head>
 <body>
@@ -471,11 +505,16 @@
     <div id="typingIndicator"></div>
 
     <div class="chat-input-area">
+    <button id="emojiButton">😊</button>
      <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
       <button id="sendButton">
         <i class="fas fa-paper-plane"></i>
       </button>
+
     </div>
+         <!-- Painel de opções de emoji (inicialmente escondido) -->
+    <div class="emoji-options-panel" id="emojiOptionsPanel">
+      </div>
 
     <div class="profile-menu" id="profileMenu">
       <ul>
@@ -562,14 +601,35 @@
     const saveProfileButton = document.getElementById('saveProfileButton');
     const profileImageInput = document.getElementById('profileImageInput');
     const profileImagePreview = document.getElementById('profileImagePreview');
+ // Lista de emojis para o painel de emojis
+    const emojis = ["😊", "😂", "❤️", "👍", "🤔", "😢", "😡", "🤣", "😍", "👏", "🙌", "🔥", "💯", "🙏"];
 
+    // Elementos do painel de emojis
+    const emojiButton = document.getElementById('emojiButton');
+    const emojiOptionsPanel = document.getElementById('emojiOptionsPanel');
+
+    //Evento do botao de emoji
+    emojiButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      emojiOptionsPanel.classList.toggle('show');
+    });
+
+         // Criar opções de emoji
+    emojis.forEach(emoji => {
+    const emojiOptionButton = document.createElement('button');
+    emojiOptionButton.className = 'emoji-option-button';
+    emojiOptionButton.textContent = emoji;
+    emojiOptionButton.addEventListener('click', () => {
+    chatInput.value += emoji; // Inserir emoji no textarea
+       emojiOptionsPanel.classList.remove('show'); //Esconde o painel
+    });
+    emojiOptionsPanel.appendChild(emojiOptionButton);
+   });
     // Variáveis Globais
     let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
     let currentProfileImageBase64 = localStorage.getItem('profileImage') || null;
     let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
     let conversationStarted = localStorage.getItem('conversationStarted') || null;
-    //Array de emojis (As opções da imagem)
-      const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
 
     //Funções de formatação de data e hora
     const formatDate = (timestamp) => {
@@ -603,7 +663,7 @@
       return Math.random().toString(36).substring(2, 15);
     }
 
-  function displayMessage(userId, nick, message, timestamp, key, reactions) { //Agora recebe o Nick e o timestamp
+ function displayMessage(userId, nick, message, timestamp, key, reactions) { //Agora recebe o Nick e o timestamp
        const messageElement = document.createElement('div');
        messageElement.classList.add('message');
   /*
@@ -634,16 +694,9 @@
        emojiPanel.appendChild(emojiOption);
      });
          reactionContainer.appendChild(emojiPanel)
-       messageElement.addEventListener('click', () => {
-        emojiPanel.classList.toggle('show');
-       });
-           //Adicionado Reações
-         if (reactions && reactions[currentUserId]) {
-          const reactionElement = document.createElement('span');
-          reactionElement.textContent = reactions[currentUserId];
-           reactionElement.className = 'reactions';
-         messageElement.appendChild(reactionElement);
-        }
+           messageElement.addEventListener('click', () => {
+           emojiPanel.classList.toggle('show');
+        });
            messageElement.appendChild(reactionContainer);
            messagesDiv.appendChild(messageElement);
            messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -660,23 +713,23 @@
     `;
       const data = snapshot.val();
       if (data) {
-         for (let key in data) {
-         displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp, key, data[key].reactions);
-         }
+        for (let key in data) {
+            displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp, key, data[key].reactions);
+        }
       }
     });
     sendButton.addEventListener('click', () => {
-     const messageText = chatInput.value;
-     if (messageText) {
-       push(messagesRef, {
-         userId: currentUserId,
-         nick: currentNick, //Salva o nick com a mensagem
-         message: messageText,
-         timestamp: Date.now() //Salva a data/hora
-       });
-       chatInput.value = '';
-       set(ref(database, `typing/${currentUserId}`), null);
-     }
+      const messageText = chatInput.value;
+      if (messageText) {
+        push(messagesRef, {
+          userId: currentUserId,
+          nick: currentNick, //Salva o nick com a mensagem
+          message: messageText,
+          timestamp: Date.now() //Salva a data/hora
+        });
+        chatInput.value = '';
+        set(ref(database, `typing/${currentUserId}`), null);
+      }
     });
     // Evento para mostrar/esconder o menu de perfil
     profileIcon.addEventListener('click', () => {
