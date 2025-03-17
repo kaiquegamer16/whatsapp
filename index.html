@@ -17,13 +17,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Garante que o body ocupe pelo menos a altura da tela */
+            min-height: 100vh;
         }
 
         .chat-container {
             display: flex;
             flex-direction: column;
-            height: 85vh; /* Usando vh para ocupar 85% da altura da tela */
+            height: 85vh;
             width: 90%;
             max-width: 500px;
             border-radius: 12px;
@@ -36,7 +36,7 @@
         .chat-header {
             background-color: #3e3e3e;
             color: #e0e0e0;
-            padding: 1em; /* Usando em para tamanhos relativos à fonte */
+            padding: 1em;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -45,7 +45,7 @@
 
         .chat-header .title {
             font-weight: bold;
-            font-size: 1.2em; /* Tamanho da fonte em relação ao body */
+            font-size: 1.2em;
         }
 
         .profile-icon {
@@ -70,18 +70,17 @@
         /* Área de Mensagens */
         .chat-messages {
             flex-grow: 1;
-            padding: 1em; /* Espaçamento interno */
+            padding: 1em;
             overflow-y: auto;
             background-color: #1e1e1e;
-            /* Adicionado para a imagem de fundo */
             background-image: var(--chat-background-image);
             background-size: cover;
             background-repeat: no-repeat;
         }
 
         .message {
-            margin-bottom: 0.8em; /* Espaçamento entre mensagens */
-            padding: 0.7em; /* Espaçamento interno nas mensagens */
+            margin-bottom: 0.8em;
+            padding: 0.7em;
             border-radius: 10px;
             max-width: 70%;
             position: relative;
@@ -103,7 +102,7 @@
 
         .message strong {
             color: #a5d6a7;
-            margin-right: 0.3em; /* Espaçamento do nick */
+            margin-right: 0.3em;
         }
 
         .message-content {
@@ -113,7 +112,7 @@
         /* Área de Input de Mensagem */
         .chat-input-area {
             background-color: #3e3e3e;
-            padding: 1em; /* Espaçamento interno */
+            padding: 0.7em;
             display: flex;
             align-items: center;
             border-top: 1px solid #444;
@@ -121,10 +120,10 @@
 
         #chatInput {
             flex-grow: 1;
-            padding: 0.7em; /* Espaçamento interno */
+            padding: 0.7em;
             border: none;
             border-radius: 25px;
-            margin-right: 0.5em; /* Espaçamento do botão */
+            margin-right: 0.5em;
             background-color: #4f4f4f;
             color: #e0e0e0;
             resize: none;
@@ -135,11 +134,7 @@
             color: #999;
         }
 
-        #sendButton,
-        #emojiButton,
-        #createGroupButton,
-        #viewGroupsButton,
-        #imageButton {
+        .icon-button { /* Classe genérica para botões com ícones */
             background-color: #4caf50;
             color: white;
             border: none;
@@ -150,15 +145,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-left: 0.3em; /* Espaçamento entre botões */
+            margin-left: 0.3em;
+            transition: background-color 0.3s ease; /* Animação suave */
         }
 
-        #sendButton i,
-        #emojiButton i,
-        #createGroupButton i,
-        #viewGroupsButton i,
-        #imageButton i {
+        .icon-button:hover {
+            background-color: #388e3c; /* Escurece ao passar o mouse */
+        }
+
+        .icon-button i {
             margin: auto;
+        }
+
+        #sendButton {
+            margin-left: auto; /* Empurra para a direita */
         }
 
         /* Menu de Perfil */
@@ -685,13 +685,13 @@
             border-radius: 8px;
             width: 80%;
             max-width: 400px;
-            text-align: left; /* Alinha o texto à esquerda dentro da caixa */
+            text-align: left;
         }
 
         #settingsBox h2 {
             color: #e0e0e0;
             margin-bottom: 15px;
-            text-align: center; /* Centraliza o título */
+            text-align: center;
         }
 
         #settingsBox label {
@@ -705,7 +705,7 @@
         }
 
         #settingsBox #backgroundImageInput {
-            display: none; /* Esconde o input de arquivo */
+            display: none;
         }
 
         #settingsBox .upload-button {
@@ -737,7 +737,7 @@
             width: 100%;
             transition: background-color 0.3s ease;
             margin-top: 15px;
-            text-align: center; /* Garante que o botão "Fechar" esteja centralizado */
+            text-align: center;
         }
 
         #settingsBox .close-button:hover {
@@ -783,19 +783,20 @@
         }
 
         /* Estilos para a imagem */
-        .message img {
+        .message img,
+        .message video {
             max-width: 100%;
             border-radius: 5px;
             margin-top: 5px;
         }
 
-        /* Esconde o input de imagem */
-        #imageInput {
+        /* Esconde o input de arquivo */
+        #fileInput {
             display: none;
         }
 
-        /* Estilos para a área de visualização da imagem */
-        #imagePreviewArea {
+        /* Estilos para a área de visualização de mídia */
+        #mediaPreviewArea {
             width: 100%;
             height: 200px;
             border: 1px dashed #777;
@@ -807,13 +808,13 @@
             overflow: hidden;
         }
 
-        #imagePreviewArea img {
+        #mediaPreview {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
         }
 
-        #imagePreviewArea #downloadButton {
+        #mediaPreviewArea #downloadButton {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -827,17 +828,17 @@
             display: none;
         }
 
-        #imagePreviewArea:hover #downloadButton {
+        #mediaPreviewArea:hover #downloadButton {
             display: block;
         }
 
-        /* Esconde o input de texto quando a imagem está selecionada */
+        /* Esconde o input de texto quando a mídia está selecionada */
         #chatInput.hidden {
             display: none;
         }
 
         /* Estilos para o botão de cancelar */
-        #cancelImageButton {
+        #cancelMediaButton {
             background-color: #f44336;
             color: white;
             border: none;
@@ -851,7 +852,7 @@
             margin-left: 0.3em;
         }
 
-        /* Estilos para o campo de texto quando a imagem está sendo exibida */
+        /* Estilos para o campo de texto quando a mídia está sendo exibida */
         #chatInput {
             flex-grow: 1;
             padding: 0.7em;
@@ -878,20 +879,21 @@
     </div>
     <div id="typingIndicator"></div>
     <div class="chat-input-area">
-        <button id="emojiButton"><i class="far fa-smile"></i></button>
+        <button id="emojiButton" class="icon-button"><i class="far fa-smile"></i></button>
         <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
-        <div id="imagePreviewArea">
-            <img id="imagePreview" src="#" alt="Prévia da Imagem">
-            <button id="downloadButton">Baixar Imagem</button>
+        <div id="mediaPreviewArea">
+            <img id="mediaPreview" src="#" alt="Prévia da Mídia">
+            <video id="videoPreview" controls style="display: none;"></video> <!-- Elemento de vídeo -->
+            <button id="downloadButton">Baixar Mídia</button>
         </div>
-        <input type="file" id="imageInput" accept="image/*">
-        <button id="imageButton"><i class="fas fa-image"></i></button>
-        <button id="sendButton">
+        <input type="file" id="fileInput" accept="image/*, video/*">
+        <button id="fileButton" class="icon-button"><i class="fas fa-paperclip"></i></button>
+        <button id="sendButton" class="icon-button">
             <i class="fas fa-paper-plane"></i>
         </button>
-        <button id="createGroupButton"><i class="fas fa-users"></i></button>
-        <button id="viewGroupsButton"><i class="fas fa-list"></i></button>
-        <button id="cancelImageButton" style="display: none;"><i class="fas fa-times"></i></button>
+        <button id="createGroupButton" class="icon-button"><i class="fas fa-users"></i></button>
+        <button id="viewGroupsButton" class="icon-button"><i class="fas fa-list"></i></button>
+        <button id="cancelMediaButton" class="icon-button" style="display: none;"><i class="fas fa-times"></i></button>
         <div id="emojiPicker">
             <span>😀</span> <span>😂</span> <span>😊</span> <span>🤔</span> <span>👍</span> <span>❤️</span> <span>😎</span>
             <span>😭</span>
@@ -938,11 +940,11 @@
             <li>✅ Criação de grupos.</li>
             <li>✅ Lista de grupos com opções de editar e deletar.</li>
             <li>✅ Correções de bugs e melhorias de desempenho.</li>
-            <li>✅ Envio de imagens no chat.</li>
+            <li>✅ Envio de imagens e vídeos no chat.</li>
             <li>✅ Apenas outros usuários podem reagir às mensagens.</li>
             <li>✅ Feedback visual quando sua própria mensagem é reagida por outros.</li>
-            <li>✅ Área de visualização da imagem antes do envio.</li>
-            <li>✅ Botão de download da imagem.</li>
+            <li>✅ Área de visualização da mídia antes do envio.</li>
+            <li>✅ Botão de download da mídia.</li>
         </ul>
         <button class="close-button" id="closeUpdatePanel">Fechar</button>
     </div>
@@ -959,7 +961,7 @@
         <div class="group-list-box">
             <h2>Grupos</h2>
             <ul id="groupList">
-              <!-- Grupos serão listados aqui -->
+                <!-- Grupos serão listados aqui -->
             </ul>
         </div>
     </div>
@@ -1017,12 +1019,13 @@
     const notificationSound = document.getElementById('notificationSound'); //Elemento de áudio
     const emojiButton = document.getElementById('emojiButton'); //Botão de Emoji
     const emojiPicker = document.getElementById('emojiPicker'); //Painel de Emojis
-    const imageButton = document.getElementById('imageButton'); //Botão de Imagem
-    const imageInput = document.getElementById('imageInput'); //Input de Imagem
-    const imagePreviewArea = document.getElementById('imagePreviewArea'); // Área de visualização da imagem
-    const imagePreview = document.getElementById('imagePreview'); // Elemento img para a visualização
+    const fileButton = document.getElementById('fileButton'); //Botão de Anexar Arquivo (agora com ícone de clipe)
+    const fileInput = document.getElementById('fileInput'); //Input de Arquivo
+    const mediaPreviewArea = document.getElementById('mediaPreviewArea'); // Área de visualização da mídia
+    const mediaPreview = document.getElementById('mediaPreview'); // Elemento img para a visualização da imagem
+    const videoPreview = document.getElementById('videoPreview'); // Elemento video para a visualização do vídeo
     const downloadButton = document.getElementById('downloadButton'); // Botão de download
-    const cancelImageButton = document.getElementById('cancelImageButton'); // Botão de cancelar
+    const cancelMediaButton = document.getElementById('cancelMediaButton'); // Botão de cancelar
 
     //Elementos da tela de boas vindas
     const welcomeScreen = document.getElementById('welcomeScreen');
@@ -1110,13 +1113,13 @@
      * Função para exibir uma mensagem no chat.
      * @param {string} userId - ID do usuário que enviou a mensagem.
      * @param {string} nick - Nick do usuário.
-     * @param {string} message - Conteúdo da mensagem (texto ou imagem).
+     * @param {string} message - Conteúdo da mensagem (texto ou URL da mídia).
      * @param {number} timestamp - Timestamp da mensagem.
      * @param {string} key - Chave da mensagem no Firebase.
      * @param {object} reactions - Objeto contendo as reações à mensagem.
-     * @param {boolean} isImage - Indica se a mensagem é uma imagem.
+     * @param {string} mediaType - Tipo de mídia ('image' ou 'video').
      */
-    function displayMessage(userId, nick, message, timestamp, key, reactions, isImage = false) {
+    function displayMessage(userId, nick, message, timestamp, key, reactions, mediaType = null) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
 
@@ -1131,12 +1134,22 @@
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
 
-        // Formata a exibição do conteúdo da mensagem (texto ou imagem)
-        if (isImage) {
-            const img = document.createElement('img');
-            img.src = message; // message contém o Base64 da imagem
+        // Formata a exibição do conteúdo da mensagem (texto ou mídia)
+        let mediaElement = null;
+        if (mediaType === 'image') {
+            mediaElement = document.createElement('img');
+            mediaElement.src = message;
+            mediaElement.alt = 'Imagem';
+        } else if (mediaType === 'video') {
+            mediaElement = document.createElement('video');
+            mediaElement.src = message;
+            mediaElement.alt = 'Vídeo';
+            mediaElement.controls = true; // Adiciona controles de reprodução
+        }
+
+        if (mediaElement) {
             messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-            messageContent.appendChild(img);
+            messageContent.appendChild(mediaElement);
         } else {
             messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
         }
@@ -1234,7 +1247,7 @@
                         data[key].timestamp,
                         key,
                         data[key].reactions,
-                        data[key].isImage //Passa a informação se é imagem ou não
+                        data[key].mediaType //Passa a informação se é imagem ou vídeo
                     );
                 }
             }
@@ -1299,7 +1312,7 @@
                 nick: currentNick, //Salva o nick com a mensagem
                 message: messageText,
                 timestamp: Date.now(), //Salva a data/hora
-                isImage: false //Indica que não é uma imagem
+                mediaType: null //Indica que é uma mensagem de texto
             });
             chatInput.value = '';
             set(ref(database, `typing/${currentUserId}`), null);
@@ -1309,19 +1322,19 @@
     });
 
     /**
-     * Evento de clique no botão de enviar imagem.
+     * Evento de clique no botão de anexar arquivo.
      */
-    imageButton.addEventListener('click', () => {
-        imageInput.click(); // Aciona o input de arquivo
+    fileButton.addEventListener('click', () => {
+        fileInput.click(); // Aciona o input de arquivo
     });
 
     /**
-     * Função para fazer o download da imagem
+     * Função para fazer o download da mídia
      */
-    const downloadImage = (imageBase64, fileName) => {
+    const downloadMedia = (mediaUrl, fileName) => {
         const link = document.createElement("a");
 
-        link.href = imageBase64;
+        link.href = mediaUrl;
         link.download = fileName;
 
         document.body.appendChild(link);
@@ -1330,36 +1343,49 @@
     };
 
     /**
-     * Evento de mudança no input de imagem.
+     * Evento de mudança no input de arquivo.
      */
-    imageInput.addEventListener('change', (event) => {
+    fileInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function (e) {
-                const imageBase64 = e.target.result; // Base64 da imagem
+                const mediaUrl = e.target.result; // URL da mídia (Base64 ou URL do objeto)
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
 
-                imagePreview.src = imageBase64;
-                imagePreviewArea.style.display = 'flex';
+                mediaPreview.style.display = 'none';
+                videoPreview.style.display = 'none';
+
+                if (isImage) {
+                    mediaPreview.src = mediaUrl;
+                    mediaPreview.style.display = 'block';
+                } else if (isVideo) {
+                    videoPreview.src = mediaUrl;
+                    videoPreview.style.display = 'block';
+                }
+
+                mediaPreviewArea.style.display = 'flex';
                 chatInput.classList.add('hidden'); // Esconde a área de texto
-                cancelImageButton.style.display = 'flex'; // Exibe o botão de cancelar
+                cancelMediaButton.style.display = 'flex'; // Exibe o botão de cancelar
 
                 // Evento de clique no botão de download
                 downloadButton.addEventListener('click', () => {
-                    downloadImage(imageBase64, file.name);
+                    downloadMedia(mediaUrl, file.name);
                 });
 
-                // Evento para enviar a imagem ao clicar no botão enviar
+                // Evento para enviar a mídia ao clicar no botão enviar
                 sendButton.addEventListener('click', () => {
                     if (currentGroupId) {
+                        let mediaType = isImage ? 'image' : (isVideo ? 'video' : null);
                         push(ref(database, `messages/${currentGroupId}`), {
                             userId: currentUserId,
                             nick: currentNick,
-                            message: imageBase64, // Envia o Base64 da imagem
+                            message: mediaUrl, // Envia o URL da mídia
                             timestamp: Date.now(),
-                            isImage: true // Indica que é uma imagem
+                            mediaType: mediaType // Indica o tipo de mídia
                         });
-                        resetImagePreview(); // Limpa a visualização
+                        resetMediaPreview(); // Limpa a visualização
                         set(ref(database, `typing/${currentUserId}`), null);
                     } else {
                         alert('Selecione um grupo para enviar a mensagem.');
@@ -1371,22 +1397,26 @@
     });
 
     /**
-     * Função para resetar a visualização da imagem
+     * Função para resetar a visualização da mídia
      */
-    function resetImagePreview() {
-        imagePreview.src = "#";
-        imagePreviewArea.style.display = 'none';
+    function resetMediaPreview() {
+        mediaPreview.src = "#";
+        videoPreview.src = "#";
+        mediaPreview.style.display = 'none';
+        videoPreview.style.display = 'none';
+        mediaPreviewArea.style.display = 'none';
         chatInput.classList.remove('hidden'); // Mostra a área de texto
-        cancelImageButton.style.display = 'none'; // Esconde o botão de cancelar
-        imageInput.value = ''; // Limpa o input
-        sendButton.removeEventListener('click', () => {}); // Remove o event listener para evitar duplicatas
+        cancelMediaButton.style.display = 'none'; // Esconde o botão de cancelar
+        fileInput.value = ''; // Limpa o input
+        sendButton.removeEventListener('click', () => {
+        }); // Remove o event listener para evitar duplicatas
     }
 
     /**
-     * Evento de clique no botão de cancelar a imagem
+     * Evento de clique no botão de cancelar a mídia
      */
-    cancelImageButton.addEventListener('click', () => {
-        resetImagePreview();
+    cancelMediaButton.addEventListener('click', () => {
+        resetMediaPreview();
     });
 
     // Evento para mostrar/esconder o menu de perfil
