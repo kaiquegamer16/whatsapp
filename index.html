@@ -1348,51 +1348,58 @@
     fileInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const mediaUrl = e.target.result; // URL da mídia (Base64 ou URL do objeto)
-                const isImage = file.type.startsWith('image/');
-                const isVideo = file.type.startsWith('video/');
+            const isImage = file.type.startsWith('image/');
+            const isVideo = file.type.startsWith('video/');
 
-                mediaPreview.style.display = 'none';
-                videoPreview.style.display = 'none';
-
-                if (isImage) {
-                    mediaPreview.src = mediaUrl;
-                    mediaPreview.style.display = 'block';
-                } else if (isVideo) {
-                    videoPreview.src = mediaUrl;
-                    videoPreview.style.display = 'block';
-                }
-
-                mediaPreviewArea.style.display = 'flex';
-                chatInput.classList.add('hidden'); // Esconde a área de texto
-                cancelMediaButton.style.display = 'flex'; // Exibe o botão de cancelar
-
-                // Evento de clique no botão de download
-                downloadButton.addEventListener('click', () => {
-                    downloadMedia(mediaUrl, file.name);
-                });
-
-                // Evento para enviar a mídia ao clicar no botão enviar
-                sendButton.addEventListener('click', () => {
-                    if (currentGroupId) {
-                        let mediaType = isImage ? 'image' : (isVideo ? 'video' : null);
-                        push(ref(database, `messages/${currentGroupId}`), {
-                            userId: currentUserId,
-                            nick: currentNick,
-                            message: mediaUrl, // Envia o URL da mídia
-                            timestamp: Date.now(),
-                            mediaType: mediaType // Indica o tipo de mídia
-                        });
-                        resetMediaPreview(); // Limpa a visualização
-                        set(ref(database, `typing/${currentUserId}`), null);
-                    } else {
-                        alert('Selecione um grupo para enviar a mensagem.');
-                    }
-                }, { once: true });
+            // Verifica o tamanho do arquivo
+            if (file.size > 200 * 1024 * 1024) { // 200MB
+                alert("O arquivo excede o tamanho máximo permitido (200MB).");
+                fileInput.value = ''; // Limpa o input
+                return;
             }
-            reader.readAsDataURL(file);
+
+            // Cria uma URL temporária para o arquivo
+            const mediaUrl = URL.createObjectURL(file);
+
+            mediaPreview.style.display = 'none';
+            videoPreview.style.display = 'none';
+
+            if (isImage) {
+                mediaPreview.src = mediaUrl;
+                mediaPreview.style.display = 'block';
+            } else if (isVideo) {
+                videoPreview.src = mediaUrl;
+                videoPreview.style.display = 'block';
+            }
+
+            mediaPreviewArea.style.display = 'flex';
+            chatInput.classList.add('hidden'); // Esconde a área de texto
+            cancelMediaButton.style.display = 'flex'; // Exibe o botão de cancelar
+
+            // Evento de clique no botão de download
+            downloadButton.addEventListener('click', () => {
+                downloadMedia(mediaUrl, file.name);
+            });
+
+            // Evento para enviar a URL da mídia ao clicar no botão enviar
+            sendButton.addEventListener('click', () => {
+                if (currentGroupId) {
+                    let mediaType = isImage ? 'image' : (isVideo ? 'video' : null);
+                    push(ref(database, `messages/${currentGroupId}`), {
+                        userId: currentUserId,
+                        nick: currentNick,
+                        message: mediaUrl, // Envia o URL da mídia
+                        timestamp: Date.now(),
+                        mediaType: mediaType // Indica o tipo de mídia
+                    });
+                    resetMediaPreview(); // Limpa a visualização
+                    set(ref(database, `typing/${currentUserId}`), null);
+                } else {
+                    alert('Selecione um grupo para enviar a mensagem.');
+                }
+            }, {
+                once: true
+            });
         }
     });
 
@@ -1485,20 +1492,20 @@
         }
     });
 
-    //Evento para "Limpar Chat"
-    clearChatOption.addEventListener('click', () => {
-        profileMenu.classList.remove('show');
-        if (confirm('Tem certeza que deseja limpar o chat?')) {
-            //Limpa as mensagens do Firebase (simulação)
-            set(ref(database, `messages/${currentGroupId}`), null)
-                .then(() => {
-                    alert('Chat limpo com sucesso!');
-                })
-                .catch((error) => {
-                    alert('Ocorreu um erro ao limpar o chat: ' + error.message);
-                });
-        }
-    });
+        //Evento para "Limpar Chat"
+        clearChatOption.addEventListener('click', () => {
+            profileMenu.classList.remove('show');
+            if (confirm('Tem certeza que deseja limpar o chat?')) {
+                //Limpa as mensagens do Firebase (simulação)
+                set(ref(database, `messages/${currentGroupId}`), null)
+                    .then(() => {
+                        alert('Chat limpo com sucesso!');
+                    })
+                    .catch((error) => {
+                        alert('Ocorreu um erro ao limpar o chat: ' + error.message);
+                    });
+            }
+        });
 
     //Controle do "digitando..."
     chatInput.addEventListener('input', () => {
