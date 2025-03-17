@@ -138,7 +138,8 @@
         #sendButton,
         #emojiButton,
         #createGroupButton,
-        #viewGroupsButton {
+        #viewGroupsButton,
+        #imageButton {
             background-color: #4caf50;
             color: white;
             border: none;
@@ -155,7 +156,8 @@
         #sendButton i,
         #emojiButton i,
         #createGroupButton i,
-        #viewGroupsButton i {
+        #viewGroupsButton i,
+        #imageButton i {
             margin: auto;
         }
 
@@ -780,6 +782,87 @@
             background-color: #444;
         }
 
+        /* Estilos para a imagem */
+        .message img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+        /* Esconde o input de imagem */
+        #imageInput {
+            display: none;
+        }
+
+        /* Estilos para a área de visualização da imagem */
+        #imagePreviewArea {
+            width: 100%;
+            height: 200px;
+            border: 1px dashed #777;
+            margin-bottom: 10px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #imagePreviewArea img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        #imagePreviewArea #downloadButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+
+        #imagePreviewArea:hover #downloadButton {
+            display: block;
+        }
+
+        /* Esconde o input de texto quando a imagem está selecionada */
+        #chatInput.hidden {
+            display: none;
+        }
+
+        /* Estilos para o botão de cancelar */
+        #cancelImageButton {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 0.3em;
+        }
+
+        /* Estilos para o campo de texto quando a imagem está sendo exibida */
+        #chatInput {
+            flex-grow: 1;
+            padding: 0.7em;
+            border: none;
+            border-radius: 25px;
+            margin-right: 0.5em;
+            background-color: #4f4f4f;
+            color: #e0e0e0;
+            resize: none;
+            min-height: 40px;
+        }
     </style>
 </head>
 <body>
@@ -797,12 +880,18 @@
     <div class="chat-input-area">
         <button id="emojiButton"><i class="far fa-smile"></i></button>
         <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
+        <div id="imagePreviewArea">
+            <img id="imagePreview" src="#" alt="Prévia da Imagem">
+            <button id="downloadButton">Baixar Imagem</button>
+        </div>
+        <input type="file" id="imageInput" accept="image/*">
+        <button id="imageButton"><i class="fas fa-image"></i></button>
         <button id="sendButton">
             <i class="fas fa-paper-plane"></i>
         </button>
         <button id="createGroupButton"><i class="fas fa-users"></i></button>
         <button id="viewGroupsButton"><i class="fas fa-list"></i></button>
-        <!-- Painel de Emojis -->
+        <button id="cancelImageButton" style="display: none;"><i class="fas fa-times"></i></button>
         <div id="emojiPicker">
             <span>😀</span> <span>😂</span> <span>😊</span> <span>🤔</span> <span>👍</span> <span>❤️</span> <span>😎</span>
             <span>😭</span>
@@ -849,6 +938,11 @@
             <li>✅ Criação de grupos.</li>
             <li>✅ Lista de grupos com opções de editar e deletar.</li>
             <li>✅ Correções de bugs e melhorias de desempenho.</li>
+            <li>✅ Envio de imagens no chat.</li>
+            <li>✅ Apenas outros usuários podem reagir às mensagens.</li>
+            <li>✅ Feedback visual quando sua própria mensagem é reagida por outros.</li>
+            <li>✅ Área de visualização da imagem antes do envio.</li>
+            <li>✅ Botão de download da imagem.</li>
         </ul>
         <button class="close-button" id="closeUpdatePanel">Fechar</button>
     </div>
@@ -865,7 +959,7 @@
         <div class="group-list-box">
             <h2>Grupos</h2>
             <ul id="groupList">
-                <!-- Grupos serão listados aqui -->
+              <!-- Grupos serão listados aqui -->
             </ul>
         </div>
     </div>
@@ -893,6 +987,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
+    // Configuração do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
         authDomain: "banco-5a678.firebaseapp.com",
@@ -903,11 +998,16 @@
         measurementId: "G-DEER2QFNXL"
     };
 
+    // Inicialização do Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
+
+    // Referências do Banco de Dados
     const messagesRef = ref(database, 'messages');
     const groupsRef = ref(database, 'groups');
     const typingRef = ref(database, 'typing'); //Referência para o "digitando..."
+
+    // Elementos do DOM
     const messagesDiv = document.getElementById('messages');
     const chatInput = document.getElementById('chatInput');
     const sendButton = document.getElementById('sendButton');
@@ -917,12 +1017,20 @@
     const notificationSound = document.getElementById('notificationSound'); //Elemento de áudio
     const emojiButton = document.getElementById('emojiButton'); //Botão de Emoji
     const emojiPicker = document.getElementById('emojiPicker'); //Painel de Emojis
+    const imageButton = document.getElementById('imageButton'); //Botão de Imagem
+    const imageInput = document.getElementById('imageInput'); //Input de Imagem
+    const imagePreviewArea = document.getElementById('imagePreviewArea'); // Área de visualização da imagem
+    const imagePreview = document.getElementById('imagePreview'); // Elemento img para a visualização
+    const downloadButton = document.getElementById('downloadButton'); // Botão de download
+    const cancelImageButton = document.getElementById('cancelImageButton'); // Botão de cancelar
+
     //Elementos da tela de boas vindas
     const welcomeScreen = document.getElementById('welcomeScreen');
     const welcomeNickInput = document.getElementById('welcomeNickInput');
     const welcomeProfileImageInput = document.getElementById('welcomeProfileImageInput');
     const welcomeProfileImagePreview = document.getElementById('welcomeProfileImagePreview');
     const saveWelcomeButton = document.getElementById('saveWelcomeButton');
+
     // Elementos de Imagem de Perfil
     const headerProfileImage = document.getElementById('headerProfileImage');
     const editProfileOption = document.getElementById('editProfileOption');
@@ -932,18 +1040,22 @@
     const saveProfileButton = document.getElementById('saveProfileButton');
     const profileImageInput = document.getElementById('profileImageInput');
     const profileImagePreview = document.getElementById('profileImagePreview');
+
     // Elementos do Painel de Atualizações
     const updatePanel = document.getElementById('updatePanel');
     const closeUpdatePanel = document.getElementById('closeUpdatePanel');
+
     // Elementos do Painel de Criação de Grupos
     const createGroupContainer = document.getElementById('createGroupContainer');
     const groupNameInput = document.getElementById('groupNameInput');
     const createGroupButtonConfirm = document.getElementById('createGroupButtonConfirm');
     const createGroupButton = document.getElementById('createGroupButton');
+
     // Elementos do Painel de Lista de Grupos
     const groupListContainer = document.getElementById('groupListContainer');
     const groupList = document.getElementById('groupList');
     const viewGroupsButton = document.getElementById('viewGroupsButton');
+
     // Elementos do Painel de Configurações
     const settingsPanel = document.getElementById('settingsPanel');
     const settingsOption = document.getElementById('settingsOption');
@@ -959,8 +1071,10 @@
     let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
     let conversationStarted = localStorage.getItem('conversationStarted') || null;
     let currentGroupId = null;
+    let reactedTo = {};//Objeto para rastrear a reação à própria mensagem
     //Array de emojis (As opções da imagem)
     const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
+
     //Funções de formatação de data e hora
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
@@ -975,38 +1089,64 @@
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;
     };
+
     //Salva o userId no localStorage ao gerar um novo
     if (!localStorage.getItem('userId')) {
         localStorage.setItem('userId', currentUserId);
     }
+
     //Carrega a imagem e o nick salvos ao carregar a página
     if (currentProfileImageBase64) {
         headerProfileImage.src = currentProfileImageBase64;
         profileImagePreview.src = currentProfileImageBase64;
     }
+
     //Função para gerar um ID de usuário aleatório (simulação)
     function generateUserId() {
         return Math.random().toString(36).substring(2, 15);
     }
-    function displayMessage(userId, nick, message, timestamp, key, reactions) { //Agora recebe o Nick e o timestamp
+
+    /**
+     * Função para exibir uma mensagem no chat.
+     * @param {string} userId - ID do usuário que enviou a mensagem.
+     * @param {string} nick - Nick do usuário.
+     * @param {string} message - Conteúdo da mensagem (texto ou imagem).
+     * @param {number} timestamp - Timestamp da mensagem.
+     * @param {string} key - Chave da mensagem no Firebase.
+     * @param {object} reactions - Objeto contendo as reações à mensagem.
+     * @param {boolean} isImage - Indica se a mensagem é uma imagem.
+     */
+    function displayMessage(userId, nick, message, timestamp, key, reactions, isImage = false) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
+
+        // Adiciona classe 'sent' ou 'received' dependendo do autor
         if (userId === currentUserId) {
             messageElement.classList.add('sent');
         } else {
             messageElement.classList.add('received');
         }
-        /*
-         *  Adicionado o elemento de conteúdo da mensagem e formatado a exibição
-         */
+
+        // Cria o elemento de conteúdo da mensagem
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
-        messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
-        messageElement.appendChild(messageContent)
-        // Criar contêiner para as reações
+
+        // Formata a exibição do conteúdo da mensagem (texto ou imagem)
+        if (isImage) {
+            const img = document.createElement('img');
+            img.src = message; // message contém o Base64 da imagem
+            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+            messageContent.appendChild(img);
+        } else {
+            messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
+        }
+        messageElement.appendChild(messageContent);
+
+        // Cria o contêiner para as reações
         const reactionContainer = document.createElement('div');
         reactionContainer.className = 'reaction-container';
-        // Criar o painel de emojis
+
+        // Cria o painel de emojis
         const emojiPanel = document.createElement('div');
         emojiPanel.className = 'emoji-panel';
         emojis.forEach(emoji => {
@@ -1014,27 +1154,44 @@
             emojiOption.className = 'emoji-option';
             emojiOption.textContent = emoji;
             emojiOption.addEventListener('click', () => {
-                update(ref(database, `messages/${currentGroupId}/${key}`), {
-                    reactions: {
-                        [currentUserId]: emoji
-                    }
-                })
+                // Apenas outros usuários podem reagir à mensagem
+                if (userId !== currentUserId) {
+                    update(ref(database, `messages/${currentGroupId}/${key}`), {
+                        reactions: {
+                            [currentUserId]: emoji
+                        }
+                    });
+                }
                 emojiPanel.classList.remove('show');
             });
             emojiPanel.appendChild(emojiOption);
         });
-        reactionContainer.appendChild(emojiPanel)
-        messageElement.addEventListener('click', () => {
-            emojiPanel.classList.toggle('show');
+        reactionContainer.appendChild(emojiPanel);
+
+        // Adiciona evento de clique para mostrar/esconder o painel de emojis
+        messageElement.addEventListener('click', (event) => {
+            // Se o clique foi no botão de editar, não mostrar o painel de emojis
+            if (!event.target.classList.contains('edit-button')) {
+                emojiPanel.classList.toggle('show');
+            }
         });
-        //Adicionado Reações
-        if (reactions && reactions[currentUserId]) {
-            const reactionElement = document.createElement('span');
-            reactionElement.textContent = reactions[currentUserId];
-            reactionElement.className = 'reactions';
-            messageElement.appendChild(reactionElement);
+
+        // Adiciona as reações existentes à mensagem
+        if (reactions) {
+            for (const reactorId in reactions) {
+                const reactionElement = document.createElement('span');
+                reactionElement.textContent = reactions[reactorId];
+                reactionElement.className = 'reactions';
+                messageElement.appendChild(reactionElement);
+
+                // Se a reação é à sua própria mensagem, adicione um indicador visual
+                if (userId === currentUserId && reactorId !== currentUserId) {
+                    messageElement.classList.add('reacted');
+                }
+            }
         }
         messageElement.appendChild(reactionContainer);
+
         // Adicionar botão de edição para mensagens enviadas
         if (userId === currentUserId) {
             const editButton = document.createElement('button');
@@ -1051,23 +1208,42 @@
             });
             messageElement.appendChild(editButton);
         }
+
         messagesDiv.appendChild(messageElement);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
+
+    /**
+     * Carrega as mensagens de um grupo do Firebase e as exibe no chat.
+     * @param {string} groupId - ID do grupo a ser carregado.
+     */
     function loadMessages(groupId) {
         currentGroupId = groupId;
         messagesDiv.innerHTML = '';
         const messagesGroupRef = ref(database, `messages/${groupId}`);
+
         onValue(messagesGroupRef, (snapshot) => {
             messagesDiv.innerHTML = '';
             const data = snapshot.val();
             if (data) {
                 for (let key in data) {
-                    displayMessage(data[key].userId, data[key].nick, data[key].message, data[key].timestamp, key, data[key].reactions);
+                    displayMessage(
+                        data[key].userId,
+                        data[key].nick,
+                        data[key].message,
+                        data[key].timestamp,
+                        key,
+                        data[key].reactions,
+                        data[key].isImage //Passa a informação se é imagem ou não
+                    );
                 }
             }
         });
     }
+
+    /**
+     * Carrega a lista de grupos do Firebase e as exibe na interface.
+     */
     function loadGroups() {
         onValue(groupsRef, (snapshot) => {
             const data = snapshot.val();
@@ -1076,6 +1252,7 @@
                 for (let key in data) {
                     const li = document.createElement('li');
                     li.textContent = data[key].name;
+
                     const editButton = document.createElement('button');
                     editButton.textContent = 'Editar';
                     editButton.classList.add('edit-button');
@@ -1087,6 +1264,7 @@
                             });
                         }
                     });
+
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = '🗑️';
                     deleteButton.classList.add('delete-button');
@@ -1096,17 +1274,23 @@
                             remove(ref(database, `messages/${key}`));
                         }
                     });
+
                     li.appendChild(editButton);
                     li.appendChild(deleteButton);
                     li.addEventListener('click', () => {
                         loadMessages(key);
                         groupListContainer.classList.remove('show');
                     });
+
                     groupList.appendChild(li);
                 }
             }
         });
     }
+
+    /**
+     * Evento de clique no botão de enviar mensagem.
+     */
     sendButton.addEventListener('click', () => {
         const messageText = chatInput.value;
         if (messageText && currentGroupId) {
@@ -1114,7 +1298,8 @@
                 userId: currentUserId,
                 nick: currentNick, //Salva o nick com a mensagem
                 message: messageText,
-                timestamp: Date.now() //Salva a data/hora
+                timestamp: Date.now(), //Salva a data/hora
+                isImage: false //Indica que não é uma imagem
             });
             chatInput.value = '';
             set(ref(database, `typing/${currentUserId}`), null);
@@ -1122,6 +1307,88 @@
             alert('Selecione um grupo para enviar a mensagem.');
         }
     });
+
+    /**
+     * Evento de clique no botão de enviar imagem.
+     */
+    imageButton.addEventListener('click', () => {
+        imageInput.click(); // Aciona o input de arquivo
+    });
+
+    /**
+     * Função para fazer o download da imagem
+     */
+    const downloadImage = (imageBase64, fileName) => {
+        const link = document.createElement("a");
+
+        link.href = imageBase64;
+        link.download = fileName;
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    /**
+     * Evento de mudança no input de imagem.
+     */
+    imageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imageBase64 = e.target.result; // Base64 da imagem
+
+                imagePreview.src = imageBase64;
+                imagePreviewArea.style.display = 'flex';
+                chatInput.classList.add('hidden'); // Esconde a área de texto
+                cancelImageButton.style.display = 'flex'; // Exibe o botão de cancelar
+
+                // Evento de clique no botão de download
+                downloadButton.addEventListener('click', () => {
+                    downloadImage(imageBase64, file.name);
+                });
+
+                // Evento para enviar a imagem ao clicar no botão enviar
+                sendButton.addEventListener('click', () => {
+                    if (currentGroupId) {
+                        push(ref(database, `messages/${currentGroupId}`), {
+                            userId: currentUserId,
+                            nick: currentNick,
+                            message: imageBase64, // Envia o Base64 da imagem
+                            timestamp: Date.now(),
+                            isImage: true // Indica que é uma imagem
+                        });
+                        resetImagePreview(); // Limpa a visualização
+                        set(ref(database, `typing/${currentUserId}`), null);
+                    } else {
+                        alert('Selecione um grupo para enviar a mensagem.');
+                    }
+                }, { once: true });
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    /**
+     * Função para resetar a visualização da imagem
+     */
+    function resetImagePreview() {
+        imagePreview.src = "#";
+        imagePreviewArea.style.display = 'none';
+        chatInput.classList.remove('hidden'); // Mostra a área de texto
+        cancelImageButton.style.display = 'none'; // Esconde o botão de cancelar
+        imageInput.value = ''; // Limpa o input
+        sendButton.removeEventListener('click', () => {}); // Remove o event listener para evitar duplicatas
+    }
+
+    /**
+     * Evento de clique no botão de cancelar a imagem
+     */
+    cancelImageButton.addEventListener('click', () => {
+        resetImagePreview();
+    });
+
     // Evento para mostrar/esconder o menu de perfil
     profileIcon.addEventListener('click', () => {
         profileMenu.classList.toggle('show');
@@ -1154,6 +1421,7 @@
         editProfileContainer.classList.add('show');
         newNickInput.value = currentNick;
     });
+
     // Evento para "Salvar" na tela de edição de perfil
     saveProfileButton.addEventListener('click', () => {
         const newNick = newNickInput.value;
@@ -1164,6 +1432,7 @@
         }
         editProfileContainer.classList.remove('show');
     });
+
     // Evento para processar a imagem selecionada
     profileImageInput.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -1178,12 +1447,14 @@
             reader.readAsDataURL(file);
         }
     });
+
     // Fechar a tela de edição de perfil ao clicar fora dela
     editProfileContainer.addEventListener('click', (event) => {
         if (event.target === editProfileContainer) {
             editProfileContainer.classList.remove('show');
         }
     });
+
     //Evento para "Limpar Chat"
     clearChatOption.addEventListener('click', () => {
         profileMenu.classList.remove('show');
@@ -1198,6 +1469,7 @@
                 });
         }
     });
+
     //Controle do "digitando..."
     chatInput.addEventListener('input', () => {
         if (chatInput.value) {
@@ -1208,10 +1480,12 @@
             set(ref(database, `typing/${currentUserId}`), null);
         }
     });
+
     //Remove o "digitando..." ao perder o foco
     chatInput.addEventListener('blur', () => {
         set(ref(database, `typing/${currentUserId}`), null);
     });
+
     //Monitora o "digitando..." de outros usuários
     onValue(typingRef, (snapshot) => {
         const data = snapshot.val();
@@ -1221,6 +1495,7 @@
             typingUsers = Object.entries(data) //Convertendo o objeto em array de [key, value]
                 .filter(([key, nick]) => nick !== null && key !== currentUserId) //Filtrando para não mostrar o usuário atual
                 .map(([key, nick]) => nick); //Pegando apenas os Nicks
+
             if (typingUsers.length > 0) {
                 typingIndicator.textContent = `${typingUsers.join(', ')} está digitando...`;
             } else {
@@ -1230,6 +1505,7 @@
             typingIndicator.textContent = '';
         }
     });
+
     //Carrega a imagem e o nick salvos ao carregar a página
     if (currentProfileImageBase64) {
         headerProfileImage.src = currentProfileImageBase64;
@@ -1347,6 +1623,7 @@
         notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
         darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
         enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
+
         //Carregar imagem de fundo
         const backgroundImage = localStorage.getItem('backgroundImage');
         if (backgroundImage) {
@@ -1374,6 +1651,7 @@
         localStorage.setItem('enterToSend', enterToSend.checked);
         applySettings(); //Aplicar as configurações ao salvar
     };
+
     // Eventos para salvar as configurações quando os checkboxes mudarem
     notificationSetting.addEventListener('change', saveSettings);
     darkModeSetting.addEventListener('change', saveSettings);
