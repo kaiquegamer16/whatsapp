@@ -985,11 +985,12 @@
         Seu navegador não suporta o elemento de áudio.
     </audio>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
-    // Configuração do Firebase
+  // Configuração do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
         authDomain: "banco-5a678.firebaseapp.com",
@@ -1113,7 +1114,7 @@
      * Função para exibir uma mensagem no chat.
      * @param {string} userId - ID do usuário que enviou a mensagem.
      * @param {string} nick - Nick do usuário.
-     * @param {string} message - Conteúdo da mensagem (texto ou URL da mídia).
+     * @param {string} message - Conteúdo da mensagem (texto ou chave do localForage).
      * @param {number} timestamp - Timestamp da mensagem.
      * @param {string} key - Chave da mensagem no Firebase.
      * @param {object} reactions - Objeto contendo as reações à mensagem.
@@ -1136,24 +1137,52 @@
 
         // Formata a exibição do conteúdo da mensagem (texto ou mídia)
         let mediaElement = null;
+
         if (mediaType === 'image') {
-            mediaElement = document.createElement('img');
-            mediaElement.src = message;
-            mediaElement.alt = 'Imagem';
+            localforage.getItem(message)
+                .then(imageData => {
+                    if (imageData) {
+                        mediaElement = document.createElement('img');
+                        mediaElement.src = imageData;
+                        mediaElement.alt = 'Imagem';
+                        messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+                        messageContent.appendChild(mediaElement);
+                        messageElement.appendChild(messageContent);
+                        messagesDiv.appendChild(messageElement);
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    } else {
+                        console.log('Imagem não encontrada no localForage.');
+                    }
+                })
+                .catch(err => console.error("Erro ao recuperar imagem do localForage:", err));
+            return;
         } else if (mediaType === 'video') {
-            mediaElement = document.createElement('video');
-            mediaElement.src = message;
-            mediaElement.alt = 'Vídeo';
-            mediaElement.controls = true; // Adiciona controles de reprodução
+            localforage.getItem(message)
+                .then(videoData => {
+                    if (videoData) {
+                        mediaElement = document.createElement('video');
+                        mediaElement.src = URL.createObjectURL(new Blob([videoData])); // Cria um URL a partir do Blob
+                        mediaElement.alt = 'Vídeo';
+                        mediaElement.controls = true;
+                        messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+                        messageContent.appendChild(mediaElement);
+                        messageElement.appendChild(messageContent);
+                        messagesDiv.appendChild(messageElement);
+                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    } else {
+                        console.log('Vídeo não encontrado no localForage.');
+                    }
+                })
+                .catch(err => console.error("Erro ao recuperar vídeo do localForage:", err));
+            return;
         }
 
-        if (mediaElement) {
-            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-            messageContent.appendChild(mediaElement);
-        } else {
+        if (!mediaElement) {
             messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
+            messageElement.appendChild(messageContent);
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
-        messageElement.appendChild(messageContent);
 
         // Cria o contêiner para as reações
         const reactionContainer = document.createElement('div');
@@ -1358,11 +1387,13 @@
                 return;
             }
 
-            // Cria uma URL temporária para o arquivo
-            const mediaUrl = URL.createObjectURL(file);
-
             mediaPreview.style.display = 'none';
             videoPreview.style.display = 'none';
+
+            let fileKey = generateFileKey(); // Chave única para o arquivo
+
+            // Cria uma URL temporária para o arquivo
+            const mediaUrl = URL.createObjectURL(file);
 
             if (isImage) {
                 mediaPreview.src = mediaUrl;
@@ -1385,15 +1416,31 @@
             sendButton.addEventListener('click', () => {
                 if (currentGroupId) {
                     let mediaType = isImage ? 'image' : (isVideo ? 'video' : null);
-                    push(ref(database, `messages/${currentGroupId}`), {
-                        userId: currentUserId,
-                        nick: currentNick,
-                        message: mediaUrl, // Envia o URL da mídia
-                        timestamp: Date.now(),
-                        mediaType: mediaType // Indica o tipo de mídia
-                    });
-                    resetMediaPreview(); // Limpa a visualização
-                    set(ref(database, `typing/${currentUserId}`), null);
+
+                    // Salva o arquivo no localForage
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        localforage.setItem(fileKey, e.target.result)
+                            .then(() => {
+                                // Envia a chave do arquivo para o Firebase
+                                push(ref(database, `messages/${currentGroupId}`), {
+                                    userId: currentUserId,
+                                    nick: currentNick,
+                                    message: fileKey, // Envia a CHAVE do arquivo
+                                    timestamp: Date.now(),
+                                    mediaType: mediaType // Indica o tipo de mídia
+                                });
+                                resetMediaPreview(); // Limpa a visualização
+                                set(ref(database, `typing/${currentUserId}`), null);
+                            })
+                            .catch(err => console.error("Erro ao salvar o arquivo no localForage:", err));
+                    }
+
+                    if (isImage) {
+                        reader.readAsDataURL(file);
+                    } else {
+                        reader.readAsArrayBuffer(file); // Para vídeos
+                    }
                 } else {
                     alert('Selecione um grupo para enviar a mensagem.');
                 }
@@ -1402,6 +1449,13 @@
             });
         }
     });
+
+     /**
+     * Função para gerar uma chave única para o arquivo.
+     */
+    function generateFileKey() {
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
 
     /**
      * Função para resetar a visualização da mídia
