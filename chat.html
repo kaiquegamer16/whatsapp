@@ -4,46 +4,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat do Grupo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Cores e Fontes */
+        :root {
+            --primary-color: #128C7E;
+            --bg-color: #121b22;
+            --panel-color: #202c33;
+            --secondary-text: #8696A0;
+            --white: #fff;
+            --font-family: sans-serif;
+        }
+
         body {
-            font-family: sans-serif;
+            font-family: var(--font-family);
             margin: 0;
             padding: 0;
-            background-color: #121b22;
+            background-color: var(--bg-color);
             color: white;
         }
 
         .chat-container {
             max-width: 600px;
             margin: 0 auto;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Garante que o chat ocupe toda a altura da tela */
         }
 
+        /* Header */
         header {
-            background-color: #202c33;
+            background-color: var(--panel-color);
             padding: 10px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        /* Chat Messages */
+        #chatMessages {
+            flex-grow: 1; /* Ocupa o espaço restante */
+            padding: 20px;
+            overflow-y: auto; /* Adiciona rolagem se necessário */
+        }
+
+        /* Input de Mensagem */
+        .message-input-container {
+            background-color: var(--panel-color);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .message-input-container input {
+            flex-grow: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a3942;
+            color: var(--white);
+        }
+
+        .message-input-container button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <header>
-            <h1>Chat do Grupo</h1>
-            <h2 id="groupName"></h2>
+            <img id="groupImage" src="https://via.placeholder.com/40" alt="Imagem do Grupo">
+            <h1 id="groupName">Nome do Grupo</h1>
         </header>
+
         <div id="chatMessages">
             <!-- Mensagens do chat aqui -->
         </div>
+
+        <div class="message-input-container">
+            <input type="text" id="messageInput" placeholder="Mensagem">
+            <button onclick="sendMessage()">Enviar</button>
+        </div>
     </div>
 
-    <script>
-        // Carregar as informações do grupo do localStorage
-        const groupInfo = JSON.parse(localStorage.getItem('currentGroup'));
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
-        if (groupInfo) {
-            document.getElementById('groupName').innerText = groupInfo.name || 'Nome do Grupo';
-            // Aqui você poderia carregar as mensagens do grupo, se tivesse
+        // Firebase configuration (substitua com suas credenciais)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
+            authDomain: "banco-5a678.firebaseapp.com",
+            databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
+            projectId: "banco-5a678",
+            storageBucket: "banco-5a678.firebasestorage.app",
+            messagingSenderId: "943801310064",
+            appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+            measurementId: "G-DEER2QFNXL"
+          };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+
+        // Carregar o ID do grupo do localStorage
+        const groupId = localStorage.getItem('currentGroupId');
+
+        async function loadGroupData(groupId) {
+            if (groupId) {
+                const groupRef = ref(database, `groups/${groupId}`); // Referência ao nó do grupo específico
+                const snapshot = await get(groupRef); // Busca os dados
+                if (snapshot.exists()) {
+                    const groupData = snapshot.val(); // Extrai os dados
+                    document.getElementById('groupName').innerText = groupData.name || 'Nome do Grupo';
+                    document.getElementById('groupImage').src = groupData.image || 'https://via.placeholder.com/40';
+                } else {
+                    console.log("No data available for this group ID.");
+                }
+            }
+        }
+
+        loadGroupData(groupId);
+
+        function sendMessage() {
+            const message = document.getElementById('messageInput').value;
+            // Aqui você enviaria a mensagem para o Firebase
+            console.log('Enviando mensagem:', message);
+            document.getElementById('messageInput').value = ''; // Limpa o input
         }
     </script>
 </body>
