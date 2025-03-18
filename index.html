@@ -6,7 +6,7 @@
     <title>WhatsApp (Mockup)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-         /* Cores e Fontes */
+        /* Cores e Fontes */
         :root {
             --primary-color: #128C7E;
             --bg-color: #121b22;
@@ -42,20 +42,23 @@
             margin: 0;
             font-size: 1.2em;
             font-weight: normal;
-            text-align: center; /* Centralizar o texto */
+            text-align: center;
         }
 
         header .icons {
             display: flex;
             gap: 15px;
             font-size: 1.3em;
-            text-align: center; /* Centralizar os ícones */
+            text-align: center;
+            align-items: center;
         }
 
         /* Search Bar */
         .search-bar {
             padding: 10px;
             background-color: var(--panel-color);
+            display: flex;
+            align-items: center;
         }
 
         .search-bar input {
@@ -65,7 +68,7 @@
             border-radius: 5px;
             background-color: #2a3942;
             color: var(--white);
-            text-align: center; /* Centralizar o texto */
+            text-align: center;
         }
 
         /* Tab Bar */
@@ -83,7 +86,8 @@
             padding: 12px 16px;
             cursor: pointer;
             font-size: 0.9em;
-            text-align: center; /* Centralizar os botões */
+            align-items: center;
+            text-align: center;
         }
 
         .tab-bar button.active {
@@ -120,25 +124,30 @@
 
         .chat-item .chat-details {
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .chat-item .chat-details .name {
             font-weight: bold;
             margin-bottom: 5px;
-            text-align: left;
         }
 
         .chat-item .chat-details .message {
             color: var(--secondary-text);
             font-size: 0.9em;
-            text-align: left;
         }
 
         .chat-item .time {
             font-size: 0.8em;
             color: var(--secondary-text);
             margin-left: auto;
-            text-align: right;
+        }
+
+        .chat-item .delete-group {
+            margin-left: auto;
+            color: var(--secondary-text);
+            cursor: pointer;
         }
 
         /* Footer */
@@ -172,7 +181,6 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             z-index: 1;
-            overflow: auto; /* Adicionado para garantir que o conteúdo não saia do modal */
         }
 
         #newGroupModal .modal-content {
@@ -181,7 +189,7 @@
             margin: 50px auto;
             padding: 20px;
             border-radius: 5px;
-            text-align: center; /* Centralizar o conteúdo do modal */
+            text-align: center;
         }
 
         #newGroupModal h2 {
@@ -197,7 +205,6 @@
             border-radius: 5px;
             background-color: #2a3942;
             color: var(--white);
-            text-align: center;
         }
 
         #newGroupModal button {
@@ -206,15 +213,6 @@
             border: none;
             border-radius: 5px;
             padding: 10px 20px;
-            cursor: pointer;
-        }
-
-        #newGroupModal .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-            color: var(--secondary-text);
             cursor: pointer;
         }
 
@@ -231,44 +229,8 @@
             display: none;
         }
 
-        /* Configurações do Grupo */
-        #groupSettingsModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 2;
-            overflow: auto; /* Adicionado para garantir que o conteúdo não saia do modal */
-        }
-
-        #groupSettingsModal .modal-content {
-            background-color: var(--panel-color);
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 5px;
-            text-align: center; /* Centralizar o conteúdo do modal */
-        }
-
-        #groupSettingsModal h2 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-
-        #groupSettingsModal .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-            color: var(--secondary-text);
-            cursor: pointer;
-        }
-
-                /* Delete Group Modal */
-        #deleteGroupModal {
+        /* Configurações */
+        #settingsModal {
             display: none;
             position: fixed;
             top: 0;
@@ -279,105 +241,29 @@
             z-index: 3;
         }
 
-        #deleteGroupModal .modal-content {
+        #settingsModal .modal-content {
             background-color: var(--panel-color);
             max-width: 400px;
             margin: 50px auto;
             padding: 20px;
             border-radius: 5px;
-            text-align: center; /* Centralizar o conteúdo do modal */
         }
 
-        #deleteGroupModal h2 {
+        #settingsModal h2 {
             margin-top: 0;
             margin-bottom: 10px;
         }
 
-        #deleteGroupModal button {
+        #settingsModal button {
             background-color: var(--primary-color);
             color: var(--white);
             border: none;
             border-radius: 5px;
             padding: 10px 20px;
-            cursor: pointer;
-            margin: 0 10px;
-        }
-
-        #deleteGroupModal .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-            color: var(--secondary-text);
-            cursor: pointer;
-        }
-
-                /* Clear Data Modal */
-        #clearDataModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 4;
-        }
-
-        #clearDataModal .modal-content {
-            background-color: var(--panel-color);
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 5px;
-            text-align: center; /* Centralizar o conteúdo do modal */
-        }
-
-        #clearDataModal h2 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-
-        #clearDataModal button {
-            background-color: var(--primary-color);
-            color: var(--white);
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-            margin: 0 10px;
-        }
-
-        #clearDataModal .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5em;
-            color: var(--secondary-text);
-            cursor: pointer;
-        }
-            /* Settings Menu */
-        #settingsMenu {
-            display: none;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--panel-color);
-            border-radius: 5px;
-            padding: 10px;
-            z-index: 5;
-        }
-
-        #settingsMenu button {
-            background-color: transparent;
-            border: none;
-            color: var(--white);
-            padding: 8px 16px;
             cursor: pointer;
             display: block;
-            text-align: left;
+            margin-bottom: 10px;
         }
-
     </style>
 </head>
 <body>
@@ -387,12 +273,7 @@
             <div class="icons">
                 <i class="fas fa-camera"></i>
                 <i class="fas fa-search"></i>
-                <i class="fas fa-ellipsis-v" onclick="toggleSettingsMenu()"></i>
-            </div>
-                         <!-- Settings Menu -->
-            <div id="settingsMenu">
-                <button onclick="openClearDataModal()">Limpar Dados</button>
-                <button onclick="closeSettingsMenu()">Fechar Menu</button>
+                <i class="fas fa-ellipsis-v" onclick="openSettingsModal()"></i>
             </div>
         </header>
 
@@ -434,30 +315,17 @@
         </div>
     </div>
 
-        <!-- Delete Group Modal -->
-    <div id="deleteGroupModal">
+    <!-- Modal para configurações -->
+    <div id="settingsModal">
         <div class="modal-content">
-            <span class="close-button" onclick="closeDeleteGroupModal()">×</span>
-            <h2>Excluir Grupo</h2>
-            <p>Tem certeza que deseja excluir este grupo?</p>
-            <button onclick="deleteGroupConfirm()">Sim</button>
-            <button onclick="closeDeleteGroupModal()">Não</button>
-        </div>
-    </div>
-
-        <!-- Clear Data Modal -->
-    <div id="clearDataModal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeClearDataModal()">×</span>
-            <h2>Limpar Dados do Firebase</h2>
-            <p>Tem certeza que deseja limpar todos os dados do Firebase?</p>
-            <button onclick="clearDataConfirm()">Sim</button>
-            <button onclick="closeClearDataModal()">Não</button>
+            <span class="close-button" onclick="closeSettingsModal()">×</span>
+            <h2>Configurações</h2>
+            <button onclick="clearFirebaseData()">Limpar todos os dados</button>
         </div>
     </div>
 
     <script type="module">
-                // Import the functions you need from the SDKs you need
+        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
         import { getDatabase, ref, push, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
@@ -480,7 +348,6 @@
         const database = getDatabase(app);
 
         let newGroup; // Armazenar informações do novo grupo
-        let selectedGroupId; // Armazenar o ID do grupo selecionado para exclusão
 
         window.openNewGroupModal = function () {
             document.getElementById("newGroupModal").style.display = "block";
@@ -539,17 +406,14 @@
                     <div class="message">Grupo criado!</div>
                 </div>
                 <span class="time">Agora</span>
+                <i class="fas fa-trash delete-group" onclick="deleteGroup('${group.id}')"></i>
             `;
-
-              // Adiciona um evento de clique para abrir chat.html
-            listItem.addEventListener('click', () => openChatPage(group.id));
-            // Adiciona um evento para mostrar a opção de deletar o grupo
-            listItem.addEventListener('contextmenu', (event) => {
-                event.preventDefault(); // Evita o menu de contexto padrão do navegador
-                selectedGroupId = group.id; // Salva o ID do grupo selecionado
-                openDeleteGroupModal(); // Abre o modal de confirmação de exclusão
+            // Adiciona um evento de clique para abrir chat.html
+            listItem.addEventListener('click', (event) => {
+                if (!event.target.classList.contains('delete-group')) {
+                    openChatPage(group.id); // Passa o ID do grupo
+                }
             });
-
             chatList.appendChild(listItem);
         }
 
@@ -561,64 +425,14 @@
             window.open('chat.html', '_blank');
         }
 
-        // Delete Group Functions
-        window.openDeleteGroupModal = function () {
-            document.getElementById("deleteGroupModal").style.display = "block";
-        }
-
-        window.closeDeleteGroupModal = function () {
-            document.getElementById("deleteGroupModal").style.display = "none";
-            selectedGroupId = null; // Limpa o ID do grupo selecionado
-        }
-
-        window.deleteGroupConfirm = async function () {
-            if (selectedGroupId) {
-                // Remove o grupo do Firebase
-                const groupRef = ref(database, `groups/${selectedGroupId}`);
-                await remove(groupRef);
-
-                // Atualiza a lista de chats após a exclusão
-                loadGroupsFromFirebase();
-                closeDeleteGroupModal();
-            }
-        }
-
-                // Clear Data Functions
-        window.openClearDataModal = function () {
-            document.getElementById("clearDataModal").style.display = "block";
-        }
-
-        window.closeClearDataModal = function () {
-            document.getElementById("clearDataModal").style.display = "none";
-        }
-
-         window.clearDataConfirm = async function () {
-            // Remove todos os grupos do Firebase
-            const groupsRef = ref(database, 'groups');
-            await remove(groupsRef);
-
-            // Atualiza a lista de chats após a exclusão
-            loadGroupsFromFirebase();
-            closeClearDataModal();
-        }
-                 // Settings Menu Functions
-        window.toggleSettingsMenu = function () {
-            const menu = document.getElementById("settingsMenu");
-            menu.style.display = menu.style.display === "none" ? "block" : "none";
-        }
-
-           window.closeSettingsMenu = function () {
-            const menu = document.getElementById("settingsMenu");
-            menu.style.display = "none";
-        }
-        window.openGroupSettingsModal = function() {
+         window.openGroupSettingsModal = function() {
             document.getElementById("groupSettingsModal").style.display = "block";
         }
 
         window.closeGroupSettingsModal = function() {
             document.getElementById("groupSettingsModal").style.display = "none";
         }
-    
+
         async function loadGroupsFromFirebase() {
             const chatList = document.getElementById("chatList");
             chatList.innerHTML = ""; // Limpa a lista de chats existente
@@ -640,6 +454,28 @@
                 console.log("No groups found in Firebase.");
             }
         }
+
+        window.deleteGroup = async function (groupId) {
+            const groupRef = ref(database, `groups/${groupId}`);
+            await remove(groupRef);
+            loadGroupsFromFirebase(); // Recarrega a lista após a exclusão
+        }
+
+        window.openSettingsModal = function() {
+            document.getElementById("settingsModal").style.display = "block";
+        }
+
+        window.closeSettingsModal = function() {
+            document.getElementById("settingsModal").style.display = "none";
+        }
+
+        window.clearFirebaseData = async function() {
+            const groupsRef = ref(database, 'groups');
+            await remove(groupsRef);
+            loadGroupsFromFirebase(); // Recarrega a lista após a limpeza
+            closeSettingsModal();
+        }
+        
 
         // Carrega os grupos do Firebase ao carregar a página
         loadGroupsFromFirebase();
