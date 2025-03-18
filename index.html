@@ -27,9 +27,6 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 0;
-            display: grid;
-            grid-template-rows: auto auto auto 1fr auto;
-            height: 100vh;
         }
 
         /* Header */
@@ -58,6 +55,10 @@
         .search-bar {
             padding: 10px;
             background-color: var(--panel-color);
+            /* Ajustado para ocupar 95% da largura e alinhado corretamente */
+            width: 95%;
+            margin: 0 auto;
+            box-sizing: border-box; /* Garante que o padding não afete a largura total */
         }
 
         .search-bar input {
