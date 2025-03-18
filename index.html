@@ -27,6 +27,9 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 0;
+            display: grid;
+            grid-template-rows: auto auto auto 1fr auto;
+            height: 100vh;
         }
 
         /* Header */
@@ -53,16 +56,17 @@
 
         /* Search Bar */
         .search-bar {
-            padding: 10px;
             background-color: var(--panel-color);
-            /* Ajustado para ocupar 95% da largura e alinhado corretamente */
-            width: 95%;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            /* Reduz a largura e centraliza */
+            width: 96%;
             margin: 0 auto;
-            box-sizing: border-box; /* Garante que o padding não afete a largura total */
         }
 
         .search-bar input {
-            width: 100%;
+            flex: 1; /* Permite que o input preencha o espaço restante */
             padding: 8px;
             border: none;
             border-radius: 5px;
