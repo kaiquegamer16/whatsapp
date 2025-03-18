@@ -153,7 +153,7 @@
 
         // Carregar o ID do grupo do localStorage
         const groupId = localStorage.getItem('currentGroupId');
-          let user;
+        let user;
         async function loadGroupData(groupId) {
             if (groupId) {
                 const groupRef = ref(database, `groups/${groupId}`); // Referência ao nó do grupo específico
@@ -208,7 +208,7 @@
                    // userId: user.id // caso vc queira criar usuario id no perfil  
                 });
                 document.getElementById('messageInput').value = '';
-                displayMessage(message);
+                 loadMessages(groupId)
             }
                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }
