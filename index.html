@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Público (Beta) - Tema Escuro Moderno</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         /* Variáveis de estilo para facilitar a customização */
         :root {
-            --primary-color: #64ffda;          /* Cor principal (destaque) */
-            --secondary-color: #ccd6f6;       /* Cor secundária (texto) */
-            --background-color: #0a192f;      /* Cor de fundo */
-            --panel-background-color: #112240; /* Cor de fundo dos painéis */
-            --header-height: 60px;             /* Altura do cabeçalho */
-            --border-radius: 8px;              /* Raio dos cantos */
-            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte */
+            --primary-color: #64ffda;
+            /* Cor principal (destaque) */
+            --secondary-color: #ccd6f6;
+            /* Cor secundária (texto) */
+            --background-color: #0a192f;
+            /* Cor de fundo */
+            --panel-background-color: #112240;
+            /* Cor de fundo dos painéis */
+            --header-height: 60px;
+            /* Altura do cabeçalho */
+            --border-radius: 8px;
+            /* Raio dos cantos */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Fonte */
             --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
@@ -39,7 +47,8 @@
             flex-direction: column;
             height: 85vh;
             width: 90%;
-            max-width: 600px; /* Aumentando a largura máxima */
+            max-width: 600px;
+            /* Aumentando a largura máxima */
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: var(--box-shadow);
@@ -48,7 +57,8 @@
 
         /* Cabeçalho do chat */
         .chat-header {
-            background-color: #1e3a8a; /* Cor mais vibrante */
+            background-color: #1e3a8a;
+            /* Cor mais vibrante */
             color: var(--secondary-color);
             padding: 1em;
             display: flex;
@@ -59,9 +69,12 @@
         }
 
         .chat-header .title {
-            font-size: 1.5em; /* Tamanho maior */
-            font-weight: 600;  /* Mais forte */
-            letter-spacing: 0.5px; /* Espaçamento entre letras */
+            font-size: 1.5em;
+            /* Tamanho maior */
+            font-weight: 600;
+            /* Mais forte */
+            letter-spacing: 0.5px;
+            /* Espaçamento entre letras */
         }
 
         .profile-icon {
@@ -74,25 +87,29 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            border: 2px solid var(--primary-color); /* Destaque */
+            border: 2px solid var(--primary-color);
+            /* Destaque */
             transition: transform 0.3s ease;
         }
 
         .profile-icon:hover {
-            transform: scale(1.1); /* Leve efeito de zoom */
+            transform: scale(1.1);
+            /* Leve efeito de zoom */
         }
 
         .profile-icon img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            max-width: 100%; /* Garante que a imagem não distorça */
+            max-width: 100%;
+            /* Garante que a imagem não distorça */
         }
 
         /* Área de mensagens */
         .chat-messages {
             flex-grow: 1;
-            padding: 1.5em; /* Aumentando o padding */
+            padding: 1.5em;
+            /* Aumentando o padding */
             overflow-y: auto;
             background-color: var(--background-color);
             background-image: var(--chat-background-image);
@@ -101,20 +118,24 @@
         }
 
         .message {
-            margin-bottom: 1em; /* Aumentando o espaçamento */
+            margin-bottom: 1em;
+            /* Aumentando o espaçamento */
             padding: 1em;
             border-radius: var(--border-radius);
-            max-width: 75%; /* Aumentando a largura máxima */
+            max-width: 75%;
+            /* Aumentando a largura máxima */
             position: relative;
             display: flex;
             flex-direction: column;
             transition: background-color 0.2s ease;
             box-sizing: border-box;
-             word-break: break-word; /* Quebra palavras longas */
+            word-break: break-word;
+            /* Quebra palavras longas */
         }
 
         .message:hover {
-            background-color: #2d3748; /* Feedback visual */
+            background-color: #2d3748;
+            /* Feedback visual */
         }
 
         .sent {
@@ -166,7 +187,8 @@
             resize: none;
             min-height: 45px;
             font-size: 1em;
-            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         #chatInput::placeholder {
@@ -239,10 +261,10 @@
         .group-list-container,
         #settingsPanel,
         #welcomeScreen,
-        #passwordPanel,
-        #successPanel, /* Adicionado painéis de feedback */
-        #errorPanel
-        {
+        #groupAccessPanel,
+        #successPanel,
+        /* Adicionado painéis de feedback */
+        #errorPanel {
             position: fixed;
             top: 0;
             left: 0;
@@ -260,10 +282,9 @@
         .group-list-container.show,
         #settingsPanel.show,
         #welcomeScreen.show,
-        #passwordPanel.show,
+        #groupAccessPanel.show,
         #successPanel.show,
-        #errorPanel.show
-        {
+        #errorPanel.show {
             display: flex;
         }
 
@@ -272,9 +293,8 @@
         .group-list-box,
         #settingsBox,
         #welcomeBox,
-        #passwordBox,
-        .feedback-box
-         {
+        #groupAccessBox,
+        .feedback-box {
             background-color: var(--panel-background-color);
             padding: 20px;
             border-radius: var(--border-radius);
@@ -282,8 +302,10 @@
             max-width: 450px;
             text-align: center;
             box-shadow: var(--box-shadow);
-              overflow: hidden; /* Evita que o conteúdo saia do painel */
-             box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            overflow: hidden;
+            /* Evita que o conteúdo saia do painel */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         .edit-profile-box h2,
@@ -291,8 +313,8 @@
         .group-list-box h2,
         #settingsBox h2,
         #welcomeBox h2,
-        #passwordBox h2,
-         .feedback-box h2{
+        #groupAccessBox h2,
+        .feedback-box h2 {
             color: var(--secondary-color);
             margin-bottom: 15px;
         }
@@ -300,11 +322,10 @@
         .edit-profile-box input[type="text"],
         .edit-profile-box input[type="file"],
         .create-group-box input[type="text"],
-         .create-group-box input[type="password"],
         #settingsBox input[type="file"],
         #welcomeBox input[type="text"],
         #welcomeBox input[type="file"],
-          #passwordBox input[type="password"] {
+        #groupAccessBox input[type="text"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
@@ -314,25 +335,24 @@
             color: var(--secondary-color);
             font-size: 1em;
             transition: border-color 0.3s ease;
-              box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         .edit-profile-box input[type="text"]::placeholder,
         .create-group-box input[type="text"]::placeholder,
-        .create-group-box input[type="password"]::placeholder,
         #welcomeBox input[type="text"]::placeholder,
-           #passwordBox input[type="password"]::placeholder{
+        #groupAccessBox input[type="text"]::placeholder {
             color: #a0aec0;
         }
 
         .edit-profile-box input[type="text"]:focus,
         .edit-profile-box input[type="file"]:focus,
         .create-group-box input[type="text"]:focus,
-        .create-group-box input[type="password"]:focus,
         #settingsBox input[type="file"]:focus,
         #welcomeBox input[type="text"]:focus,
         #welcomeBox input[type="file"]:focus,
-           #passwordBox input[type="password"]:focus {
+        #groupAccessBox input[type="text"]:focus {
             border-color: var(--primary-color);
             outline: none;
         }
@@ -341,8 +361,8 @@
         .create-group-box button,
         #settingsBox .close-button,
         #welcomeBox button,
-          #passwordBox button,
-           .feedback-box button{
+        #groupAccessBox button,
+        .feedback-box button {
             background-color: var(--primary-color);
             color: var(--background-color);
             border: none;
@@ -360,9 +380,8 @@
         .create-group-box button:hover,
         #settingsBox .close-button:hover,
         #welcomeBox button:hover,
-          #passwordBox button:hover,
-            .feedback-box button:hover
-           {
+        #groupAccessBox button:hover,
+        .feedback-box button:hover {
             background-color: #4caf50;
         }
 
@@ -375,8 +394,10 @@
             object-fit: cover;
             margin-bottom: 15px;
             border: 3px solid var(--primary-color);
-            max-width: 100%; /* Garante que a imagem não distorça */
-              box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            max-width: 100%;
+            /* Garante que a imagem não distorça */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         #profileImageInput,
@@ -430,7 +451,8 @@
             border-radius: var(--border-radius);
             transition: background-color 0.3s ease;
             cursor: pointer;
-             box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         .group-list-box li:hover {
@@ -474,7 +496,8 @@
             max-width: 100%;
             border-radius: 10px;
             margin-top: 8px;
-            max-width: 100%; /* Garante que a imagem não distorça */
+            max-width: 100%;
+            /* Garante que a imagem não distorça */
         }
 
         /* Esconde o input de arquivo */
@@ -495,15 +518,18 @@
             position: relative;
             overflow: hidden;
             border-radius: var(--border-radius);
-            max-width: 100%; /* Garante que a imagem não distorça */
-            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            max-width: 100%;
+            /* Garante que a imagem não distorça */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         #mediaPreview {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
-            max-width: 100%; /* Garante que a imagem não distorça */
+            max-width: 100%;
+            /* Garante que a imagem não distorça */
         }
 
         #mediaPreviewArea #downloadButton {
@@ -555,7 +581,8 @@
             color: var(--secondary-color);
             resize: none;
             min-height: 45px;
-            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         /* Estilos para o áudio */
@@ -563,8 +590,10 @@
             width: 100%;
             margin-top: 8px;
             border-radius: var(--border-radius);
-            max-width: 100%; /* Garante que a imagem não distorça */
-            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            max-width: 100%;
+            /* Garante que a imagem não distorça */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         /* Estilos para a pré-visualização de áudio */
@@ -578,14 +607,17 @@
             position: relative;
             overflow: hidden;
             border-radius: var(--border-radius);
-            max-width: 100%; /* Garante que a imagem não distorça */
-            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            max-width: 100%;
+            /* Garante que a imagem não distorça */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
 
         #audioPreview {
             max-width: 100%;
             object-fit: contain;
-            max-width: 100%; /* Garante que a imagem não distorça */
+            max-width: 100%;
+            /* Garante que a imagem não distorça */
         }
 
         /* Estilos para o painel de atualizações */
@@ -633,14 +665,17 @@
         .update-panel .close-button:hover {
             background-color: #388e3c;
         }
-// Estilos para o painel de senha
-        #passwordBox {
+
+        /* Estilos para o painel de acesso ao grupo */
+        #groupAccessBox {
             display: flex;
             flex-direction: column;
             align-items: center;
-             box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
-        #passwordBox input[type="password"] {
+
+        #groupAccessBox input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -648,9 +683,11 @@
             border-radius: 5px;
             background-color: #4f4f4f;
             color: #e0e0e0;
-              box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
-        #passwordBox button {
+
+        #groupAccessBox button {
             background-color: #4caf50;
             color: white;
             border: none;
@@ -660,355 +697,398 @@
             width: 100%;
             transition: background-color 0.3s ease;
         }
-        #passwordBox button:hover {
+
+        #groupAccessBox button:hover {
             background-color: #388e3c;
         }
-// Estilos para os painéis de feedback
+
+        /* Estilos para os painéis de feedback */
         .feedback-box {
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+            box-sizing: border-box;
+            /* Garante que o padding não aumente o tamanho total */
         }
-
-        #passwordBox button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-
-        #passwordBox button:hover {
-            background-color: #388e3c;
-        }
-
     </style>
 </head>
+
 <body>
-<div class="chat-container">
-    <div class="chat-header">
-        <div class="title">Chat Público</div>
-        <div class="profile-icon" id="profileIcon">
-            <img src="https://via.placeholder.com/100" id="headerProfileImage" alt="Foto de Perfil">
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="title">Chat Público</div>
+            <div class="profile-icon" id="profileIcon">
+                <img src="https://via.placeholder.com/100" id="headerProfileImage" alt="Foto de Perfil">
+            </div>
         </div>
-    </div>
-    <div class="chat-messages" id="messages">
-        <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
-    </div>
-    <div id="typingIndicator"></div>
-    <div class="chat-input-area">
-        <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
-        <div id="mediaPreviewArea">
-            <img id="mediaPreview" src="#" alt="Prévia da Mídia" style="display: none;">
-            <video id="videoPreview" controls style="display: none;"></video>
-            <audio id="audioPreview" src="#" alt="Prévia da Mídia" controls style="display: none;"></audio>
-            <button id="downloadButton" style="display: none;">Baixar Mídia</button>
+        <div class="chat-messages" id="messages">
+            <div class="beta-message">Este aplicativo está em desenvolvimento (Beta).</div>
         </div>
-        <input type="file" id="fileInput" accept="image/*, video/*">
-        <input type="file" id="audioInput" accept="audio/*">  <!-- Adicionado input para áudio -->
-        <button id="fileButton" class="icon-button"><i class="fas fa-paperclip"></i></button>
-        <button id="audioButton" class="icon-button"><i class="fas fa-microphone"></i></button>  <!-- Adicionado botão para áudio -->
-        <button id="sendButton" class="icon-button">
-            <i class="fas fa-paper-plane"></i>
-        </button>
-        <button id="createGroupButton" class="icon-button"><i class="fas fa-users"></i></button>
-        <button id="viewGroupsButton" class="icon-button"><i class="fas fa-list"></i></button>
-        <button id="cancelMediaButton" class="icon-button" style="display: none;"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="profile-menu" id="profileMenu">
-        <ul>
-            <li id="editProfileOption">Editar Perfil</li>
-            <li id="clearChatOption">Limpar Chat</li>
-            <li id="settingsOption">Configurações</li>
-        </ul>
-    </div>
-    <!-- Tela de edição de perfil (escondida inicialmente) -->
-    <div class="edit-profile-container" id="editProfileContainer">
-        <div class="edit-profile-box">
-            <h2>Editar Perfil</h2>
-            <img id="profileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem"/>
-            <label for="profileImageInput" class="upload-button">Escolher Foto</label>
-            <input type="file" id="profileImageInput" accept="image/*">
-            <input type="text" id="newNickInput" placeholder="Seu Nick">
-            <button id="saveProfileButton">Salvar</button>
+        <div id="typingIndicator"></div>
+        <div class="chat-input-area">
+            <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
+            <div id="mediaPreviewArea">
+                <img id="mediaPreview" src="#" alt="Prévia da Mídia" style="display: none;">
+                <video id="videoPreview" controls style="display: none;"></video>
+                <audio id="audioPreview" src="#" alt="Prévia da Mídia" controls style="display: none;"></audio>
+                <button id="downloadButton" style="display: none;">Baixar Mídia</button>
+            </div>
+            <input type="file" id="fileInput" accept="image/*, video/*">
+            <input type="file" id="audioInput" accept="audio/*">
+            <!-- Adicionado input para áudio -->
+            <button id="fileButton" class="icon-button"><i class="fas fa-paperclip"></i></button>
+            <button id="audioButton" class="icon-button"><i class="fas fa-microphone"></i></button>
+            <!-- Adicionado botão para áudio -->
+            <button id="sendButton" class="icon-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+            <button id="createGroupButton" class="icon-button"><i class="fas fa-users"></i></button>
+            <button id="viewGroupsButton" class="icon-button"><i class="fas fa-list"></i></button>
+            <button id="cancelMediaButton" class="icon-button" style="display: none;"><i
+                    class="fas fa-times"></i></button>
         </div>
-    </div>
-    <!-- Tela de boas vindas -->
-    <div id="welcomeScreen">
-        <div id="welcomeBox">
-            <h2>Bem-vindo(a)!</h2>
-            <p>Para começar a usar o chat, defina seu nick e imagem de perfil.</p>
-            <img id="welcomeProfileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem"/>
-            <label for="welcomeProfileImageInput" class="upload-button">Escolher Foto</label>
-            <input type="file" id="welcomeProfileImageInput" accept="image/*">
-            <input type="text" id="welcomeNickInput" placeholder="Seu Nick">
-            <button id="saveWelcomeButton">Entrar no Chat</button>
-        </div>
-    </div>
-    <!-- Painel de Atualizações -->
-    <div class="update-panel" id="updatePanel">
-        <h3>Novas Funcionalidades</h3>
-        <ul>
-            <li>✅ Correções no sistema de senhas.</li>
-            <li>✅ Feedback visual ao entrar no grupo.</li>
-            <li>✅ Vídeos funcionando corretamente.</li>
-        </ul>
-        <button class="close-button" id="closeUpdatePanel">Fechar</button>
-    </div>
-    <!-- Painel de Criação de Grupos -->
-    <div class="create-group-container" id="createGroupContainer">
-        <div class="create-group-box">
-            <h2>Criar Grupo</h2>
-            <input type="text" id="groupNameInput" placeholder="Nome do Grupo">
-            <input type="password" id="groupPasswordInput" placeholder="Senha do Grupo (opcional)">
-            <button id="createGroupButtonConfirm">Criar</button>
-        </div>
-    </div>
-    <!-- Painel de Lista de Grupos -->
-    <div class="group-list-container" id="groupListContainer">
-        <div class="group-list-box">
-            <h2>Grupos</h2>
-            <ul id="groupList">
-                <!-- Grupos serão listados aqui -->
+        <div class="profile-menu" id="profileMenu">
+            <ul>
+                <li id="editProfileOption">Editar Perfil</li>
+                <li id="clearChatOption">Limpar Chat</li>
+                <li id="settingsOption">Configurações</li>
             </ul>
         </div>
-    </div>
-    <!-- Painel de Configurações -->
-    <div id="settingsPanel">
-        <div id="settingsBox">
-            <h2>Configurações</h2>
-            <label><input type="checkbox" id="notificationSetting">Notificações</label>
-            <label><input type="checkbox" id="darkModeSetting">Modo Escuro</label>
-            <label><input type="checkbox" id="enterToSend">Enter Envia Mensagem</label>
-            <!-- Adicionando a opção de imagem de fundo -->
-            <label for="backgroundImageInput" class="upload-button">Imagem de Fundo</label>
-            <input type="file" id="backgroundImageInput" accept="image/*">
-            <button class="close-button" id="closeSettingsPanel">Fechar</button>
+        <!-- Tela de edição de perfil (escondida inicialmente) -->
+        <div class="edit-profile-container" id="editProfileContainer">
+            <div class="edit-profile-box">
+                <h2>Editar Perfil</h2>
+                <img id="profileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem" />
+                <label for="profileImageInput" class="upload-button">Escolher Foto</label>
+                <input type="file" id="profileImageInput" accept="image/*">
+                <input type="text" id="newNickInput" placeholder="Seu Nick">
+                <button id="saveProfileButton">Salvar</button>
+            </div>
         </div>
-    </div>
-
-    <!-- Painel de Senha -->
-    <div id="passwordPanel">
-        <div id="passwordBox">
-            <h2>Senha do Grupo</h2>
-            <input type="password" id="passwordInput" placeholder="Digite a senha">
-            <button id="confirmPasswordButton">Confirmar</button>
+        <!-- Tela de boas vindas -->
+        <div id="welcomeScreen">
+            <div id="welcomeBox">
+                <h2>Bem-vindo(a)!</h2>
+                <p>Para começar a usar o chat, defina seu nick e imagem de perfil.</p>
+                <img id="welcomeProfileImagePreview" src="https://via.placeholder.com/100" alt="Prévia da Imagem" />
+                <label for="welcomeProfileImageInput" class="upload-button">Escolher Foto</label>
+                <input type="file" id="welcomeProfileImageInput" accept="image/*">
+                <input type="text" id="welcomeNickInput" placeholder="Seu Nick">
+                <button id="saveWelcomeButton">Entrar no Chat</button>
+            </div>
         </div>
-    </div>
-
-    <!-- Painel de Sucesso -->
-    <div id="successPanel">
-        <div class="feedback-box">
-            <h2>Senha correta!</h2>
-            <p>Você está no grupo, aproveite o bate-papo.</p>
-            <button id="okSuccessButton">OK</button>
+        <!-- Painel de Atualizações -->
+        <div class="update-panel" id="updatePanel">
+            <h3>Novas Funcionalidades</h3>
+            <ul>
+                <li>✅ Correções no sistema de senhas.</li>
+                <li>✅ Feedback visual ao entrar no grupo.</li>
+                <li>✅ Vídeos funcionando corretamente.</li>
+            </ul>
+            <button class="close-button" id="closeUpdatePanel">Fechar</button>
         </div>
-    </div>
-
-    <!-- Painel de Erro -->
-    <div id="errorPanel">
-        <div class="feedback-box">
-            <h2>Senha incorreta!</h2>
-            <p>Por favor, coloque a senha correta.</p>
-            <button id="okErrorButton">OK</button>
+        <!-- Painel de Criação de Grupos -->
+        <div class="create-group-container" id="createGroupContainer">
+            <div class="create-group-box">
+                <h2>Criar Grupo</h2>
+                <input type="text" id="groupNameInput" placeholder="Nome do Grupo">
+                <button id="createGroupButtonConfirm">Criar</button>
+                <p id="groupIdDisplay" style="display: none;">ID do Grupo: <span id="groupIdValue"></span></p>
+            </div>
         </div>
+        <!-- Painel de Lista de Grupos -->
+        <div class="group-list-container" id="groupListContainer">
+            <div class="group-list-box">
+                <h2>Grupos</h2>
+                <ul id="groupList">
+                    <!-- Grupos serão listados aqui -->
+                </ul>
+            </div>
+        </div>
+        <!-- Painel de Configurações -->
+        <div id="settingsPanel">
+            <div id="settingsBox">
+                <h2>Configurações</h2>
+                <label><input type="checkbox" id="notificationSetting">Notificações</label>
+                <label><input type="checkbox" id="darkModeSetting">Modo Escuro</label>
+                <label><input type="checkbox" id="enterToSend">Enter Envia Mensagem</label>
+                <!-- Adicionando a opção de imagem de fundo -->
+                <label for="backgroundImageInput" class="upload-button">Imagem de Fundo</label>
+                <input type="file" id="backgroundImageInput" accept="image/*">
+                <button class="close-button" id="closeSettingsPanel">Fechar</button>
+            </div>
+        </div>
+        <!-- Painel de Acesso ao Grupo -->
+        <div id="groupAccessPanel">
+            <div id="groupAccessBox">
+                <h2>Acessar Grupo</h2>
+                <input type="text" id="groupIdInput" placeholder="Digite o ID do Grupo">
+                <button id="confirmGroupIdButton">Entrar</button>
+            </div>
+        </div>
+        <!-- Painel de Sucesso -->
+        <div id="successPanel">
+            <div class="feedback-box">
+                <h2>Sucesso!</h2>
+                <p>Você está no grupo, aproveite o bate-papo.</p>
+                <button id="okSuccessButton">OK</button>
+            </div>
+        </div>
+        <!-- Painel de Erro -->
+        <div id="errorPanel">
+            <div class="feedback-box">
+                <h2>Erro!</h2>
+                <p>ID de grupo inválido.</p>
+                <button id="okErrorButton">OK</button>
+            </div>
+        </div>
+        <!-- Elemento de áudio para a notificação -->
+        <audio id="notificationSound" preload="auto">
+            <source src="notifica.mp3" type="audio/mp3">
+            Seu navegador não suporta o elemento de áudio.
+        </audio>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, set, update, remove, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js"; // Importe a função get
 
-    <!-- Elemento de áudio para a notificação -->
-    <audio id="notificationSound" preload="auto">
-        <source src="notifica.mp3" type="audio/mp3">
-        Seu navegador não suporta o elemento de áudio.
-    </audio>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/localforage@1.10.0/dist/localforage.min.js"></script>
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, set, update, remove, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js"; // Importe a função get
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE", // REMOVER ESSA CHAVE ANTES DE COMPARTILHAR!
+            authDomain: "banco-5a678.firebaseapp.com",
+            databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
+            projectId: "banco-5a678",
+            storageBucket: "banco-5a678.firebasestorage.app",
+            messagingSenderId: "943801310064",
+            appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+            measurementId: "G-DEER2QFNXL"
+        };
+        // Inicialização do Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-    // Configuração do Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE", // REMOVER ESSA CHAVE ANTES DE COMPARTILHAR!
-        authDomain: "banco-5a678.firebaseapp.com",
-        databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
-        projectId: "banco-5a678",
-        storageBucket: "banco-5a678.firebasestorage.app",
-        messagingSenderId: "943801310064",
-        appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
-        measurementId: "G-DEER2QFNXL"
-    };
-    // Inicialização do Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
+        // Referências do Banco de Dados
+        const messagesRef = ref(database, 'messages');
+        const groupsRef = ref(database, 'groups');
+        const typingRef = ref(database, 'typing'); //Referência para o "digitando..."
 
-    // Referências do Banco de Dados
-    const messagesRef = ref(database, 'messages');
-    const groupsRef = ref(database, 'groups');
-    const typingRef = ref(database, 'typing'); //Referência para o "digitando..."
+        // Elementos do DOM
+        const messagesDiv = document.getElementById('messages');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+        const profileIcon = document.getElementById('profileIcon');
+        const profileMenu = document.getElementById('profileMenu');
+        const typingIndicator = document.getElementById('typingIndicator'); //Elemento "digitando..."
+        const notificationSound = document.getElementById('notificationSound'); //Elemento de áudio
+        const fileButton = document.getElementById('fileButton'); //Botão de Anexar Arquivo
+        const fileInput = document.getElementById('fileInput'); //Input de Arquivo
+        const audioInput = document.getElementById('audioInput'); // Input de Áudio
+        const audioButton = document.getElementById('audioButton'); // Botão de áudio
+        const mediaPreviewArea = document.getElementById('mediaPreviewArea'); // Área de visualização da mídia
+        const mediaPreview = document.getElementById('mediaPreview'); // Elemento img para a visualização da imagem
+        const videoPreview = document.getElementById('videoPreview'); // Elemento video para a visualização do vídeo
+        const audioPreview = document.getElementById('audioPreview'); // Elemento audio para a visualização do áudio
+        const downloadButton = document.getElementById('downloadButton'); // Botão de download
+        const cancelMediaButton = document.getElementById('cancelMediaButton'); // Botão de cancelar
 
-    // Elementos do DOM
-    const messagesDiv = document.getElementById('messages');
-    const chatInput = document.getElementById('chatInput');
-    const sendButton = document.getElementById('sendButton');
-    const profileIcon = document.getElementById('profileIcon');
-    const profileMenu = document.getElementById('profileMenu');
-    const typingIndicator = document.getElementById('typingIndicator'); //Elemento "digitando..."
-    const notificationSound = document.getElementById('notificationSound'); //Elemento de áudio
-    const fileButton = document.getElementById('fileButton'); //Botão de Anexar Arquivo
-    const fileInput = document.getElementById('fileInput'); //Input de Arquivo
-    const audioInput = document.getElementById('audioInput'); // Input de Áudio
-    const audioButton = document.getElementById('audioButton'); // Botão de áudio
-    const mediaPreviewArea = document.getElementById('mediaPreviewArea'); // Área de visualização da mídia
-    const mediaPreview = document.getElementById('mediaPreview'); // Elemento img para a visualização da imagem
-    const videoPreview = document.getElementById('videoPreview'); // Elemento video para a visualização do vídeo
-    const audioPreview = document.getElementById('audioPreview'); // Elemento audio para a visualização do áudio
-    const downloadButton = document.getElementById('downloadButton'); // Botão de download
-    const cancelMediaButton = document.getElementById('cancelMediaButton'); // Botão de cancelar
+        //Elementos da tela de boas vindas
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const welcomeNickInput = document.getElementById('welcomeNickInput');
+        const welcomeProfileImageInput = document.getElementById('welcomeProfileImageInput');
+        const welcomeProfileImagePreview = document.getElementById('welcomeProfileImagePreview');
+        const saveWelcomeButton = document.getElementById('saveWelcomeButton');
 
-    //Elementos da tela de boas vindas
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    const welcomeNickInput = document.getElementById('welcomeNickInput');
-    const welcomeProfileImageInput = document.getElementById('welcomeProfileImageInput');
-    const welcomeProfileImagePreview = document.getElementById('welcomeProfileImagePreview');
-    const saveWelcomeButton = document.getElementById('saveWelcomeButton');
+        // Elementos de Imagem de Perfil
+        const headerProfileImage = document.getElementById('headerProfileImage');
+        const editProfileOption = document.getElementById('editProfileOption');
+        const clearChatOption = document.getElementById('clearChatOption'); //Opção Limpar Chat
+        const editProfileContainer = document.getElementById('editProfileContainer');
+        const newNickInput = document.getElementById('newNickInput');
+        const saveProfileButton = document.getElementById('saveProfileButton');
+        const profileImageInput = document.getElementById('profileImageInput');
+        const profileImagePreview = document.getElementById('profileImagePreview');
 
-    // Elementos de Imagem de Perfil
-    const headerProfileImage = document.getElementById('headerProfileImage');
-    const editProfileOption = document.getElementById('editProfileOption');
-    const clearChatOption = document.getElementById('clearChatOption'); //Opção Limpar Chat
-    const editProfileContainer = document.getElementById('editProfileContainer');
-    const newNickInput = document.getElementById('newNickInput');
-    const saveProfileButton = document.getElementById('saveProfileButton');
-    const profileImageInput = document.getElementById('profileImageInput');
-    const profileImagePreview = document.getElementById('profileImagePreview');
+        // Elementos do Painel de Atualizações
+        const updatePanel = document.getElementById('updatePanel');
+        const closeUpdatePanel = document.getElementById('closeUpdatePanel');
 
-    // Elementos do Painel de Atualizações
-    const updatePanel = document.getElementById('updatePanel');
-    const closeUpdatePanel = document.getElementById('closeUpdatePanel');
+        // Elementos do Painel de Criação de Grupos
+        const createGroupContainer = document.getElementById('createGroupContainer');
+        const groupNameInput = document.getElementById('groupNameInput');
+        const createGroupButtonConfirm = document.getElementById('createGroupButtonConfirm');
+        const createGroupButton = document.getElementById('createGroupButton');
+        const groupIdDisplay = document.getElementById('groupIdDisplay');
+        const groupIdValue = document.getElementById('groupIdValue');
 
-    // Elementos do Painel de Criação de Grupos
-    const createGroupContainer = document.getElementById('createGroupContainer');
-    const groupNameInput = document.getElementById('groupNameInput');
-    const groupPasswordInput = document.getElementById('groupPasswordInput');
-    const createGroupButtonConfirm = document.getElementById('createGroupButtonConfirm');
-    const createGroupButton = document.getElementById('createGroupButton');
+        // Elementos do Painel de Lista de Grupos
+        const groupListContainer = document.getElementById('groupListContainer');
+        const groupList = document.getElementById('groupList');
+        const viewGroupsButton = document.getElementById('viewGroupsButton');
 
-    // Elementos do Painel de Lista de Grupos
-    const groupListContainer = document.getElementById('groupListContainer');
-    const groupList = document.getElementById('groupList');
-    const viewGroupsButton = document.getElementById('viewGroupsButton');
+        // Elementos do Painel de Configurações
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsOption = document.getElementById('settingsOption');
+        const closeSettingsPanel = document.getElementById('closeSettingsPanel');
+        const notificationSetting = document.getElementById('notificationSetting');
+        const darkModeSetting = document.getElementById('darkModeSetting');
+        const enterToSend = document.getElementById('enterToSend');
+        const backgroundImageInput = document.getElementById('backgroundImageInput');
 
-    // Elementos do Painel de Configurações
-    const settingsPanel = document.getElementById('settingsPanel');
-    const settingsOption = document.getElementById('settingsOption');
-    const closeSettingsPanel = document.getElementById('closeSettingsPanel');
-    const notificationSetting = document.getElementById('notificationSetting');
-    const darkModeSetting = document.getElementById('darkModeSetting');
-    const enterToSend = document.getElementById('enterToSend');
-    const backgroundImageInput = document.getElementById('backgroundImageInput');
+        // Elementos do Painel de Acesso ao Grupo
+        const groupAccessPanel = document.getElementById('groupAccessPanel');
+        const groupAccessBox = document.getElementById('groupAccessBox');
+        const groupIdInput = document.getElementById('groupIdInput');
+        const confirmGroupIdButton = document.getElementById('confirmGroupIdButton');
 
-    // Elementos do Painel de Senha
-    const passwordPanel = document.getElementById('passwordPanel');
-    const passwordBox = document.getElementById('passwordBox');
-    const passwordInput = document.getElementById('passwordInput');
-    const confirmPasswordButton = document.getElementById('confirmPasswordButton');
+        // Elementos do Painel de Feedback
+        const successPanel = document.getElementById('successPanel');
+        const errorPanel = document.getElementById('errorPanel');
+        const okSuccessButton = document.getElementById('okSuccessButton');
+        const okErrorButton = document.getElementById('okErrorButton');
 
-    // Elementos do Painel de Feedback
-    const successPanel = document.getElementById('successPanel');
-    const errorPanel = document.getElementById('errorPanel');
-    const okSuccessButton = document.getElementById('okSuccessButton');
-    const okErrorButton = document.getElementById('okErrorButton');
+        // Variáveis Globais
+        let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
+        let currentProfileImageBase64 = localStorage.getItem('profileImage') || null;
+        let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
+        let conversationStarted = localStorage.getItem('conversationStarted') || null;
+        let currentGroupId = null;
+        let currentGroupAdmin = null; //Armazena o ID do administrador do grupo atual
 
-    // Variáveis Globais
-    let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
-    let currentProfileImageBase64 = localStorage.getItem('profileImage') || null;
-    let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
-    let conversationStarted = localStorage.getItem('conversationStarted') || null;
-    let currentGroupId = null;
-    let currentGroupAdmin = null; //Armazena o ID do administrador do grupo atual
+        let selectedMessageKey = null; // Rastreia a mensagem selecionada
+        let groupBeingJoined = null; // Rastreia o grupo que está sendo entrado
+        let joinedGroups = JSON.parse(localStorage.getItem('joinedGroups')) || {}; // Grupos que o usuário já entrou
 
-    let selectedMessageKey = null; // Rastreia a mensagem selecionada
-    let groupBeingJoined = null; // Rastreia o grupo que está sendo entrado
-    let joinedGroups = JSON.parse(localStorage.getItem('joinedGroups')) || {}; // Grupos que o usuário já entrou
+        //Funções de formatação de data e hora
+        const formatDate = (timestamp) => {
+            const date = new Date(timestamp);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+        const formatTime = (timestamp) => {
+            const date = new Date(timestamp);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        };
 
-    //Funções de formatação de data e hora
-    const formatDate = (timestamp) => {
-        const date = new Date(timestamp);
-        const day = date.getDate().toString().padStart(2, '0');
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
-    const formatTime = (timestamp) => {
-        const date = new Date(timestamp);
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
-    };
+        //Salva o userId no localStorage ao gerar um novo
+        if (!localStorage.getItem('userId')) {
+            localStorage.setItem('userId', currentUserId);
+        }
 
-    //Salva o userId no localStorage ao gerar um novo
-    if (!localStorage.getItem('userId')) {
-        localStorage.setItem('userId', currentUserId);
-    }
+        //Carrega a imagem e o nick salvos ao carregar a página
+        if (currentProfileImageBase64) {
+            headerProfileImage.src = currentProfileImageBase64;
+            profileImagePreview.src = currentProfileImageBase64;
+        }
 
-    //Carrega a imagem e o nick salvos ao carregar a página
-    if (currentProfileImageBase64) {
-        headerProfileImage.src = currentProfileImageBase64;
-        profileImagePreview.src = currentProfileImageBase64;
-    }
+        //Função para gerar um ID de usuário aleatório (simulação)
+        function generateUserId() {
+            return Math.random().toString(36).substring(2, 15);
+        }
 
-    //Função para gerar um ID de usuário aleatório (simulação)
-    function generateUserId() {
-        return Math.random().toString(36).substring(2, 15);
-    }
+        /**
+         * Função para converter um arquivo para Base64.
+         */
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
 
-    /**
-     * Função para converter um arquivo para Base64.
-     */
-    function toBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-    }
+        /**
+         * Evento de mudança no input de arquivo (imagens e vídeos).
+         */
+        fileInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
 
-    /**
-     * Evento de mudança no input de arquivo (imagens e vídeos).
-     */
-    fileInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const isImage = file.type.startsWith('image/');
-            const isVideo = file.type.startsWith('video/');
+                // Verifica o tamanho do arquivo
+                if (file.size > 5 * 1024 * 1024) { // Limite para 5MB (ajuste conforme necessário)
+                    alert("O arquivo excede o tamanho máximo permitido (5MB).");
+                    fileInput.value = ''; // Limpa o input
+                    return;
+                }
 
-            // Verifica o tamanho do arquivo
-            if (file.size > 5 * 1024 * 1024) { // Limite para 5MB (ajuste conforme necessário)
-                alert("O arquivo excede o tamanho máximo permitido (5MB).");
-                fileInput.value = ''; // Limpa o input
-                return;
+                mediaPreview.style.display = 'none';
+                videoPreview.style.display = 'none';
+                audioPreview.style.display = 'none';
+
+                if (isImage || isVideo) {
+                    try {
+                        const base64String = await toBase64(file);
+
+                        if (isImage) {
+                            mediaPreview.src = base64String;
+                            mediaPreview.style.display = 'block';
+                        } else {
+                            videoPreview.src = base64String;
+                            videoPreview.style.display = 'block';
+                            videoPreview.controls = true; //Mostra os controles do video
+                        }
+
+                        mediaPreviewArea.style.display = 'flex';
+                        chatInput.classList.add('hidden');
+                        cancelMediaButton.style.display = 'flex';
+
+                        sendButton.addEventListener('click', () => {
+                            if (currentGroupId) {
+                                let mediaType = isImage ? 'image' : 'video';
+                                push(ref(database, `messages/${currentGroupId}`), {
+                                    userId: currentUserId,
+                                    nick: currentNick,
+                                    message: base64String, // Envia o Base64
+                                    timestamp: Date.now(),
+                                    mediaType: mediaType
+                                });
+                                resetMediaPreview();
+                                set(ref(database, `typing/${currentUserId}`), null);
+                            } else {
+                                alert('Selecione um grupo para enviar a mensagem.');
+                            }
+                        }, { once: true });
+
+                    } catch (error) {
+                        console.error("Erro ao converter para Base64:", error);
+                        alert("Erro ao processar o arquivo.");
+                    }
+                } else {
+                    alert("Tipo de arquivo não suportado. Apenas imagens e vídeos são permitidos.");
+                }
             }
+        });
 
-            mediaPreview.style.display = 'none';
-            videoPreview.style.display = 'none';
-            audioPreview.style.display = 'none';
+        /**
+         * Evento de mudança no input de arquivo (áudio).
+         */
+        audioInput.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                // Verifica o tamanho do arquivo
+                if (file.size > 5 * 1024 * 1024) { // Limite para 5MB (ajuste conforme necessário)
+                    alert("O arquivo excede o tamanho máximo permitido (5MB).");
+                    audioInput.value = ''; // Limpa o input
+                    return;
+                }
 
-            if (isImage || isVideo) {
+                mediaPreview.style.display = 'none';
+                videoPreview.style.display = 'none';
+                audioPreview.style.display = 'none';
+
                 try {
                     const base64String = await toBase64(file);
 
-                    if (isImage) {
-                        mediaPreview.src = base64String;
-                        mediaPreview.style.display = 'block';
-                    } else {
-                        videoPreview.src = base64String;
-                        videoPreview.style.display = 'block';
-                        videoPreview.controls = true; //Mostra os controles do video
-                    }
+                    audioPreview.src = base64String;
+                    audioPreview.style.display = 'block';
+                    audioPreview.controls = true; //Mostra os controles do áudio
 
                     mediaPreviewArea.style.display = 'flex';
                     chatInput.classList.add('hidden');
@@ -1016,13 +1096,12 @@
 
                     sendButton.addEventListener('click', () => {
                         if (currentGroupId) {
-                            let mediaType = isImage ? 'image' : 'video';
                             push(ref(database, `messages/${currentGroupId}`), {
                                 userId: currentUserId,
                                 nick: currentNick,
                                 message: base64String, // Envia o Base64
                                 timestamp: Date.now(),
-                                mediaType: mediaType
+                                mediaType: 'audio'
                             });
                             resetMediaPreview();
                             set(ref(database, `typing/${currentUserId}`), null);
@@ -1033,692 +1112,578 @@
 
                 } catch (error) {
                     console.error("Erro ao converter para Base64:", error);
-                    alert("Erro ao processar o arquivo.");
+                    alert("Erro ao processar o arquivo de áudio.");
                 }
-            } else {
-                alert("Tipo de arquivo não suportado. Apenas imagens e vídeos são permitidos.");
             }
+        });
+
+        /**
+         * Remove a seleção visual de todas as mensagens. (Não utilizado pois não há edição/reação)
+         */
+        function clearMessageSelection() {
+            document.querySelectorAll('.message').forEach(msg => {
+                msg.classList.remove('selected');
+            });
+            selectedMessageKey = null;
         }
-    });
 
-    /**
-     * Evento de mudança no input de arquivo (áudio).
-     */
-    audioInput.addEventListener('change', async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            // Verifica o tamanho do arquivo
-            if (file.size > 5 * 1024 * 1024) { // Limite para 5MB (ajuste conforme necessário)
-                alert("O arquivo excede o tamanho máximo permitido (5MB).");
-                audioInput.value = ''; // Limpa o input
-                return;
+        /**
+         * Exibe uma mensagem no chat.
+         */
+        function displayMessage(userId, nick, message, timestamp, key, mediaType = null) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+
+            // Adiciona classe 'sent' ou 'received' dependendo do autor
+            if (userId === currentUserId) {
+                messageElement.classList.add('sent');
+            } else {
+                messageElement.classList.add('received');
             }
 
+            // Cria o elemento de conteúdo da mensagem
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+
+            let mediaElement = null;
+
+            if (mediaType === 'image') {
+                mediaElement = document.createElement('img');
+                mediaElement.src = message; //message já é o base64
+                mediaElement.alt = 'Imagem';
+                messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+                messageElement.style.maxWidth = '100%';
+                messageElement.style.borderRadius = '5px';
+                messageElement.style.marginTop = '5px';
+                messageContent.appendChild(mediaElement);
+            } else if (mediaType === 'video') {
+                mediaElement = document.createElement('video');
+                messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+                mediaElement.src = message; //message já é o base64
+                messageElement.alt = 'Vídeo';
+                mediaElement.controls = true;
+                messageElement.style.maxWidth = '100%';
+                messageElement.style.borderRadius = '5px';
+                messageElement.style.marginTop = '5px';
+                messageContent.appendChild(mediaElement);
+            } else if (mediaType === 'audio') {
+                mediaElement = document.createElement('audio');
+                messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+                mediaElement.src = message; //message já é o base64
+                mediaElement.alt = 'Áudio';
+                mediaElement.controls = true;
+                messageElement.style.maxWidth = '100%';
+                messageElement.style.borderRadius = '5px';
+                messageElement.style.marginTop = '5px';
+                messageContent.appendChild(mediaElement);
+
+            } else {
+                messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
+            }
+
+            messageElement.appendChild(messageContent);
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        /**
+         * Carrega as mensagens do Firebase para um grupo específico.
+         */
+        function loadMessages(groupId) {
+            currentGroupId = groupId;
+            messagesDiv.innerHTML = '';
+
+            const messagesGroupRef = ref(database, `messages/${groupId}`);
+
+            onValue(messagesGroupRef, (snapshot) => {
+                messagesDiv.innerHTML = '';
+                const data = snapshot.val();
+                if (data) {
+                    for (let key in data) {
+                        displayMessage(
+                            data[key].userId,
+                            data[key].nick,
+                            data[key].message,
+                            data[key].timestamp,
+                            key,
+                            data[key].mediaType //Passa a informação se é imagem ou vídeo
+                        );
+                    }
+                }
+            });
+        }
+        /**
+         * Carrega a lista de grupos do Firebase e as exibe na interface.
+         */
+        function loadGroups() {
+            onValue(groupsRef, (snapshot) => {
+                const data = snapshot.val();
+                groupList.innerHTML = '';
+                if (data) {
+                    for (let key in data) {
+                        const li = document.createElement('li');
+                        li.textContent = data[key].name;
+
+                        li.addEventListener('click', () => {
+                            loadMessages(key);
+                            groupListContainer.classList.remove('show');
+                            currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
+                            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+                        });
+
+                        // Adiciona o botão "🗑️" para o administrador remover o grupo
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = '🗑️';
+                        deleteButton.classList.add('delete-button');
+                        deleteButton.addEventListener('click', (event) => {
+                            event.stopPropagation(); // Impede que o evento de clique no grupo seja disparado
+                            if (currentUserId === data[key].admin) {
+                                if (confirm('Tem certeza que deseja deletar este grupo?')) {
+                                    remove(ref(database, `groups/${key}`));
+                                    remove(ref(database, `messages/${key}`));
+                                    alert('Grupo deletado com sucesso!');
+                                }
+                            } else {
+                                alert('Você não tem permissão para deletar este grupo.');
+                            }
+                        });
+
+                        li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
+                        groupList.appendChild(li);
+                    }
+                }
+            });
+        }
+        /**
+         * Evento de clique no botão de enviar mensagem.
+         */
+        sendButton.addEventListener('click', () => {
+            const messageText = chatInput.value;
+            if (messageText && currentGroupId) {
+                push(ref(database, `messages/${currentGroupId}`), {
+                    userId: currentUserId,
+                    nick: currentNick, //Salva o nick com a mensagem
+                    message: messageText,
+                    timestamp: Date.now(), //Salva a data/hora
+                    mediaType: null //Indica que é uma mensagem de texto
+                });
+                chatInput.value = '';
+                set(ref(database, `typing/${currentUserId}`), null);
+            } else {
+                alert('Selecione um grupo para enviar a mensagem.');
+            }
+        });
+
+        /**
+         * Evento de clique no botão de anexar arquivo (imagem/vídeo).
+         */
+        fileButton.addEventListener('click', () => {
+            fileInput.click(); // Aciona o input de arquivo
+        });
+
+        /**
+         * Evento de clique no botão de anexar áudio.
+         */
+        audioButton.addEventListener('click', () => {
+            audioInput.click(); // Aciona o input de áudio
+        });
+
+        /**
+         * Função para resetar a visualização da mídia
+         */
+        function resetMediaPreview() {
+            mediaPreview.src = "";
+            videoPreview.src = "";
+            audioPreview.src = "";
             mediaPreview.style.display = 'none';
             videoPreview.style.display = 'none';
             audioPreview.style.display = 'none';
+            mediaPreviewArea.style.display = 'none';
+            chatInput.classList.remove('hidden');
+            cancelMediaButton.style.display = 'none';
+            fileInput.value = '';
+            audioInput.value = '';
 
-            try {
-                const base64String = await toBase64(file);
-
-                audioPreview.src = base64String;
-                audioPreview.style.display = 'block';
-                audioPreview.controls = true; //Mostra os controles do áudio
-
-                mediaPreviewArea.style.display = 'flex';
-                chatInput.classList.add('hidden');
-                cancelMediaButton.style.display = 'flex';
-
-                sendButton.addEventListener('click', () => {
-                    if (currentGroupId) {
-                        push(ref(database, `messages/${currentGroupId}`), {
-                            userId: currentUserId,
-                            nick: currentNick,
-                            message: base64String, // Envia o Base64
-                            timestamp: Date.now(),
-                            mediaType: 'audio'
-                        });
-                        resetMediaPreview();
-                        set(ref(database, `typing/${currentUserId}`), null);
-                    } else {
-                        alert('Selecione um grupo para enviar a mensagem.');
-                    }
-                }, { once: true });
-
-            } catch (error) {
-                console.error("Erro ao converter para Base64:", error);
-                alert("Erro ao processar o arquivo de áudio.");
-            }
-        }
-    });
-
-    /**
-     * Remove a seleção visual de todas as mensagens. (Não utilizado pois não há edição/reação)
-     */
-    function clearMessageSelection() {
-        document.querySelectorAll('.message').forEach(msg => {
-            msg.classList.remove('selected');
-        });
-        selectedMessageKey = null;
-    }
-
-    /**
-     * Exibe uma mensagem no chat.
-     */
-    function displayMessage(userId, nick, message, timestamp, key, mediaType = null) {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-
-        // Adiciona classe 'sent' ou 'received' dependendo do autor
-        if (userId === currentUserId) {
-            messageElement.classList.add('sent');
-        } else {
-            messageElement.classList.add('received');
+            // Remove o event listener (se adicionado) para não acumular
+            sendButton.onclick = null;
         }
 
-        // Cria o elemento de conteúdo da mensagem
-        const messageContent = document.createElement('div');
-        messageContent.className = 'message-content';
-
-        let mediaElement = null;
-
-        if (mediaType === 'image') {
-            mediaElement = document.createElement('img');
-            mediaElement.src = message; //message já é o base64
-            mediaElement.alt = 'Imagem';
-            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-            messageElement.style.maxWidth = '100%';
-            messageElement.style.borderRadius = '5px';
-            messageElement.style.marginTop = '5px';
-            messageContent.appendChild(mediaElement);
-        } else if (mediaType === 'video') {
-            mediaElement = document.createElement('video');
-            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-            mediaElement.src = message; //message já é o base64
-            messageElement.alt = 'Vídeo';
-            mediaElement.controls = true;
-            messageElement.style.maxWidth = '100%';
-            messageElement.style.borderRadius = '5px';
-            messageElement.style.marginTop = '5px';
-            messageContent.appendChild(mediaElement);
-        } else if (mediaType === 'audio') {
-            mediaElement = document.createElement('audio');
-            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-            mediaElement.src = message; //message já é o base64
-            messageElement.alt = 'Áudio';
-            messageElement.controls = true;
-            messageElement.style.maxWidth = '100%';
-            messageElement.style.borderRadius = '5px';
-            messageElement.style.marginTop = '5px';
-            messageContent.appendChild(mediaElement);
-
-        } else {
-            messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
-        }
-
-        messageElement.appendChild(messageContent);
-        messagesDiv.appendChild(messageElement);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    /**
-     * Carrega as mensagens do Firebase para um grupo específico.
-     */
-    function loadMessages(groupId) {
-        currentGroupId = groupId;
-        messagesDiv.innerHTML = '';
-
-        const messagesGroupRef = ref(database, `messages/${groupId}`);
-
-        onValue(messagesGroupRef, (snapshot) => {
-            messagesDiv.innerHTML = '';
-            const data = snapshot.val();
-            if (data) {
-                for (let key in data) {
-                    displayMessage(
-                        data[key].userId,
-                        data[key].nick,
-                        data[key].message,
-                        data[key].timestamp,
-                        key,
-                        data[key].mediaType //Passa a informação se é imagem ou vídeo
-                    );
-                }
-            }
+        /**
+         * Evento de clique no botão de cancelar a mídia
+         */
+        cancelMediaButton.addEventListener('click', () => {
+            resetMediaPreview();
         });
-    }
-/**
-     * Carrega a lista de grupos do Firebase e as exibe na interface.
-     */
-    function loadGroups() {
-        onValue(groupsRef, (snapshot) => {
-            const data = snapshot.val();
-            groupList.innerHTML = '';
-            if (data) {
-                for (let key in data) {
-                    const li = document.createElement('li');
-                    li.textContent = data[key].name;
 
-           li.addEventListener('click', () => {
-                        groupBeingJoined = key; // Rastreia o grupo que está sendo entrado
-
-                        // Se o usuário for o administrador, entra automaticamente
-                        if (data[key].admin === currentUserId) {
-                            loadMessages(key);
-                            groupListContainer.classList.remove('show');
-                            currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
-                            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                             // Registra que o usuário entrou no grupo
-                            joinedGroups[key] = currentUserId;
-                            localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
-                            return;
-                        }
-
-                        // Verifica se o usuário já entrou no grupo antes
-                        if (joinedGroups[key] === currentUserId) {
-                            loadMessages(key);
-                            groupListContainer.classList.remove('show');
-                            currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
-                            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                            return;
-                        }
-
-                        // Se o grupo tiver senha, mostra o painel de senha
-                        if (data[key].password) {
-                            passwordPanel.classList.add('show');
-                             passwordInput.focus(); // Coloca o foco no input de senha
-                        } else {
-                            // Se não tiver senha, entra diretamente no grupo
-                            loadMessages(key);
-                            groupListContainer.classList.remove('show');
-                             passwordPanel.classList.remove('show');
-                            currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
-                            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                                // Registra que o usuário entrou no grupo
-                            joinedGroups[key] = currentUserId;
-                            localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
-                        }
-                    });
-
-  // Adiciona o botão "🗑️" para o administrador remover o grupo
-                    const deleteButton = document.createElement('button');
-                    deleteButton.textContent = '🗑️';
-                    deleteButton.classList.add('delete-button');
-                    deleteButton.addEventListener('click', (event) => {
-                        event.stopPropagation(); // Impede que o evento de clique no grupo seja disparado
-                        if (currentUserId === data[key].admin) {
-                            if (confirm('Tem certeza que deseja deletar este grupo?')) {
-                                remove(ref(database, `groups/${key}`));
-                                remove(ref(database, `messages/${key}`));
-                                alert('Grupo deletado com sucesso!');
-                            }
-                        } else {
-                            alert('Você não tem permissão para deletar este grupo.');
-                        }
-                    });
-
-                    li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
-                    groupList.appendChild(li);
-                }
-            }
+        // Evento para mostrar/esconder o menu de perfil
+        profileIcon.addEventListener('click', () => {
+            profileMenu.classList.toggle('show');
         });
-    }
-    /**
-     * Evento ao confirmar a senha no painel de senha.
-     */
- confirmPasswordButton.addEventListener('click', () => {
-        const enteredPassword = passwordInput.value;
-        const groupKey = groupBeingJoined;
 
-        // Verifica se a senha digitada está correta
-        get(ref(database, `groups/${groupKey}`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                const group = snapshot.val();
-
-                // Se a senha estiver incorreta
-                if (group.password && group.password !== enteredPassword) {
-                    errorPanel.classList.add('show');
-                       passwordPanel.classList.remove('show');
-                     passwordInput.value = ''; // Limpa o campo de senha
-                          passwordInput.focus(); // Coloca o foco no input de senha
-                } else {
-                    // Se a senha estiver correta
-                    successPanel.classList.add('show');
-                         passwordPanel.classList.remove('show');
-                    passwordInput.value = ''; // Limpa o campo de senha
-  currentGroupAdmin = group.admin; // Carrega o administrador do grupo
-                        updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-    // Registra que o usuário entrou no grupo
-                    joinedGroups[groupKey] = currentUserId;
-                    localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
-                }
-            }
-        }).catch((error) => {
-            console.error(error);
-            alert("Ocorreu um erro ao verificar a senha.");
-        });
-    });
-     // Evento ao clicar no botão "OK" do painel de sucesso
-    okSuccessButton.addEventListener('click', () => {
-        successPanel.classList.remove('show');
-        groupListContainer.classList.remove('show');
-          loadMessages(groupBeingJoined);
-    });
-
-    // Evento ao clicar no botão "OK" do painel de erro
-    okErrorButton.addEventListener('click', () => {
-        errorPanel.classList.remove('show');
-           passwordPanel.classList.add('show');
-              passwordInput.focus(); // Coloca o foco no input de senha
-    });
-    /**
-     * Evento de clique no botão de enviar mensagem.
-     */
-    sendButton.addEventListener('click', () => {
-        const messageText = chatInput.value;
-        if (messageText && currentGroupId) {
-            push(ref(database, `messages/${currentGroupId}`), {
-                userId: currentUserId,
-                nick: currentNick, //Salva o nick com a mensagem
-                message: messageText,
-                timestamp: Date.now(), //Salva a data/hora
-                mediaType: null //Indica que é uma mensagem de texto
-            });
-            chatInput.value = '';
-            set(ref(database, `typing/${currentUserId}`), null);
-        } else {
-            alert('Selecione um grupo para enviar a mensagem.');
-        }
-    });
-
-    /**
-     * Evento de clique no botão de anexar arquivo (imagem/vídeo).
-     */
-    fileButton.addEventListener('click', () => {
-        fileInput.click(); // Aciona o input de arquivo
-    });
-
-    /**
-     * Evento de clique no botão de anexar áudio.
-     */
-    audioButton.addEventListener('click', () => {
-        audioInput.click(); // Aciona o input de áudio
-    });
-
-    /**
-     * Função para resetar a visualização da mídia
-     */
-    function resetMediaPreview() {
-        mediaPreview.src = "";
-        videoPreview.src = "";
-        audioPreview.src = "";
-        mediaPreview.style.display = 'none';
-        videoPreview.style.display = 'none';
-        audioPreview.style.display = 'none';
-        mediaPreviewArea.style.display = 'none';
-        chatInput.classList.remove('hidden');
-        cancelMediaButton.style.display = 'none';
-        fileInput.value = '';
-        audioInput.value = '';
-
-        // Remove o event listener (se adicionado) para não acumular
-        sendButton.onclick = null;
-    }
-
-    /**
-     * Evento de clique no botão de cancelar a mídia
-     */
-    cancelMediaButton.addEventListener('click', () => {
-        resetMediaPreview();
-    });
-
-    // Evento para mostrar/esconder o menu de perfil
-    profileIcon.addEventListener('click', () => {
-        profileMenu.classList.toggle('show');
-    });
-
-    // Evento para mostrar o painel de configurações
-    settingsOption.addEventListener('click', () => {
-        profileMenu.classList.remove('show');
-        settingsPanel.classList.add('show');
-    });
-
-    // Evento para fechar o painel de configurações
-    closeSettingsPanel.addEventListener('click', () => {
-        settingsPanel.classList.remove('show');
-    });
-
-    // Fechar o menu ao clicar fora dele
-    document.addEventListener('click', (event) => {
-        if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
+        // Evento para mostrar o painel de configurações
+        settingsOption.addEventListener('click', () => {
             profileMenu.classList.remove('show');
-        }
-        if (event.target === settingsPanel) {
-            settingsPanel.classList.remove('show');
-        }
-    });
-
-    // Evento para "Editar Perfil"
-    editProfileOption.addEventListener('click', () => {
-        profileMenu.classList.remove('show');
-        editProfileContainer.classList.add('show');
-        newNickInput.value = currentNick;
-    });
-     // Evento para "Salvar" na tela de edição de perfil
-    saveProfileButton.addEventListener('click', () => {
-        const newNick = newNickInput.value;
-        if (newNick !== currentNick) {
-            currentNick = newNick;
-            localStorage.setItem('nick', newNick);
-            alert('Nick atualizado para: ' + newNick);
-        }
-        editProfileContainer.classList.remove('show');
-    });
-
-    // Evento para processar a imagem selecionada
-    profileImageInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                currentProfileImageBase64 = e.target.result;
-                profileImagePreview.src = currentProfileImageBase64;
-                headerProfileImage.src = currentProfileImageBase64;
-                localStorage.setItem('profileImage', e.target.result);
-            }
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Fechar a tela de edição de perfil ao clicar fora dela
-    editProfileContainer.addEventListener('click', (event) => {
-        if (event.target === editProfileContainer) {
-            editProfileContainer.classList.remove('show');
-        }
-    });
-  /**
-     * Verifica se o usuário atual é o administrador do grupo.
-     */
-    function isCurrentUserGroupAdmin() {
-        return currentUserId === currentGroupAdmin;
-    }
-
-    /**
-     * Atualiza a visibilidade da opção "Limpar Chat" com base nas permissões do usuário.
-     */
-    function updateClearChatOptionVisibility() {
-        if (isCurrentUserGroupAdmin()) {
-            clearChatOption.style.display = 'block'; // Mostra a opção
-        } else {
-            clearChatOption.style.display = 'none'; // Esconde a opção
-        }
-    }
-   //Evento para "Limpar Chat"
-    clearChatOption.addEventListener('click', () => {
-        profileMenu.classList.remove('show');
-
-        // Verifique se o usuário é o administrador do grupo
-        if (isCurrentUserGroupAdmin()) {
-            if (confirm('Tem certeza que deseja limpar o chat?')) {
-                //Limpa as mensagens do Firebase (simulação)
-                set(ref(database, `messages/${currentGroupId}`), null)
-                    .then(() => {
-                        alert('Chat limpo com sucesso!');
-                    })
-                    .catch((error) => {
-                        alert('Ocorreu um erro ao limpar o chat: ' + error.message);
-                    });
-            }
-        } else {
-            alert('Você não tem permissão para limpar este chat.');
-        }
-    });
-
-    //Controle do "digitando..."
-    chatInput.addEventListener('input', () => {
-        if (chatInput.value) {
-            //Envia "digitando..." para o Firebase
-            set(ref(database, `typing/${currentUserId}`), currentNick);
-        } else {
-            //Remove o "digitando..."
-            set(ref(database, `typing/${currentUserId}`), null);
-        }
-    });
-
-    //Remove o "digitando..." ao perder o foco
-    chatInput.addEventListener('blur', () => {
-        set(ref(database, `typing/${currentUserId}`), null);
-    });
-
-    //Monitora o "digitando..." de outros usuários
-    onValue(typingRef, (snapshot) => {
-        const data = snapshot.val();
-        let typingUsers = [];
-        if (data) {
-            //Cria uma lista dos usuários que estão digitando
-            typingUsers = Object.entries(data) //Convertendo o objeto em array de [key, value]
-                .filter(([key, nick]) => nick !== null && key !== currentUserId) //Filtrando para não mostrar o usuário atual
-                .map(([key, nick]) => nick); //Pegando apenas os Nicks
-            if (typingUsers.length > 0) {
-                typingIndicator.textContent = `${typingUsers.join(', ')} está digitando...`;
-            } else {
-                typingIndicator.textContent = '';
-            }
-        } else {
-            typingIndicator.textContent = '';
-        }
-    });
-
-    //Carrega a imagem e o nick salvos ao carregar a página
-    if (currentProfileImageBase64) {
-        headerProfileImage.src = currentProfileImageBase64;
-        profileImagePreview.src = currentProfileImageBase64;
-    }
-
-    //Exibe tela de boas vindas se não tiver Nick
-    const init = () => {
-        headerProfileImage.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
-        profileImagePreview.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
-
-        if (!currentNick) {
-            welcomeScreen.classList.add('show');
-        }
-//Salva as configurações da tela de boas vindas
-        saveWelcomeButton.addEventListener('click', () => {
-            const newNick = welcomeNickInput.value.trim();
-            if (!newNick) {
-                alert('Por favor, insira um Nick.');
-                return;
-            }
-            currentNick = newNick;
-            currentProfileImageBase64 = localStorage.getItem('profileImage');
-            //Persiste os dados
-            localStorage.setItem('nick', currentNick);
-            localStorage.setItem('profileImage', currentProfileImageBase64);
-            welcomeScreen.classList.remove('show');
+            settingsPanel.classList.add('show');
         });
 
-        //Evento para processar a imagem na tela de boas vindas
-        welcomeProfileImageInput.addEventListener('change', (event) => {
+        // Evento para fechar o painel de configurações
+        closeSettingsPanel.addEventListener('click', () => {
+            settingsPanel.classList.remove('show');
+        });
+
+        // Fechar o menu ao clicar fora dele
+        document.addEventListener('click', (event) => {
+            if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
+                profileMenu.classList.remove('show');
+            }
+            if (event.target === settingsPanel) {
+                settingsPanel.classList.remove('show');
+            }
+        });
+
+        // Evento para "Editar Perfil"
+        editProfileOption.addEventListener('click', () => {
+            profileMenu.classList.remove('show');
+            editProfileContainer.classList.add('show');
+            newNickInput.value = currentNick;
+        });
+        // Evento para "Salvar" na tela de edição de perfil
+        saveProfileButton.addEventListener('click', () => {
+            const newNick = newNickInput.value;
+            if (newNick !== currentNick) {
+                currentNick = newNick;
+                localStorage.setItem('nick', newNick);
+                alert('Nick atualizado para: ' + newNick);
+            }
+            editProfileContainer.classList.remove('show');
+        });
+
+        // Evento para processar a imagem selecionada
+        profileImageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    localStorage.setItem('profileImage', e.target.result); //Salva no localStorage
-                    welcomeProfileImagePreview.src = e.target.result;
-                };
+                    currentProfileImageBase64 = e.target.result;
+                    profileImagePreview.src = currentProfileImageBase64;
+                    headerProfileImage.src = currentProfileImageBase64;
+                    localStorage.setItem('profileImage', e.target.result);
+                }
                 reader.readAsDataURL(file);
             }
         });
-    };
 
-    init();
-
-    // Carregar os grupos em que o usuário já entrou do localStorage
-    joinedGroups = JSON.parse(localStorage.getItem('joinedGroups')) || {};
-
-    // Evento para fechar o painel de atualizações
-    closeUpdatePanel.addEventListener('click', () => {
-        updatePanel.style.display = 'none';
-    });
-
-    // Exibe o painel de atualizações ao carregar a página
-    updatePanel.style.display = 'block';
-
-   // Evento para mostrar o painel de criação de grupos
-    createGroupButton.addEventListener('click', () => {
-        createGroupContainer.classList.add('show');
-    });
-
-    // Evento para criar um grupo
-    createGroupButtonConfirm.addEventListener('click', () => {
-        const groupName = groupNameInput.value.trim();
-        const groupPassword = groupPasswordInput.value;
-
-        if (!groupName) {
-            alert('Por favor, insira um nome para o grupo.');
-            return;
-        }
-
-        push(groupsRef, {
-            name: groupName,
-            password: groupPassword, // Adiciona a senha (pode ser vazia)
-            admin: currentUserId // Define o criador como administrador
-        }).then((snapshot) => {
-            loadMessages(snapshot.key);
-            createGroupContainer.classList.remove('show');
-            groupNameInput.value = ''; // Limpa o campo de entrada
-            groupPasswordInput.value = ''; // Limpa o campo de senha
-            currentGroupAdmin = currentUserId; // Define o usuário atual como administrador do grupo
-               updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-        });
-    });
-// Fechar a tela de criação de grupos ao clicar fora dela
-    createGroupContainer.addEventListener('click', (event) => {
-        if (event.target === createGroupContainer) {
-            createGroupContainer.classList.remove('show');
-        }
-    });
-      // Evento para mostrar a lista de grupos
-    viewGroupsButton.addEventListener('click', () => {
-        groupListContainer.classList.add('show');
-        loadGroups();
-    });
-    // Fechar a tela de lista de grupos ao clicar fora dela
-    groupListContainer.addEventListener('click', (event) => {
-        if (event.target === groupListContainer) {
-            groupListContainer.classList.remove('show');
-        }
-    });
-   // Carregar as configurações salvas
-    const loadSettings = () => {
-        notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
-        darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
-        enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
-
-        //Carregar imagem de fundo
-        const backgroundImage = localStorage.getItem('backgroundImage');
-        if (backgroundImage) {
-            document.documentElement.style.setProperty('--chat-background-image', `url(${backgroundImage})`);
-        }
-        applySettings(); // Aplicar as configurações carregadas
-    };
-
-    // Aplicar as configurações
-    const applySettings = () => {
-        // Modo Escuro
-        if (darkModeSetting.checked) {
-            document.body.classList.add('dark-mode');
-        } else {
-            document.body.classList.remove('dark-mode');
-    }
-
-    //Notificações
-    //Lógica de notificação aqui (pode usar a API de notificação do navegador)
-    };
-      // Salvar as configurações
-    const saveSettings = () => {
-    localStorage.setItem('notificationSetting', notificationSetting.checked);
-    localStorage.setItem('darkModeSetting', darkModeSetting.checked);
-    localStorage.setItem('enterToSend', enterToSend.checked);
-        applySettings(); //Aplicar as configurações ao salvar
-    };
-// Eventos para salvar as configurações quando os checkboxes mudarem
-    notificationSetting.addEventListener('change', saveSettings);
-    darkModeSetting.addEventListener('change', saveSettings);
-    enterToSend.addEventListener('change', saveSettings);
-  // Evento para "Enter Envia"
-    chatInput.addEventListener('keydown', (event) => {
-        if (enterToSend.checked && event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            sendButton.click();
-        }
-    });
-    // Evento para processar a imagem de fundo
-    if (backgroundImageInput) { // Verifica se o elemento existe
-    backgroundImageInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imageUrl = e.target.result;
-                localStorage.setItem('backgroundImage', imageUrl);
-                document.documentElement.style.setProperty('--chat-background-image', `url(${imageUrl})`);
+        // Fechar a tela de edição de perfil ao clicar fora dela
+        editProfileContainer.addEventListener('click', (event) => {
+            if (event.target === editProfileContainer) {
+                editProfileContainer.classList.remove('show');
             }
-            reader.readAsDataURL(file);
+        });
+        /**
+         * Verifica se o usuário atual é o administrador do grupo.
+         */
+        function isCurrentUserGroupAdmin() {
+            return currentUserId === currentGroupAdmin;
         }
-    });
-    } else {
-    console.error("Elemento backgroundImageInput não encontrado.");
-    }
-      // Carregar as configurações ao iniciar o aplicativo
-    loadSettings();
-     // Ao carregar os grupos, esconde a opção "Limpar Chat" inicialmente
-    clearChatOption.style.display = 'none';
-   /**
-     * Carrega a lista de grupos e gerencia a exibição e tentativa de entrada de grupos com senha.
-     */
-       confirmPasswordButton.addEventListener('click', () => {
-        const enteredPassword = passwordInput.value;
-        const groupKey = groupBeingJoined;
-        // Verifica se a senha digitada está correta
-        get(ref(database, `groups/${groupKey}`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                const group = snapshot.val();
-                // Se a senha estiver incorreta
-                if (group.password && group.password !== enteredPassword) {
-                    errorPanel.classList.add('show');
-                       passwordPanel.classList.remove('show');
-                    passwordInput.value = ''; // Limpa o campo de senha
-                } else {
-                    // Se a senha estiver correta
-                    successPanel.classList.add('show');
-                         passwordPanel.classList.remove('show');
-                    passwordInput.value = ''; // Limpa o campo de senha
-                    currentGroupAdmin = group.admin; // Carrega o administrador do grupo
-                    updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                 // Registra que o usuário entrou no grupo
-                    joinedGroups[groupKey] = currentUserId;
-                    localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
+
+        /**
+         * Atualiza a visibilidade da opção "Limpar Chat" com base nas permissões do usuário.
+         */
+        function updateClearChatOptionVisibility() {
+            if (isCurrentUserGroupAdmin()) {
+                clearChatOption.style.display = 'block'; // Mostra a opção
+            } else {
+                clearChatOption.style.display = 'none'; // Esconde a opção
+            }
+        }
+        //Evento para "Limpar Chat"
+        clearChatOption.addEventListener('click', () => {
+            profileMenu.classList.remove('show');
+
+            // Verifique se o usuário é o administrador do grupo
+            if (isCurrentUserGroupAdmin()) {
+                if (confirm('Tem certeza que deseja limpar o chat?')) {
+                    //Limpa as mensagens do Firebase (simulação)
+                    set(ref(database, `messages/${currentGroupId}`), null)
+                        .then(() => {
+                            alert('Chat limpo com sucesso!');
+                        })
+                        .catch((error) => {
+                            alert('Ocorreu um erro ao limpar o chat: ' + error.message);
+                        });
                 }
+            } else {
+                alert('Você não tem permissão para limpar este chat.');
             }
-        }).catch((error) => {
-            console.error(error);
-            alert("Ocorreu um erro ao verificar a senha.");
         });
-    });
-    // Evento ao clicar no botão "OK" do painel de sucesso
-    okSuccessButton.addEventListener('click', () => {
-        successPanel.classList.remove('show');
-        groupListContainer.classList.remove('show');
-        loadMessages(groupBeingJoined);
-    });
 
-    // Evento ao clicar no botão "OK" do painel de erro
-    okErrorButton.addEventListener('click', () => {
-        errorPanel.classList.remove('show');
-           passwordPanel.classList.add('show');
-            passwordInput.focus(); // Coloca o foco no input de senha
-    });
-    
- </script>
+        //Controle do "digitando..."
+        chatInput.addEventListener('input', () => {
+            if (chatInput.value) {
+                //Envia "digitando..." para o Firebase
+                set(ref(database, `typing/${currentUserId}`), currentNick);
+            } else {
+                //Remove o "digitando..."
+                set(ref(database, `typing/${currentUserId}`), null);
+            }
+        });
+
+        //Remove o "digitando..." ao perder o foco
+        chatInput.addEventListener('blur', () => {
+            set(ref(database, `typing/${currentUserId}`), null);
+        });
+
+        //Monitora o "digitando..." de outros usuários
+        onValue(typingRef, (snapshot) => {
+            const data = snapshot.val();
+            let typingUsers = [];
+            if (data) {
+                //Cria uma lista dos usuários que estão digitando
+                typingUsers = Object.entries(data) //Convertendo o objeto em array de [key, value]
+                    .filter(([key, nick]) => nick !== null && key !== currentUserId) //Filtrando para não mostrar o usuário atual
+                    .map(([key, nick]) => nick); //Pegando apenas os Nicks
+                if (typingUsers.length > 0) {
+                    typingIndicator.textContent = `${typingUsers.join(', ')} está digitando...`;
+                } else {
+                    typingIndicator.textContent = '';
+                }
+            } else {
+                typingIndicator.textContent = '';
+            }
+        });
+
+        //Carrega a imagem e o nick salvos ao carregar a página
+        if (currentProfileImageBase64) {
+            headerProfileImage.src = currentProfileImageBase64;
+            profileImagePreview.src = currentProfileImageBase64;
+        }
+
+        //Exibe tela de boas vindas se não tiver Nick
+        const init = () => {
+            headerProfileImage.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
+            profileImagePreview.src = currentProfileImageBase64 || "https://via.placeholder.com/100";
+
+            if (!currentNick) {
+                welcomeScreen.classList.add('show');
+            }
+            //Salva as configurações da tela de boas vindas
+            saveWelcomeButton.addEventListener('click', () => {
+                const newNick = welcomeNickInput.value.trim();
+                if (!newNick) {
+                    alert('Por favor, insira um Nick.');
+                    return;
+                }
+                currentNick = newNick;
+                currentProfileImageBase64 = localStorage.getItem('profileImage');
+                //Persiste os dados
+                localStorage.setItem('nick', currentNick);
+                localStorage.setItem('profileImage', currentProfileImageBase64);
+                welcomeScreen.classList.remove('show');
+            });
+
+            //Evento para processar a imagem na tela de boas vindas
+            welcomeProfileImageInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        localStorage.setItem('profileImage', e.target.result); //Salva no localStorage
+                        welcomeProfileImagePreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        };
+
+        init();
+
+        // Carregar os grupos em que o usuário já entrou do localStorage
+        joinedGroups = JSON.parse(localStorage.getItem('joinedGroups')) || {};
+
+        // Evento para fechar o painel de atualizações
+        closeUpdatePanel.addEventListener('click', () => {
+            updatePanel.style.display = 'none';
+        });
+
+        // Exibe o painel de atualizações ao carregar a página
+        updatePanel.style.display = 'block';
+
+        // Evento para mostrar o painel de criação de grupos
+        createGroupButton.addEventListener('click', () => {
+            createGroupContainer.classList.add('show');
+        });
+
+        // Função para gerar um ID aleatório para o grupo
+        function generateGroupId() {
+            return Math.random().toString(36).substring(2, 15);
+        }
+
+        // Evento para criar um grupo
+        createGroupButtonConfirm.addEventListener('click', () => {
+            const groupName = groupNameInput.value.trim();
+            if (!groupName) {
+                alert('Por favor, insira um nome para o grupo.');
+                return;
+            }
+
+            // Gera um ID aleatório para o grupo
+            const newGroupId = generateGroupId();
+
+            push(groupsRef, {
+                name: groupName,
+                id: newGroupId, // Salva o ID do grupo
+                admin: currentUserId // Define o criador como administrador
+            }).then(() => {
+                groupIdValue.textContent = newGroupId; // Exibe o ID do grupo
+                groupIdDisplay.style.display = 'block'; // Mostra o ID do grupo
+                createGroupContainer.classList.remove('show');
+                groupNameInput.value = ''; // Limpa o campo de entrada
+                currentGroupAdmin = currentUserId; // Define o usuário atual como administrador do grupo
+                updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+            });
+        });
+
+        // Evento para mostrar o painel de Acesso ao Grupo
+        viewGroupsButton.addEventListener('click', () => {
+            groupAccessPanel.classList.add('show');
+        });
+
+        // Evento para confirmar o ID do grupo
+        confirmGroupIdButton.addEventListener('click', () => {
+            const enteredGroupId = groupIdInput.value.trim();
+
+            if (!enteredGroupId) {
+                alert('Por favor, insira o ID do grupo.');
+                return;
+            }
+
+            // Verificar se o ID do grupo existe no Firebase
+            get(groupsRef)
+                .then((snapshot) => {
+                    let groupIdExists = false;
+                    snapshot.forEach((childSnapshot) => {
+                        const group = childSnapshot.val();
+                        if (group.id === enteredGroupId) {
+                            groupIdExists = true;
+                            loadMessages(childSnapshot.key); // Carrega as mensagens usando a chave correta
+                            groupAccessPanel.classList.remove('show');
+                            successPanel.classList.add('show');
+                            setTimeout(() => successPanel.classList.remove('show'), 2000);
+                            return true; // Encerra o loop forEach
+                        }
+                    });
+
+                    if (!groupIdExists) {
+                        errorPanel.classList.add('show');
+                        setTimeout(() => errorPanel.classList.remove('show'), 2000);
+                        groupIdInput.value = ''; // Limpa o campo de entrada
+                    }
+                })
+                .catch((error) => {
+                    console.error("Erro ao verificar o ID do grupo:", error);
+                    alert("Ocorreu um erro ao verificar o ID do grupo.");
+                });
+        });
+
+        // Fechar a tela de criação de grupos ao clicar fora dela
+        createGroupContainer.addEventListener('click', (event) => {
+            if (event.target === createGroupContainer) {
+                createGroupContainer.classList.remove('show');
+                groupIdDisplay.style.display = 'none'; // Esconde o ID do grupo ao fechar
+            }
+        });
+        // Fechar a tela de lista de grupos ao clicar fora dela
+        groupListContainer.addEventListener('click', (event) => {
+            if (event.target === groupListContainer) {
+                groupListContainer.classList.remove('show');
+            }
+        });
+        // Fechar a tela de acesso ao grupo ao clicar fora dela
+        groupAccessPanel.addEventListener('click', (event) => {
+            if (event.target === groupAccessPanel) {
+                groupAccessPanel.classList.remove('show');
+            }
+        });
+        // Fechar a tela de erro ao clicar fora dela
+        errorPanel.addEventListener('click', (event) => {
+            if (event.target === errorPanel) {
+                errorPanel.classList.remove('show');
+            }
+        });
+
+        // Fechar a tela de sucesso ao clicar fora dela
+        successPanel.addEventListener('click', (event) => {
+            if (event.target === successPanel) {
+                successPanel.classList.remove('show');
+            }
+        });
+
+        // Carregar as configurações salvas
+        const loadSettings = () => {
+            notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
+            darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
+            enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
+
+            //Carregar imagem de fundo
+            const backgroundImage = localStorage.getItem('backgroundImage');
+            if (backgroundImage) {
+                document.documentElement.style.setProperty('--chat-background-image', `url(${backgroundImage})`);
+            }
+            applySettings(); // Aplicar as configurações carregadas
+        };
+
+        // Aplicar as configurações
+        const applySettings = () => {
+            // Modo Escuro
+            if (darkModeSetting.checked) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+
+            //Notificações
+            //Lógica de notificação aqui (pode usar a API de notificação do navegador)
+        };
+        // Salvar as configurações
+        const saveSettings = () => {
+            localStorage.setItem('notificationSetting', notificationSetting.checked);
+            localStorage.setItem('darkModeSetting', darkModeSetting.checked);
+            localStorage.setItem('enterToSend', enterToSend.checked);
+            applySettings(); //Aplicar as configurações ao salvar
+        };
+        // Eventos para salvar as configurações quando os checkboxes mudarem
+        notificationSetting.addEventListener('change', saveSettings);
+        darkModeSetting.addEventListener('change', saveSettings);
+        enterToSend.addEventListener('change', saveSettings);
+        // Evento para "Enter Envia"
+        chatInput.addEventListener('keydown', (event) => {
+            if (enterToSend.checked && event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendButton.click();
+            }
+        });
+        // Evento para processar a imagem de fundo
+        if (backgroundImageInput) { // Verifica se o elemento existe
+            backgroundImageInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const imageUrl = e.target.result;
+                        localStorage.setItem('backgroundImage', imageUrl);
+                        document.documentElement.style.setProperty('--chat-background-image', `url(${imageUrl})`);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        } else {
+            console.error("Elemento backgroundImageInput não encontrado.");
+        }
+        // Carregar as configurações ao iniciar o aplicativo
+        loadSettings();
+        // Ao carregar os grupos, esconde a opção "Limpar Chat" inicialmente
+        clearChatOption.style.display = 'none';
+    </script>
+</body>
+
+</html>
