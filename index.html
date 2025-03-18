@@ -261,6 +261,7 @@
         .group-list-container,
         #settingsPanel,
         #welcomeScreen,
+        #privateChatPanel, /* Added private chat panel */
         #groupAccessPanel,
         #successPanel,
         /* Adicionado painéis de feedback */
@@ -282,6 +283,7 @@
         .group-list-container.show,
         #settingsPanel.show,
         #welcomeScreen.show,
+        #privateChatPanel.show, /* Added private chat panel */
         #groupAccessPanel.show,
         #successPanel.show,
         #errorPanel.show {
@@ -293,6 +295,7 @@
         .group-list-box,
         #settingsBox,
         #welcomeBox,
+        #privateChatBox, /* Added private chat box */
         #groupAccessBox,
         .feedback-box {
             background-color: var(--panel-background-color);
@@ -313,6 +316,7 @@
         .group-list-box h2,
         #settingsBox h2,
         #welcomeBox h2,
+        #privateChatBox h2, /* Added private chat h2 */
         #groupAccessBox h2,
         .feedback-box h2 {
             color: var(--secondary-color);
@@ -325,6 +329,7 @@
         #settingsBox input[type="file"],
         #welcomeBox input[type="text"],
         #welcomeBox input[type="file"],
+        #privateChatBox input[type="text"], /* Added private chat input */
         #groupAccessBox input[type="text"] {
             width: 100%;
             padding: 12px;
@@ -342,6 +347,7 @@
         .edit-profile-box input[type="text"]::placeholder,
         .create-group-box input[type="text"]::placeholder,
         #welcomeBox input[type="text"]::placeholder,
+        #privateChatBox input[type="text"]::placeholder, /* Added private chat placeholder */
         #groupAccessBox input[type="text"]::placeholder {
             color: #a0aec0;
         }
@@ -352,6 +358,7 @@
         #settingsBox input[type="file"]:focus,
         #welcomeBox input[type="text"]:focus,
         #welcomeBox input[type="file"]:focus,
+        #privateChatBox input[type="text"]:focus, /* Added private chat focus */
         #groupAccessBox input[type="text"]:focus {
             border-color: var(--primary-color);
             outline: none;
@@ -361,6 +368,7 @@
         .create-group-box button,
         #settingsBox .close-button,
         #welcomeBox button,
+        #privateChatBox button, /* Added private chat button */
         #groupAccessBox button,
         .feedback-box button {
             background-color: var(--primary-color);
@@ -380,6 +388,7 @@
         .create-group-box button:hover,
         #settingsBox .close-button:hover,
         #welcomeBox button:hover,
+        #privateChatBox button:hover, /* Added private chat button hover */
         #groupAccessBox button:hover,
         .feedback-box button:hover {
             background-color: #4caf50;
@@ -710,6 +719,40 @@
             box-sizing: border-box;
             /* Garante que o padding não aumente o tamanho total */
         }
+
+        /* Estilos para o painel de chat privado */
+        #privateChatBox {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        #privateChatBox input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            background-color: #4f4f4f;
+            color: #e0e0e0;
+            box-sizing: border-box;
+        }
+
+        #privateChatBox button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        #privateChatBox button:hover {
+            background-color: #388e3c;
+        }
     </style>
 </head>
 
@@ -744,6 +787,7 @@
             </button>
             <button id="createGroupButton" class="icon-button"><i class="fas fa-users"></i></button>
             <button id="viewGroupsButton" class="icon-button"><i class="fas fa-list"></i></button>
+            <button id="privateChatButton" class="icon-button"><i class="fas fa-envelope"></i></button>
             <button id="cancelMediaButton" class="icon-button" style="display: none;"><i
                     class="fas fa-times"></i></button>
         </div>
@@ -799,9 +843,9 @@
         <!-- Painel de Lista de Grupos -->
         <div class="group-list-container" id="groupListContainer">
             <div class="group-list-box">
-                <h2>Grupos</h2>
+                <h2>Meus Grupos</h2>
                 <ul id="groupList">
-                    <!-- Grupos serão listados aqui -->
+                    <!-- Grupos que o usuário entrou serão listados aqui -->
                 </ul>
             </div>
         </div>
@@ -826,6 +870,16 @@
                 <button id="confirmGroupIdButton">Entrar</button>
             </div>
         </div>
+
+        <!-- Painel de Chat Privado -->
+        <div id="privateChatPanel">
+            <div id="privateChatBox">
+                <h2>Iniciar Chat Privado</h2>
+                <input type="text" id="userIdInput" placeholder="Digite o ID do usuário">
+                <button id="startPrivateChatButton">Iniciar Chat</button>
+            </div>
+        </div>
+
         <!-- Painel de Sucesso -->
         <div id="successPanel">
             <div class="feedback-box">
@@ -872,6 +926,7 @@
         const messagesRef = ref(database, 'messages');
         const groupsRef = ref(database, 'groups');
         const typingRef = ref(database, 'typing'); //Referência para o "digitando..."
+        const privateChatsRef = ref(database, 'privateChats'); // Added reference for private chats
 
         // Elementos do DOM
         const messagesDiv = document.getElementById('messages');
@@ -941,6 +996,12 @@
         const groupIdInput = document.getElementById('groupIdInput');
         const confirmGroupIdButton = document.getElementById('confirmGroupIdButton');
 
+        // Private Chat Elements
+        const privateChatPanel = document.getElementById('privateChatPanel');
+        const privateChatBox = document.getElementById('privateChatBox');
+        const userIdInput = document.getElementById('userIdInput');
+        const startPrivateChatButton = document.getElementById('startPrivateChatButton');
+
         // Elementos do Painel de Feedback
         const successPanel = document.getElementById('successPanel');
         const errorPanel = document.getElementById('errorPanel');
@@ -953,6 +1014,7 @@
         let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
         let conversationStarted = localStorage.getItem('conversationStarted') || null;
         let currentGroupId = null;
+        let currentPrivateChatId = null; // Added for private chat
         let currentGroupAdmin = null; //Armazena o ID do administrador do grupo atual
 
         let selectedMessageKey = null; // Rastreia a mensagem selecionada
@@ -1160,7 +1222,7 @@
                 mediaElement = document.createElement('video');
                 messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
                 mediaElement.src = message; //message já é o base64
-                messageElement.alt = 'Vídeo';
+                mediaElement.alt = 'Vídeo';
                 mediaElement.controls = true;
                 messageElement.style.maxWidth = '100%';
                 messageElement.style.borderRadius = '5px';
@@ -1191,6 +1253,7 @@
          */
         function loadMessages(groupId) {
             currentGroupId = groupId;
+            currentPrivateChatId = null; // Reset private chat ID
             messagesDiv.innerHTML = '';
 
             const messagesGroupRef = ref(database, `messages/${groupId}`);
@@ -1212,6 +1275,35 @@
                 }
             });
         }
+
+        /**
+         * Load private chat messages.
+         */
+        function loadPrivateChat(chatId) {
+            currentGroupId = null; // Reset group ID
+            currentPrivateChatId = chatId;
+            messagesDiv.innerHTML = '';
+
+            const privateChatRef = ref(database, `privateChats/${chatId}`);
+
+            onValue(privateChatRef, (snapshot) => {
+                messagesDiv.innerHTML = '';
+                const data = snapshot.val();
+                if (data) {
+                    for (let key in data) {
+                        displayMessage(
+                            data[key].userId,
+                            data[key].nick,
+                            data[key].message,
+                            data[key].timestamp,
+                            key,
+                            data[key].mediaType
+                        );
+                    }
+                }
+            });
+        }
+
         /**
          * Carrega a lista de grupos do Firebase e as exibe na interface.
          */
@@ -1221,54 +1313,83 @@
                 groupList.innerHTML = '';
                 if (data) {
                     for (let key in data) {
-                        const li = document.createElement('li');
-                        li.textContent = data[key].name;
+                        const group = data[key];
 
-                        li.addEventListener('click', () => {
-                            loadMessages(key);
-                            groupListContainer.classList.remove('show');
-                            currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
-                            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                        });
+                        // Adicionar grupo à lista se o usuário já entrou
+                        if (joinedGroups[key] === currentUserId) {
+                            const li = document.createElement('li');
+                            li.textContent = group.name;
+                            li.addEventListener('click', () => {
+                                loadMessages(key);
+                                groupListContainer.classList.remove('show');
+                                currentGroupAdmin = group.admin;
+                                updateClearChatOptionVisibility();
+                            });
 
-                        // Adiciona o botão "🗑️" para o administrador remover o grupo
-                        const deleteButton = document.createElement('button');
-                        deleteButton.textContent = '🗑️';
-                        deleteButton.classList.add('delete-button');
-                        deleteButton.addEventListener('click', (event) => {
-                            event.stopPropagation(); // Impede que o evento de clique no grupo seja disparado
-                            if (currentUserId === data[key].admin) {
-                                if (confirm('Tem certeza que deseja deletar este grupo?')) {
-                                    remove(ref(database, `groups/${key}`));
-                                    remove(ref(database, `messages/${key}`));
-                                    alert('Grupo deletado com sucesso!');
+                            // Adiciona o botão "🗑️" para o administrador remover o grupo
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = '🗑️';
+                            deleteButton.classList.add('delete-button');
+                            deleteButton.addEventListener('click', (event) => {
+                                event.stopPropagation(); // Impede que o evento de clique no grupo seja disparado
+                                if (currentUserId === group.admin) {
+                                    if (confirm('Tem certeza que deseja deletar este grupo?')) {
+                                        remove(ref(database, `groups/${key}`));
+                                        remove(ref(database, `messages/${key}`));
+                                        alert('Grupo deletado com sucesso!');
+                                    }
+                                } else {
+                                    alert('Você não tem permissão para deletar este grupo.');
                                 }
-                            } else {
-                                alert('Você não tem permissão para deletar este grupo.');
-                            }
-                        });
+                            });
 
-                        li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
-                        groupList.appendChild(li);
+                            li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
+                            groupList.appendChild(li);
+                        }
                     }
                 }
             });
         }
+
+        /**
+         * Adiciona um grupo à lista de grupos do usuário.
+         */
+        function addGroupToUserList(groupId) {
+            joinedGroups[groupId] = currentUserId;
+            localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
+            loadGroups();
+        }
+
         /**
          * Evento de clique no botão de enviar mensagem.
          */
         sendButton.addEventListener('click', () => {
             const messageText = chatInput.value;
-            if (messageText && currentGroupId) {
-                push(ref(database, `messages/${currentGroupId}`), {
-                    userId: currentUserId,
-                    nick: currentNick, //Salva o nick com a mensagem
-                    message: messageText,
-                    timestamp: Date.now(), //Salva a data/hora
-                    mediaType: null //Indica que é uma mensagem de texto
-                });
-                chatInput.value = '';
-                set(ref(database, `typing/${currentUserId}`), null);
+            if (messageText) {
+                if (currentGroupId) {
+                    push(ref(database, `messages/${currentGroupId}`), {
+                        userId: currentUserId,
+                        nick: currentNick,
+                        message: messageText,
+                        timestamp: Date.now(),
+                        mediaType: null
+                    });
+                    chatInput.value = '';
+                    set(ref(database, `typing/${currentUserId}`), null);
+                } else if (currentPrivateChatId) {
+                    // Handle private chat message sending
+                    push(ref(database, `privateChats/${currentPrivateChatId}`), {
+                        userId: currentUserId,
+                        nick: currentNick,
+                        message: messageText,
+                        timestamp: Date.now(),
+                        mediaType: null
+                    });
+                    chatInput.value = '';
+                    set(ref(database, `typing/${currentUserId}`), null);
+                } else {
+                    alert('Selecione um grupo ou chat privado para enviar a mensagem.');
+                }
             } else {
                 alert('Selecione um grupo para enviar a mensagem.');
             }
@@ -1329,16 +1450,6 @@
         // Evento para fechar o painel de configurações
         closeSettingsPanel.addEventListener('click', () => {
             settingsPanel.classList.remove('show');
-        });
-
-        // Fechar o menu ao clicar fora dele
-        document.addEventListener('click', (event) => {
-            if (!profileIcon.contains(event.target) && !profileMenu.contains(event.target)) {
-                profileMenu.classList.remove('show');
-            }
-            if (event.target === settingsPanel) {
-                settingsPanel.classList.remove('show');
-            }
         });
 
         // Evento para "Editar Perfil"
@@ -1500,6 +1611,9 @@
         // Carregar os grupos em que o usuário já entrou do localStorage
         joinedGroups = JSON.parse(localStorage.getItem('joinedGroups')) || {};
 
+        //Load joined groups on start
+        loadGroups();
+
         // Evento para fechar o painel de atualizações
         closeUpdatePanel.addEventListener('click', () => {
             updatePanel.style.display = 'none';
@@ -1540,6 +1654,9 @@
                 groupNameInput.value = ''; // Limpa o campo de entrada
                 currentGroupAdmin = currentUserId; // Define o usuário atual como administrador do grupo
                 updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+
+                //Adicionar o grupo criado à lista do usuário
+                addGroupToUserList(newGroupId);
             });
         });
 
@@ -1561,27 +1678,63 @@
             get(groupsRef)
                 .then((snapshot) => {
                     let groupIdExists = false;
+                    let groupKey = null; // Store the key of the found group
+
                     snapshot.forEach((childSnapshot) => {
                         const group = childSnapshot.val();
                         if (group.id === enteredGroupId) {
                             groupIdExists = true;
-                            loadMessages(childSnapshot.key); // Carrega as mensagens usando a chave correta
-                            groupAccessPanel.classList.remove('show');
-                            successPanel.classList.add('show');
-                            setTimeout(() => successPanel.classList.remove('show'), 2000);
-                            return true; // Encerra o loop forEach
+                            groupKey = childSnapshot.key; // Store the key
+                            return true; // End the loop
                         }
                     });
 
-                    if (!groupIdExists) {
+                    if (groupIdExists) {
+                        loadMessages(groupKey); // Load the messages of the group
+                        addGroupToUserList(groupKey);
+                        groupAccessPanel.classList.remove('show');
+                        successPanel.classList.add('show');
+                        setTimeout(() => successPanel.classList.remove('show'), 2000);
+                    } else {
                         errorPanel.classList.add('show');
                         setTimeout(() => errorPanel.classList.remove('show'), 2000);
-                        groupIdInput.value = ''; // Limpa o campo de entrada
+                        groupIdInput.value = ''; // Clear the input
                     }
                 })
                 .catch((error) => {
                     console.error("Erro ao verificar o ID do grupo:", error);
                     alert("Ocorreu um erro ao verificar o ID do grupo.");
+                });
+        });
+
+        //Private Chat functionality
+
+        document.getElementById('privateChatButton').addEventListener('click', () => {
+            privateChatPanel.classList.add('show');
+        });
+
+        document.getElementById('startPrivateChatButton').addEventListener('click', () => {
+            const otherUserId = userIdInput.value.trim();
+
+            if (!otherUserId || otherUserId === currentUserId) {
+                alert('Por favor, insira um ID de usuário válido.');
+                return;
+            }
+
+            const chatId = [currentUserId, otherUserId].sort().join('_');
+
+            // Check if chat already exists
+            get(ref(database, `privateChats/${chatId}`))
+                .then(snapshot => {
+                    if (!snapshot.exists()) {
+                        set(ref(database, `privateChats/${chatId}`), {}); // Create empty chat
+                    }
+                    loadPrivateChat(chatId);
+                    privateChatPanel.classList.remove('show');
+                })
+                .catch(error => {
+                    console.error("Erro ao iniciar chat privado:", error);
+                    alert("Ocorreu um erro ao iniciar o chat privado.");
                 });
         });
 
@@ -1602,6 +1755,12 @@
         groupAccessPanel.addEventListener('click', (event) => {
             if (event.target === groupAccessPanel) {
                 groupAccessPanel.classList.remove('show');
+            }
+        });
+        // Fechar a tela de chat privado ao clicar fora dela
+        privateChatPanel.addEventListener('click', (event) => {
+            if (event.target === privateChatPanel) {
+                privateChatPanel.classList.remove('show');
             }
         });
         // Fechar a tela de erro ao clicar fora dela
