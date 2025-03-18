@@ -86,6 +86,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            max-width: 100%; /* Garante que a imagem não distorça */
         }
 
         /* Área de mensagens */
@@ -281,6 +282,7 @@
         .edit-profile-box input[type="text"],
         .edit-profile-box input[type="file"],
         .create-group-box input[type="text"],
+         .create-group-box input[type="password"],
         #settingsBox input[type="file"],
         #welcomeBox input[type="text"],
         #welcomeBox input[type="file"] {
@@ -297,6 +299,7 @@
 
         .edit-profile-box input[type="text"]::placeholder,
         .create-group-box input[type="text"]::placeholder,
+        .create-group-box input[type="password"]::placeholder,
         #welcomeBox input[type="text"]::placeholder {
             color: #a0aec0;
         }
@@ -304,6 +307,7 @@
         .edit-profile-box input[type="text"]:focus,
         .edit-profile-box input[type="file"]:focus,
         .create-group-box input[type="text"]:focus,
+        .create-group-box input[type="password"]:focus,
         #settingsBox input[type="file"]:focus,
         #welcomeBox input[type="text"]:focus,
         #welcomeBox input[type="file"]:focus {
@@ -344,6 +348,7 @@
             object-fit: cover;
             margin-bottom: 15px;
             border: 3px solid var(--primary-color);
+            max-width: 100%; /* Garante que a imagem não distorça */
         }
 
         #profileImageInput,
@@ -440,6 +445,7 @@
             max-width: 100%;
             border-radius: 10px;
             margin-top: 8px;
+            max-width: 100%; /* Garante que a imagem não distorça */
         }
 
         /* Esconde o input de arquivo */
@@ -460,12 +466,14 @@
             position: relative;
             overflow: hidden;
             border-radius: var(--border-radius);
+            max-width: 100%; /* Garante que a imagem não distorça */
         }
 
         #mediaPreview {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            max-width: 100%; /* Garante que a imagem não distorça */
         }
 
         #mediaPreviewArea #downloadButton {
@@ -524,6 +532,7 @@
             width: 100%;
             margin-top: 8px;
             border-radius: var(--border-radius);
+            max-width: 100%; /* Garante que a imagem não distorça */
         }
 
         /* Estilos para a pré-visualização de áudio */
@@ -537,11 +546,13 @@
             position: relative;
             overflow: hidden;
             border-radius: var(--border-radius);
+            max-width: 100%; /* Garante que a imagem não distorça */
         }
 
         #audioPreview {
             max-width: 100%;
             object-fit: contain;
+            max-width: 100%; /* Garante que a imagem não distorça */
         }
 
         /* Estilos para o painel de atualizações */
@@ -671,6 +682,7 @@
         <div class="create-group-box">
             <h2>Criar Grupo</h2>
             <input type="text" id="groupNameInput" placeholder="Nome do Grupo">
+            <input type="password" id="groupPasswordInput" placeholder="Senha do Grupo (opcional)">
             <button id="createGroupButtonConfirm">Criar</button>
         </div>
     </div>
@@ -771,6 +783,7 @@
     // Elementos do Painel de Criação de Grupos
     const createGroupContainer = document.getElementById('createGroupContainer');
     const groupNameInput = document.getElementById('groupNameInput');
+    const groupPasswordInput = document.getElementById('groupPasswordInput');
     const createGroupButtonConfirm = document.getElementById('createGroupButtonConfirm');
     const createGroupButton = document.getElementById('createGroupButton');
 
@@ -781,7 +794,7 @@
 
     // Elementos do Painel de Configurações
     const settingsPanel = document.getElementById('settingsPanel');
-    const settingsOption = document.getElementById('settingsOption');
+        const settingsOption = document.getElementById('settingsOption');
     const closeSettingsPanel = document.getElementById('closeSettingsPanel');
     const notificationSetting = document.getElementById('notificationSetting');
     const darkModeSetting = document.getElementById('darkModeSetting');
@@ -794,6 +807,7 @@
     let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
     let conversationStarted = localStorage.getItem('conversationStarted') || null;
     let currentGroupId = null;
+    let currentGroupAdmin = null; //Armazena o ID do administrador do grupo atual
 
     let selectedMessageKey = null; // Rastreia a mensagem selecionada
 
@@ -809,7 +823,7 @@
         const date = new Date(timestamp);
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
-                return `${hours}:${minutes}`;
+        return `${hours}:${minutes}`;
     };
 
     //Salva o userId no localStorage ao gerar um novo
@@ -999,19 +1013,19 @@
             mediaElement.src = message; //message já é o base64
             mediaElement.alt = 'Vídeo';
             mediaElement.controls = true;
+            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
             mediaElement.style.maxWidth = '100%';
             mediaElement.style.borderRadius = '5px';
             mediaElement.style.marginTop = '5px';
-            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
             messageContent.appendChild(mediaElement);
         } else if (mediaType === 'audio') {
             mediaElement = document.createElement('audio');
             mediaElement.src = message; //message já é o base64
             mediaElement.alt = 'Áudio';
             mediaElement.controls = true;
+            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
             mediaElement.style.width = '100%';
             mediaElement.style.marginTop = '5px';
-            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
             messageContent.appendChild(mediaElement);
 
         } else {
@@ -1023,6 +1037,9 @@
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
+    /**
+     * Carrega as mensagens do Firebase para um grupo específico.
+     */
     function loadMessages(groupId) {
         currentGroupId = groupId;
         messagesDiv.innerHTML = '';
@@ -1046,8 +1063,7 @@
             }
         });
     }
-
-    /**
+ /**
      * Carrega a lista de grupos do Firebase e as exibe na interface.
      */
     function loadGroups() {
@@ -1058,23 +1074,40 @@
                 for (let key in data) {
                     const li = document.createElement('li');
                     li.textContent = data[key].name;
+                    li.addEventListener('click', () => {
+                        // Solicitar a senha ao entrar no grupo
+                        const enteredPassword = prompt("Senha do grupo (se houver):", "");
 
+                        // Se o grupo tiver senha, verificar se a senha digitada está correta
+                        if (data[key].password && data[key].password !== enteredPassword) {
+                            alert("Senha incorreta!");
+                            return;
+                        }
+
+                        loadMessages(key);
+                        groupListContainer.classList.remove('show');
+                        currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
+                        updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+                    });
+
+                     // Adiciona o botão "🗑️" para o administrador remover o grupo
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = '🗑️';
                     deleteButton.classList.add('delete-button');
-                    deleteButton.addEventListener('click', () => {
-                        if (confirm('Tem certeza que deseja deletar este grupo?')) {
-                            remove(ref(database, `groups/${key}`));
-                            remove(ref(database, `messages/${key}`));
+                    deleteButton.addEventListener('click', (event) => {
+                        event.stopPropagation(); // Impede que o evento de clique no grupo seja disparado
+                        if (currentUserId === data[key].admin) {
+                            if (confirm('Tem certeza que deseja deletar este grupo?')) {
+                                remove(ref(database, `groups/${key}`));
+                                remove(ref(database, `messages/${key}`));
+                                alert('Grupo deletado com sucesso!');
+                            }
+                        } else {
+                            alert('Você não tem permissão para deletar este grupo.');
                         }
                     });
 
-                    li.appendChild(deleteButton);
-                    li.addEventListener('click', () => {
-                        loadMessages(key);
-                        groupListContainer.classList.remove('show');
-                    });
-
+                    li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
                     groupList.appendChild(li);
                 }
             }
@@ -1208,18 +1241,42 @@
         }
     });
 
-    //Evento para "Limpar Chat"
+     /**
+     * Verifica se o usuário atual é o administrador do grupo.
+     */
+    function isCurrentUserGroupAdmin() {
+        return currentUserId === currentGroupAdmin;
+    }
+
+    /**
+     * Atualiza a visibilidade da opção "Limpar Chat" com base nas permissões do usuário.
+     */
+    function updateClearChatOptionVisibility() {
+        if (isCurrentUserGroupAdmin()) {
+            clearChatOption.style.display = 'block'; // Mostra a opção
+        } else {
+            clearChatOption.style.display = 'none'; // Esconde a opção
+        }
+    }
+
+     //Evento para "Limpar Chat"
     clearChatOption.addEventListener('click', () => {
         profileMenu.classList.remove('show');
-        if (confirm('Tem certeza que deseja limpar o chat?')) {
-            //Limpa as mensagens do Firebase (simulação)
-            set(ref(database, `messages/${currentGroupId}`), null)
-                .then(() => {
-                    alert('Chat limpo com sucesso!');
-                })
-                .catch((error) => {
-                    alert('Ocorreu um erro ao limpar o chat: ' + error.message);
-                });
+
+        // Verifique se o usuário é o administrador do grupo
+        if (isCurrentUserGroupAdmin()) {
+            if (confirm('Tem certeza que deseja limpar o chat?')) {
+                //Limpa as mensagens do Firebase (simulação)
+                set(ref(database, `messages/${currentGroupId}`), null)
+                    .then(() => {
+                        alert('Chat limpo com sucesso!');
+                    })
+                    .catch((error) => {
+                        alert('Ocorreu um erro ao limpar o chat: ' + error.message);
+                    });
+            }
+        } else {
+            alert('Você não tem permissão para limpar este chat.');
         }
     });
 
@@ -1316,7 +1373,7 @@
     // Exibe o painel de atualizações ao carregar a página
     updatePanel.style.display = 'block';
 
-    // Evento para mostrar o painel de criação de grupos
+       // Evento para mostrar o painel de criação de grupos
     createGroupButton.addEventListener('click', () => {
         createGroupContainer.classList.add('show');
     });
@@ -1324,6 +1381,8 @@
     // Evento para criar um grupo
     createGroupButtonConfirm.addEventListener('click', () => {
         const groupName = groupNameInput.value.trim();
+        const groupPassword = groupPasswordInput.value;
+
         if (!groupName) {
             alert('Por favor, insira um nome para o grupo.');
             return;
@@ -1331,100 +1390,106 @@
 
         push(groupsRef, {
             name: groupName,
+            password: groupPassword, // Adiciona a senha (pode ser vazia)
+            admin: currentUserId // Define o criador como administrador
         }).then((snapshot) => {
             loadMessages(snapshot.key);
-                createGroupContainer.classList.remove('show');
-                groupNameInput.value = ''; // Limpa o campo de entrada
-            });
+            createGroupContainer.classList.remove('show');
+            groupNameInput.value = ''; // Limpa o campo de entrada
+            groupPasswordInput.value = ''; // Limpa o campo de senha
+             currentGroupAdmin = currentUserId; // Define o usuário atual como administrador do grupo
+            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
         });
+    });
 
-        // Fechar a tela de criação de grupos ao clicar fora dela
-        createGroupContainer.addEventListener('click', (event) => {
-            if (event.target === createGroupContainer) {
-                createGroupContainer.classList.remove('show');
-            }
-        });
-
-        // Evento para mostrar a lista de grupos
-        viewGroupsButton.addEventListener('click', () => {
-            groupListContainer.classList.add('show');
-            loadGroups();
-        });
-
-        // Fechar a tela de lista de grupos ao clicar fora dela
-        groupListContainer.addEventListener('click', (event) => {
-            if (event.target === groupListContainer) {
-                groupListContainer.classList.remove('show');
-            }
-        });
-
-        // Carregar as configurações salvas
-        const loadSettings = () => {
-            notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
-            darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
-            enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
-
-            //Carregar imagem de fundo
-            const backgroundImage = localStorage.getItem('backgroundImage');
-            if (backgroundImage) {
-                document.documentElement.style.setProperty('--chat-background-image', `url(${backgroundImage})`);
-            }
-            applySettings(); // Aplicar as configurações carregadas
-        };
-
-        // Aplicar as configurações
-        const applySettings = () => {
-            // Modo Escuro
-            if (darkModeSetting.checked) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
+    // Fechar a tela de criação de grupos ao clicar fora dela
+    createGroupContainer.addEventListener('click', (event) => {
+        if (event.target === createGroupContainer) {
+            createGroupContainer.classList.remove('show');
         }
-        //Notificações
-        //Lógica de notificação aqui (pode usar a API de notificação do navegador)
-        };
+    });
 
-        // Salvar as configurações
-        const saveSettings = () => {
-        localStorage.setItem('notificationSetting', notificationSetting.checked);
-        localStorage.setItem('darkModeSetting', darkModeSetting.checked);
-        localStorage.setItem('enterToSend', enterToSend.checked);
-            applySettings(); //Aplicar as configurações ao salvar
-        };
+    // Evento para mostrar a lista de grupos
+    viewGroupsButton.addEventListener('click', () => {
+        groupListContainer.classList.add('show');
+        loadGroups();
+    });
 
-        // Eventos para salvar as configurações quando os checkboxes mudarem
-        notificationSetting.addEventListener('change', saveSettings);
-        darkModeSetting.addEventListener('change', saveSettings);
-        enterToSend.addEventListener('change', saveSettings);
+    // Fechar a tela de lista de grupos ao clicar fora dela
+    groupListContainer.addEventListener('click', (event) => {
+        if (event.target === groupListContainer) {
+            groupListContainer.classList.remove('show');
+        }
+    });
 
-        // Evento para "Enter Envia"
-        chatInput.addEventListener('keydown', (event) => {
-            if (enterToSend.checked && event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendButton.click();
-            }
-        });
+    // Carregar as configurações salvas
+    const loadSettings = () => {
+        notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
+        darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
+        enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
 
-        // Evento para processar a imagem de fundo
-        if (backgroundImageInput) { // Verifica se o elemento existe
-        backgroundImageInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const imageUrl = e.target.result;
-                    localStorage.setItem('backgroundImage', imageUrl);
-                    document.documentElement.style.setProperty('--chat-background-image', `url(${imageUrl})`);
-                }
-                reader.readAsDataURL(file);
-            }
-        });
+        //Carregar imagem de fundo
+        const backgroundImage = localStorage.getItem('backgroundImage');
+        if (backgroundImage) {
+            document.documentElement.style.setProperty('--chat-background-image', `url(${backgroundImage})`);
+        }
+        applySettings(); // Aplicar as configurações carregadas
+    };
+
+    // Aplicar as configurações
+    const applySettings = () => {
+        // Modo Escuro
+        if (darkModeSetting.checked) {
+            document.body.classList.add('dark-mode');
         } else {
-        console.error("Elemento backgroundImageInput não encontrado.");
-        }
+            document.body.classList.remove('dark-mode');
+    }
+    //Notificações
+    //Lógica de notificação aqui (pode usar a API de notificação do navegador)
+    };
 
-        // Carregar as configurações ao iniciar o aplicativo
-        loadSettings();
-        </script>
-</body>
-</html>
+    // Salvar as configurações
+    const saveSettings = () => {
+    localStorage.setItem('notificationSetting', notificationSetting.checked);
+    localStorage.setItem('darkModeSetting', darkModeSetting.checked);
+    localStorage.setItem('enterToSend', enterToSend.checked);
+        applySettings(); //Aplicar as configurações ao salvar
+    };
+
+    // Eventos para salvar as configurações quando os checkboxes mudarem
+    notificationSetting.addEventListener('change', saveSettings);
+    darkModeSetting.addEventListener('change', saveSettings);
+    enterToSend.addEventListener('change', saveSettings);
+
+    // Evento para "Enter Envia"
+    chatInput.addEventListener('keydown', (event) => {
+        if (enterToSend.checked && event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendButton.click();
+        }
+    });
+
+    // Evento para processar a imagem de fundo
+    if (backgroundImageInput) { // Verifica se o elemento existe
+    backgroundImageInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imageUrl = e.target.result;
+                localStorage.setItem('backgroundImage', imageUrl);
+                document.documentElement.style.setProperty('--chat-background-image', `url(${imageUrl})`);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+    } else {
+    console.error("Elemento backgroundImageInput não encontrado.");
+    }
+
+    // Carregar as configurações ao iniciar o aplicativo
+    loadSettings();
+
+    // Ao carregar os grupos, esconde a opção "Limpar Chat" inicialmente
+    clearChatOption.style.display = 'none';
+    </script>
