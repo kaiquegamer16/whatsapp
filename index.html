@@ -315,11 +315,11 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
         // Import the functions you need from the SDKs you need
-        //import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        //import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
-        //import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+        import { getDatabase, ref, push, set, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
         // Firebase configuration (substitua com suas credenciais)
         const firebaseConfig = {
@@ -334,13 +334,13 @@
           };
 
         // Initialize Firebase
-        //const app = initializeApp(firebaseConfig);
-        //const analytics = getAnalytics(app);
-        //const database = getDatabase(app);
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
 
         let newGroup; // Armazenar informações do novo grupo
 
-        function openNewGroupModal() {
+        window.openNewGroupModal = function () {
             document.getElementById("newGroupModal").style.display = "block";
             newGroup = {
                 name: null,
@@ -349,11 +349,11 @@
             };
         }
 
-        function closeNewGroupModal() {
+        window.closeNewGroupModal = function () {
             document.getElementById("newGroupModal").style.display = "none";
         }
 
-        function previewGroupImage(input) {
+        window.previewGroupImage = function (input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
 
@@ -366,10 +366,21 @@
             }
         }
 
-        function createNewGroup() {
+        window.createNewGroup = async function () {
             const groupName = document.getElementById("groupName").value;
             newGroup.name = groupName;
 
+            // Salvar no Firebase
+            const groupRef = ref(database, 'groups'); // Referência ao nó "groups"
+            const newGroupRef = push(groupRef); // Cria um novo nó com um ID único
+
+            // Salvar os dados do grupo
+            await set(newGroupRef, {
+                name: newGroup.name,
+                image: newGroup.image
+            });
+
+            newGroup.id = newGroupRef.key;  // Salva o ID gerado pelo Firebase
             // SIMULAÇÃO: Crie o grupo e adiciona à lista de chats
             addGroupToChatList(newGroup);
             closeNewGroupModal();
@@ -392,7 +403,7 @@
             chatList.appendChild(listItem);
         }
 
-        function openChatPage(groupId) {
+         window.openChatPage = function (groupId) {
             // Salvar o ID do grupo no localStorage (usaremos para buscar os dados no chat.html)
             localStorage.setItem('currentGroupId', groupId);
 
@@ -400,11 +411,11 @@
             window.open('chat.html', '_blank');
         }
 
-        function openGroupSettingsModal() {
+         window.openGroupSettingsModal = function() {
             document.getElementById("groupSettingsModal").style.display = "block";
         }
 
-        function closeGroupSettingsModal() {
+        window.closeGroupSettingsModal = function() {
             document.getElementById("groupSettingsModal").style.display = "none";
         }
     </script>
