@@ -239,7 +239,10 @@
         .group-list-container,
         #settingsPanel,
         #welcomeScreen,
-        #passwordPanel { /* Adicionado o painel de senha */
+        #passwordPanel,
+        #successPanel, /* Adicionado painéis de feedback */
+        #errorPanel
+        {
             position: fixed;
             top: 0;
             left: 0;
@@ -249,7 +252,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 11;
+            z-index: 12;
         }
 
         .edit-profile-container.show,
@@ -257,7 +260,10 @@
         .group-list-container.show,
         #settingsPanel.show,
         #welcomeScreen.show,
-        #passwordPanel.show { /* Adicionado o painel de senha */
+        #passwordPanel.show,
+        #successPanel.show,
+        #errorPanel.show
+        {
             display: flex;
         }
 
@@ -266,7 +272,9 @@
         .group-list-box,
         #settingsBox,
         #welcomeBox,
-        #passwordBox { /* Adicionado o painel de senha */
+        #passwordBox,
+        .feedback-box
+         {
             background-color: var(--panel-background-color);
             padding: 20px;
             border-radius: var(--border-radius);
@@ -283,7 +291,8 @@
         .group-list-box h2,
         #settingsBox h2,
         #welcomeBox h2,
-        #passwordBox h2 { /* Adicionado o painel de senha */
+        #passwordBox h2,
+         .feedback-box h2{
             color: var(--secondary-color);
             margin-bottom: 15px;
         }
@@ -295,7 +304,7 @@
         #settingsBox input[type="file"],
         #welcomeBox input[type="text"],
         #welcomeBox input[type="file"],
-         #passwordBox input[type="password"] { /* Adicionado o painel de senha */
+          #passwordBox input[type="password"] {
             width: 100%;
             padding: 12px;
             margin-bottom: 15px;
@@ -305,14 +314,14 @@
             color: var(--secondary-color);
             font-size: 1em;
             transition: border-color 0.3s ease;
-             box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+              box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
         }
 
         .edit-profile-box input[type="text"]::placeholder,
         .create-group-box input[type="text"]::placeholder,
         .create-group-box input[type="password"]::placeholder,
         #welcomeBox input[type="text"]::placeholder,
-          #passwordBox input[type="password"]::placeholder { /* Adicionado o painel de senha */
+           #passwordBox input[type="password"]::placeholder{
             color: #a0aec0;
         }
 
@@ -323,7 +332,7 @@
         #settingsBox input[type="file"]:focus,
         #welcomeBox input[type="text"]:focus,
         #welcomeBox input[type="file"]:focus,
-          #passwordBox input[type="password"]:focus { /* Adicionado o painel de senha */
+           #passwordBox input[type="password"]:focus {
             border-color: var(--primary-color);
             outline: none;
         }
@@ -332,7 +341,8 @@
         .create-group-box button,
         #settingsBox .close-button,
         #welcomeBox button,
-          #passwordBox button { /* Adicionado o painel de senha */
+          #passwordBox button,
+           .feedback-box button{
             background-color: var(--primary-color);
             color: var(--background-color);
             border: none;
@@ -350,7 +360,9 @@
         .create-group-box button:hover,
         #settingsBox .close-button:hover,
         #welcomeBox button:hover,
-          #passwordBox button:hover { /* Adicionado o painel de senha */
+          #passwordBox button:hover,
+            .feedback-box button:hover
+           {
             background-color: #4caf50;
         }
 
@@ -364,7 +376,7 @@
             margin-bottom: 15px;
             border: 3px solid var(--primary-color);
             max-width: 100%; /* Garante que a imagem não distorça */
-             box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+              box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
         }
 
         #profileImageInput,
@@ -418,7 +430,7 @@
             border-radius: var(--border-radius);
             transition: background-color 0.3s ease;
             cursor: pointer;
-            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+             box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
         }
 
         .group-list-box li:hover {
@@ -484,6 +496,7 @@
             overflow: hidden;
             border-radius: var(--border-radius);
             max-width: 100%; /* Garante que a imagem não distorça */
+            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
         }
 
         #mediaPreview {
@@ -620,15 +633,13 @@
         .update-panel .close-button:hover {
             background-color: #388e3c;
         }
-
-        /* Estilos para o painel de senha */
+// Estilos para o painel de senha
         #passwordBox {
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+             box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
         }
-
         #passwordBox input[type="password"] {
             width: 100%;
             padding: 10px;
@@ -637,7 +648,27 @@
             border-radius: 5px;
             background-color: #4f4f4f;
             color: #e0e0e0;
-             box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+              box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+        }
+        #passwordBox button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        #passwordBox button:hover {
+            background-color: #388e3c;
+        }
+// Estilos para os painéis de feedback
+        .feedback-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
         }
 
         #passwordBox button {
@@ -722,9 +753,9 @@
     <div class="update-panel" id="updatePanel">
         <h3>Novas Funcionalidades</h3>
         <ul>
-            <li>✅ Layout corrigido.</li>
-            <li>✅ Grupos com senhas.</li>
-            <li>✅ Administradores de grupo.</li>
+            <li>✅ Correções no sistema de senhas.</li>
+            <li>✅ Feedback visual ao entrar no grupo.</li>
+            <li>✅ Vídeos funcionando corretamente.</li>
         </ul>
         <button class="close-button" id="closeUpdatePanel">Fechar</button>
     </div>
@@ -766,6 +797,24 @@
             <h2>Senha do Grupo</h2>
             <input type="password" id="passwordInput" placeholder="Digite a senha">
             <button id="confirmPasswordButton">Confirmar</button>
+        </div>
+    </div>
+
+    <!-- Painel de Sucesso -->
+    <div id="successPanel">
+        <div class="feedback-box">
+            <h2>Senha correta!</h2>
+            <p>Você está no grupo, aproveite o bate-papo.</p>
+            <button id="okSuccessButton">OK</button>
+        </div>
+    </div>
+
+    <!-- Painel de Erro -->
+    <div id="errorPanel">
+        <div class="feedback-box">
+            <h2>Senha incorreta!</h2>
+            <p>Por favor, coloque a senha correta.</p>
+            <button id="okErrorButton">OK</button>
         </div>
     </div>
 
@@ -866,6 +915,12 @@
     const passwordBox = document.getElementById('passwordBox');
     const passwordInput = document.getElementById('passwordInput');
     const confirmPasswordButton = document.getElementById('confirmPasswordButton');
+
+    // Elementos do Painel de Feedback
+    const successPanel = document.getElementById('successPanel');
+    const errorPanel = document.getElementById('errorPanel');
+    const okSuccessButton = document.getElementById('okSuccessButton');
+    const okErrorButton = document.getElementById('okErrorButton');
 
     // Variáveis Globais
     let currentUserId = localStorage.getItem('userId') || generateUserId(); //Persistindo userId
@@ -1081,7 +1136,7 @@
             messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
             mediaElement.src = message; //message já é o base64
             messageElement.alt = 'Vídeo';
-            messageElement.controls = true;
+            mediaElement.controls = true;
             messageElement.style.maxWidth = '100%';
             messageElement.style.borderRadius = '5px';
             messageElement.style.marginTop = '5px';
@@ -1090,11 +1145,11 @@
             mediaElement = document.createElement('audio');
             messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
             mediaElement.src = message; //message já é o base64
-            mediaElement.alt = 'Áudio';
+            messageElement.alt = 'Áudio';
+            messageElement.controls = true;
             messageElement.style.maxWidth = '100%';
             messageElement.style.borderRadius = '5px';
             messageElement.style.marginTop = '5px';
-            mediaElement.controls = true;
             messageContent.appendChild(mediaElement);
 
         } else {
@@ -1132,7 +1187,7 @@
             }
         });
     }
-  /**
+/**
      * Carrega a lista de grupos do Firebase e as exibe na interface.
      */
     function loadGroups() {
@@ -1143,43 +1198,49 @@
                 for (let key in data) {
                     const li = document.createElement('li');
                     li.textContent = data[key].name;
-                  // Adiciona o evento de clique para entrar no grupo
-                  li.addEventListener('click', () => {
-                    groupBeingJoined = key; // Rastreia o grupo que está sendo entrado
-// Verifica se o usuário já entrou no grupo antes
-                    if (joinedGroups[key] === currentUserId) {
-                        loadMessages(key);
-                        groupListContainer.classList.remove('show');
-                        currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
-                        updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                        return;
-                    }
-                    // Se o usuário for o administrador, entra automaticamente
-                    if (data[key].admin === currentUserId) {
-                        loadMessages(key);
-                        groupListContainer.classList.remove('show');
-                        currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
-                        updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                            joinedGroups[key] = currentUserId; // Registra que o usuário entrou no grupo
-                            localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
-                        return;
-                    }
-                    // Se o grupo tiver senha, mostra o painel de senha
-                    if (data[key].password) {
-                        passwordPanel.classList.add('show');
-                         passwordInput.focus(); // Coloca o foco no input de senha
-                    } else {
-                        // Se não tiver senha, entra diretamente no grupo
-                        loadMessages(key);
-                        groupListContainer.classList.remove('show');
-                        currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
-                        updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                            joinedGroups[key] = currentUserId; // Registra que o usuário entrou no grupo
-                             localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
-                    }
-                });
 
-         // Adiciona o botão "🗑️" para o administrador remover o grupo
+           li.addEventListener('click', () => {
+                        groupBeingJoined = key; // Rastreia o grupo que está sendo entrado
+
+                        // Se o usuário for o administrador, entra automaticamente
+                        if (data[key].admin === currentUserId) {
+                            loadMessages(key);
+                            groupListContainer.classList.remove('show');
+                            currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
+                            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+                             // Registra que o usuário entrou no grupo
+                            joinedGroups[key] = currentUserId;
+                            localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
+                            return;
+                        }
+
+                        // Verifica se o usuário já entrou no grupo antes
+                        if (joinedGroups[key] === currentUserId) {
+                            loadMessages(key);
+                            groupListContainer.classList.remove('show');
+                            currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
+                            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+                            return;
+                        }
+
+                        // Se o grupo tiver senha, mostra o painel de senha
+                        if (data[key].password) {
+                            passwordPanel.classList.add('show');
+                             passwordInput.focus(); // Coloca o foco no input de senha
+                        } else {
+                            // Se não tiver senha, entra diretamente no grupo
+                            loadMessages(key);
+                            groupListContainer.classList.remove('show');
+                             passwordPanel.classList.remove('show');
+                            currentGroupAdmin = data[key].admin; // Carrega o administrador do grupo
+                            updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+                                // Registra que o usuário entrou no grupo
+                            joinedGroups[key] = currentUserId;
+                            localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
+                        }
+                    });
+
+  // Adiciona o botão "🗑️" para o administrador remover o grupo
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = '🗑️';
                     deleteButton.classList.add('delete-button');
@@ -1195,7 +1256,8 @@
                             alert('Você não tem permissão para deletar este grupo.');
                         }
                     });
-li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
+
+                    li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
                     groupList.appendChild(li);
                 }
             }
@@ -1204,7 +1266,7 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
     /**
      * Evento ao confirmar a senha no painel de senha.
      */
-     confirmPasswordButton.addEventListener('click', () => {
+ confirmPasswordButton.addEventListener('click', () => {
         const enteredPassword = passwordInput.value;
         const groupKey = groupBeingJoined;
 
@@ -1212,32 +1274,42 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
         get(ref(database, `groups/${groupKey}`)).then((snapshot) => {
             if (snapshot.exists()) {
                 const group = snapshot.val();
-  // Se a senha estiver incorreta
-                if (group.password && group.password !== enteredPassword) {
-                    alert("Senha incorreta!");
-                     passwordPanel.classList.remove('show');
-                    passwordInput.value = ''; // Limpa o campo de senha
-                     passwordInput.focus(); // Coloca o foco no input de senha
 
+                // Se a senha estiver incorreta
+                if (group.password && group.password !== enteredPassword) {
+                    errorPanel.classList.add('show');
+                       passwordPanel.classList.remove('show');
+                     passwordInput.value = ''; // Limpa o campo de senha
+                          passwordInput.focus(); // Coloca o foco no input de senha
                 } else {
                     // Se a senha estiver correta
-                    loadMessages(groupKey);
-                    groupListContainer.classList.remove('show');
-                      passwordPanel.classList.remove('show');
+                    successPanel.classList.add('show');
+                         passwordPanel.classList.remove('show');
                     passwordInput.value = ''; // Limpa o campo de senha
-                    currentGroupAdmin = group.admin; // Carrega o administrador do grupo
-                    updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                  // Registra que o usuário entrou no grupo
+  currentGroupAdmin = group.admin; // Carrega o administrador do grupo
+                        updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+    // Registra que o usuário entrou no grupo
                     joinedGroups[groupKey] = currentUserId;
                     localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
-                    // Reseta a contagem de tentativas
-                     passwordPanel.classList.remove('show');
                 }
             }
         }).catch((error) => {
             console.error(error);
             alert("Ocorreu um erro ao verificar a senha.");
         });
+    });
+     // Evento ao clicar no botão "OK" do painel de sucesso
+    okSuccessButton.addEventListener('click', () => {
+        successPanel.classList.remove('show');
+        groupListContainer.classList.remove('show');
+          loadMessages(groupBeingJoined);
+    });
+
+    // Evento ao clicar no botão "OK" do painel de erro
+    okErrorButton.addEventListener('click', () => {
+        errorPanel.classList.remove('show');
+           passwordPanel.classList.add('show');
+              passwordInput.focus(); // Coloca o foco no input de senha
     });
     /**
      * Evento de clique no botão de enviar mensagem.
@@ -1332,8 +1404,7 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
         editProfileContainer.classList.add('show');
         newNickInput.value = currentNick;
     });
-
-    // Evento para "Salvar" na tela de edição de perfil
+     // Evento para "Salvar" na tela de edição de perfil
     saveProfileButton.addEventListener('click', () => {
         const newNick = newNickInput.value;
         if (newNick !== currentNick) {
@@ -1365,7 +1436,7 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
             editProfileContainer.classList.remove('show');
         }
     });
- /**
+  /**
      * Verifica se o usuário atual é o administrador do grupo.
      */
     function isCurrentUserGroupAdmin() {
@@ -1382,7 +1453,7 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
             clearChatOption.style.display = 'none'; // Esconde a opção
         }
     }
-     //Evento para "Limpar Chat"
+   //Evento para "Limpar Chat"
     clearChatOption.addEventListener('click', () => {
         profileMenu.classList.remove('show');
 
@@ -1428,7 +1499,6 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
             typingUsers = Object.entries(data) //Convertendo o objeto em array de [key, value]
                 .filter(([key, nick]) => nick !== null && key !== currentUserId) //Filtrando para não mostrar o usuário atual
                 .map(([key, nick]) => nick); //Pegando apenas os Nicks
-
             if (typingUsers.length > 0) {
                 typingIndicator.textContent = `${typingUsers.join(', ')} está digitando...`;
             } else {
@@ -1453,22 +1523,18 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
         if (!currentNick) {
             welcomeScreen.classList.add('show');
         }
-
-        //Salva as configurações da tela de boas vindas
+//Salva as configurações da tela de boas vindas
         saveWelcomeButton.addEventListener('click', () => {
             const newNick = welcomeNickInput.value.trim();
             if (!newNick) {
                 alert('Por favor, insira um Nick.');
                 return;
             }
-
             currentNick = newNick;
             currentProfileImageBase64 = localStorage.getItem('profileImage');
-
             //Persiste os dados
             localStorage.setItem('nick', currentNick);
             localStorage.setItem('profileImage', currentProfileImageBase64);
-
             welcomeScreen.classList.remove('show');
         });
 
@@ -1495,9 +1561,11 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
     closeUpdatePanel.addEventListener('click', () => {
         updatePanel.style.display = 'none';
     });
+
     // Exibe o painel de atualizações ao carregar a página
     updatePanel.style.display = 'block';
-    // Evento para mostrar o painel de criação de grupos
+
+   // Evento para mostrar o painel de criação de grupos
     createGroupButton.addEventListener('click', () => {
         createGroupContainer.classList.add('show');
     });
@@ -1522,22 +1590,20 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
             groupNameInput.value = ''; // Limpa o campo de entrada
             groupPasswordInput.value = ''; // Limpa o campo de senha
             currentGroupAdmin = currentUserId; // Define o usuário atual como administrador do grupo
-             updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
+               updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
         });
     });
-
-    // Fechar a tela de criação de grupos ao clicar fora dela
+// Fechar a tela de criação de grupos ao clicar fora dela
     createGroupContainer.addEventListener('click', (event) => {
         if (event.target === createGroupContainer) {
             createGroupContainer.classList.remove('show');
         }
     });
-    // Evento para mostrar a lista de grupos
+      // Evento para mostrar a lista de grupos
     viewGroupsButton.addEventListener('click', () => {
         groupListContainer.classList.add('show');
         loadGroups();
     });
-
     // Fechar a tela de lista de grupos ao clicar fora dela
     groupListContainer.addEventListener('click', (event) => {
         if (event.target === groupListContainer) {
@@ -1549,6 +1615,7 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
         notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
         darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
         enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
+
         //Carregar imagem de fundo
         const backgroundImage = localStorage.getItem('backgroundImage');
         if (backgroundImage) {
@@ -1556,6 +1623,7 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
         }
         applySettings(); // Aplicar as configurações carregadas
     };
+
     // Aplicar as configurações
     const applySettings = () => {
         // Modo Escuro
@@ -1564,22 +1632,22 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
         } else {
             document.body.classList.remove('dark-mode');
     }
+
     //Notificações
     //Lógica de notificação aqui (pode usar a API de notificação do navegador)
     };
-
-    // Salvar as configurações
+      // Salvar as configurações
     const saveSettings = () => {
     localStorage.setItem('notificationSetting', notificationSetting.checked);
     localStorage.setItem('darkModeSetting', darkModeSetting.checked);
     localStorage.setItem('enterToSend', enterToSend.checked);
         applySettings(); //Aplicar as configurações ao salvar
     };
-    // Eventos para salvar as configurações quando os checkboxes mudarem
+// Eventos para salvar as configurações quando os checkboxes mudarem
     notificationSetting.addEventListener('change', saveSettings);
     darkModeSetting.addEventListener('change', saveSettings);
     enterToSend.addEventListener('change', saveSettings);
-   // Evento para "Enter Envia"
+  // Evento para "Enter Envia"
     chatInput.addEventListener('keydown', (event) => {
         if (enterToSend.checked && event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
@@ -1603,36 +1671,33 @@ li.appendChild(deleteButton); // Adiciona o botão "🗑️" ao item da lista
     } else {
     console.error("Elemento backgroundImageInput não encontrado.");
     }
-    // Carregar as configurações ao iniciar o aplicativo
+      // Carregar as configurações ao iniciar o aplicativo
     loadSettings();
      // Ao carregar os grupos, esconde a opção "Limpar Chat" inicialmente
     clearChatOption.style.display = 'none';
-    /**
+   /**
      * Carrega a lista de grupos e gerencia a exibição e tentativa de entrada de grupos com senha.
      */
-confirmPasswordButton.addEventListener('click', () => {
+       confirmPasswordButton.addEventListener('click', () => {
         const enteredPassword = passwordInput.value;
         const groupKey = groupBeingJoined;
-
         // Verifica se a senha digitada está correta
         get(ref(database, `groups/${groupKey}`)).then((snapshot) => {
             if (snapshot.exists()) {
                 const group = snapshot.val();
-
                 // Se a senha estiver incorreta
                 if (group.password && group.password !== enteredPassword) {
-                    alert("Senha incorreta!");
+                    errorPanel.classList.add('show');
                        passwordPanel.classList.remove('show');
                     passwordInput.value = ''; // Limpa o campo de senha
                 } else {
                     // Se a senha estiver correta
-                    loadMessages(groupKey);
-                    groupListContainer.classList.remove('show');
-                       passwordPanel.classList.remove('show');
+                    successPanel.classList.add('show');
+                         passwordPanel.classList.remove('show');
                     passwordInput.value = ''; // Limpa o campo de senha
                     currentGroupAdmin = group.admin; // Carrega o administrador do grupo
                     updateClearChatOptionVisibility(); // Atualiza a visibilidade da opção de limpar chat
-                    // Registra que o usuário entrou no grupo
+                 // Registra que o usuário entrou no grupo
                     joinedGroups[groupKey] = currentUserId;
                     localStorage.setItem('joinedGroups', JSON.stringify(joinedGroups));
                 }
@@ -1642,5 +1707,18 @@ confirmPasswordButton.addEventListener('click', () => {
             alert("Ocorreu um erro ao verificar a senha.");
         });
     });
+    // Evento ao clicar no botão "OK" do painel de sucesso
+    okSuccessButton.addEventListener('click', () => {
+        successPanel.classList.remove('show');
+        groupListContainer.classList.remove('show');
+        loadMessages(groupBeingJoined);
+    });
+
+    // Evento ao clicar no botão "OK" do painel de erro
+    okErrorButton.addEventListener('click', () => {
+        errorPanel.classList.remove('show');
+           passwordPanel.classList.add('show');
+            passwordInput.focus(); // Coloca o foco no input de senha
+    });
     
-    </script>
+ </script>
