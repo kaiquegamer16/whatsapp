@@ -864,6 +864,20 @@
             resize: none;
             min-height: 40px;
         }
+    /* Estilo para o botão de download */
+    .download-button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .download-button:hover {
+        background-color: #388E3C;
+    }
     </style>
 </head>
 <body>
@@ -990,7 +1004,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
-  // Configuração do Firebase
+      // Configuração do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
         authDomain: "banco-5a678.firebaseapp.com",
@@ -1147,33 +1161,52 @@
                         mediaElement.alt = 'Imagem';
                         messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
                         messageContent.appendChild(mediaElement);
-                        messageElement.appendChild(messageContent);
-                        messagesDiv.appendChild(messageElement);
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
                     } else {
                         console.log('Imagem não encontrada no localForage.');
                     }
+                    messageElement.appendChild(messageContent);
+                    messagesDiv.appendChild(messageElement);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 })
                 .catch(err => console.error("Erro ao recuperar imagem do localForage:", err));
             return;
         } else if (mediaType === 'video') {
-            localforage.getItem(message)
-                .then(videoData => {
-                    if (videoData) {
-                        mediaElement = document.createElement('video');
-                        mediaElement.src = URL.createObjectURL(new Blob([videoData])); // Cria um URL a partir do Blob
-                        mediaElement.alt = 'Vídeo';
-                        mediaElement.controls = true;
-                        messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-                        messageContent.appendChild(mediaElement);
-                        messageElement.appendChild(messageContent);
-                        messagesDiv.appendChild(messageElement);
-                        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                    } else {
-                        console.log('Vídeo não encontrado no localForage.');
-                    }
-                })
-                .catch(err => console.error("Erro ao recuperar vídeo do localForage:", err));
+            // Exibe o botão de download
+            const downloadButton = document.createElement('button');
+            downloadButton.textContent = 'Baixar Vídeo';
+            downloadButton.classList.add('download-button'); // Adiciona a classe para estilo
+            downloadButton.addEventListener('click', () => {
+                localforage.getItem(message)
+                    .then(videoData => {
+                        if (videoData) {
+                            const blob = new Blob([videoData]);
+                            const videoURL = URL.createObjectURL(blob);
+
+                            mediaElement = document.createElement('video');
+                            mediaElement.src = videoURL;
+                            mediaElement.alt = 'Vídeo';
+                            mediaElement.controls = true;
+                            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+                            messageContent.appendChild(mediaElement);
+
+                            // Remove o botão de download
+                            downloadButton.remove();
+
+                            messageElement.appendChild(messageContent);
+                            messagesDiv.appendChild(messageElement);
+                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        } else {
+                            console.log('Vídeo não encontrado no localForage.');
+                        }
+                    })
+                    .catch(err => console.error("Erro ao recuperar vídeo do localForage:", err));
+            });
+            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+            messageContent.appendChild(downloadButton); // Adiciona o botão de download
+            messageElement.appendChild(messageContent);
+            messagesDiv.appendChild(messageElement);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
             return;
         }
 
@@ -1209,30 +1242,6 @@
             emojiPanel.appendChild(emojiOption);
         });
         reactionContainer.appendChild(emojiPanel);
-
-        // Adiciona evento de clique para mostrar/esconder o painel de emojis
-        messageElement.addEventListener('click', (event) => {
-            // Se o clique foi no botão de editar, não mostrar o painel de emojis
-            if (!event.target.classList.contains('edit-button')) {
-                emojiPanel.classList.toggle('show');
-            }
-        });
-
-        // Adiciona as reações existentes à mensagem
-        if (reactions) {
-            for (const reactorId in reactions) {
-                const reactionElement = document.createElement('span');
-                reactionElement.textContent = reactions[reactorId];
-                reactionElement.className = 'reactions';
-                messageElement.appendChild(reactionElement);
-
-                // Se a reação é à sua própria mensagem, adicione um indicador visual
-                if (userId === currentUserId && reactorId !== currentUserId) {
-                    messageElement.classList.add('reacted');
-                }
-            }
-        }
-        messageElement.appendChild(reactionContainer);
 
         // Adicionar botão de edição para mensagens enviadas
         if (userId === currentUserId) {
@@ -1420,7 +1429,9 @@
                     // Salva o arquivo no localForage
                     const reader = new FileReader();
                     reader.onload = function (e) {
-                        localforage.setItem(fileKey, e.target.result)
+                        let fileData = e.target.result;
+
+                        localforage.setItem(fileKey, fileData)
                             .then(() => {
                                 // Envia a chave do arquivo para o Firebase
                                 push(ref(database, `messages/${currentGroupId}`), {
@@ -1435,6 +1446,10 @@
                             })
                             .catch(err => console.error("Erro ao salvar o arquivo no localForage:", err));
                     }
+
+                    reader.onerror = function (error) {
+                        console.error("Erro ao ler o arquivo:", error);
+                    };
 
                     if (isImage) {
                         reader.readAsDataURL(file);
