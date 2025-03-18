@@ -185,19 +185,22 @@
             document.getElementById('chatMessages').appendChild(messageContainer);
         }
            async function loadMessages(groupId) {
-          const messagesRef = ref(database, `groups/${groupId}/messages`);
-            
-          const snapshot = await get(messagesRef);
-            
-          if (snapshot.exists()) {
-              const messages = snapshot.val();
-              for (const messageId in messages) {
-                  displayMessage(messages[messageId].text)
-              }
-          } else {
-              console.log("No messages available for this group.");
-          }
-           document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+             const messagesRef = ref(database, `groups/${groupId}/messages`);
+
+            // Limpa as mensagens existentes antes de carregar novas
+            document.getElementById('chatMessages').innerHTML = '';
+
+            const snapshot = await get(messagesRef);
+
+            if (snapshot.exists()) {
+                const messages = snapshot.val();
+                for (const messageId in messages) {
+                    displayMessage(messages[messageId].text);
+                }
+            } else {
+                console.log("No messages available for this group.");
+            }
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }
 
         window.sendMessage = async function() {
@@ -213,7 +216,7 @@
                    // userId: user.id // caso vc queira criar usuario id no perfil  
                 });
                 document.getElementById('messageInput').value = '';
-                 loadMessages(groupId)
+                loadMessages(groupId)
             }
                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }
