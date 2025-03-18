@@ -87,6 +87,15 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.2s ease;
+        }
+
+        .message:hover {
+            background-color: #333;
+        }
+
+        .message.selected {
+            background-color: #444;
         }
 
         .sent {
@@ -108,6 +117,62 @@
 
         .message-content {
             word-break: break-word;
+        }
+
+        .message-options {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            display: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            padding: 5px;
+            z-index: 1;
+            flex-direction: column;
+        }
+
+        .message.selected .message-options {
+            display: flex;
+        }
+
+        .message-options button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .message-options button:hover {
+            background-color: #777;
+        }
+
+        .emoji-panel {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #4f4f4f;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 5px;
+            z-index: 2;
+            display: none;
+            white-space: nowrap;
+        }
+
+        .emoji-panel.show {
+            display: flex;
+        }
+
+        .emoji-option {
+            font-size: 1.5em;
+            cursor: pointer;
+            margin: 3px;
+            display: inline-block;
         }
 
         /* Área de Input de Mensagem */
@@ -412,16 +477,11 @@
 
         /* Estilos para as reações */
         .reaction-container {
-            display: none;
-            position: relative;
-            margin-top: 5px;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .message:hover .reaction-container {
             display: flex;
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            z-index: 1;
         }
 
         /* Painel de reações */
@@ -430,11 +490,12 @@
             border: 1px solid #555;
             border-radius: 5px;
             padding: 5px;
-            z-index: 1;
-            overflow-x: auto;
+            z-index: 2;
+            display: none;
             white-space: nowrap;
-            display: flex;
-            justify-content: center;
+            position: absolute;
+            top: 100%; /* Abaixo do botão "Reagir" */
+            left: 0;
         }
 
         .emoji-panel.show {
@@ -736,9 +797,8 @@
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
-            transition: background-color 0.3s ease;
-            margin-top: 15px;
             text-align: center;
+            transition: background-color 0.3s ease;
         }
 
         #settingsBox .close-button:hover {
@@ -792,7 +852,7 @@
         }
 
         /* Esconde o input de arquivo */
-        #fileInput {
+        #fileInput, #audioInput {
             display: none;
         }
 
@@ -880,6 +940,32 @@
         .download-button:hover {
             background-color: #388E3C;
         }
+
+        /* Estilos para o áudio */
+        .message audio {
+            width: 100%;
+            margin-top: 5px;
+            border-radius: 5px;
+             background-color: #444; /* Cor de fundo para o player de áudio */
+        }
+
+        /* Estilos para a pré-visualização de áudio */
+        #audioPreviewArea {
+            width: 100%;
+            border: 1px dashed #777;
+            margin-bottom: 10px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #audioPreview {
+            max-width: 100%;
+            object-fit: contain;
+        }
+
     </style>
 </head>
 <body>
@@ -900,11 +986,13 @@
         <div id="mediaPreviewArea">
             <img id="mediaPreview" src="#" alt="Prévia da Mídia" style="display: none;">
             <video id="videoPreview" controls style="display: none;"></video>
-            <!-- Elemento de vídeo -->
+            <audio id="audioPreview" controls style="display: none;"></audio>
             <button id="downloadButton" style="display: none;">Baixar Mídia</button>
         </div>
         <input type="file" id="fileInput" accept="image/*, video/*">
+        <input type="file" id="audioInput" accept="audio/*">  <!-- Adicionado input para áudio -->
         <button id="fileButton" class="icon-button"><i class="fas fa-paperclip"></i></button>
+        <button id="audioButton" class="icon-button"><i class="fas fa-microphone"></i></button>  <!-- Adicionado botão para áudio -->
         <button id="sendButton" class="icon-button">
             <i class="fas fa-paper-plane"></i>
         </button>
@@ -957,11 +1045,12 @@
             <li>✅ Criação de grupos.</li>
             <li>✅ Lista de grupos com opções de editar e deletar.</li>
             <li>✅ Correções de bugs e melhorias de desempenho.</li>
-            <li>✅ Envio de imagens e vídeos no chat.</li>
+            <li>✅ Envio de imagens, vídeos e áudios no chat.</li>
             <li>✅ Apenas outros usuários podem reagir às mensagens.</li>
             <li>✅ Feedback visual quando sua própria mensagem é reagida por outros.</li>
             <li>✅ Área de visualização da mídia antes do envio.</li>
             <li>✅ Botão de download da mídia.</li>
+            <li>✅ Painel lateral de opções ao selecionar mensagem.</li>
         </ul>
         <button class="close-button" id="closeUpdatePanel">Fechar</button>
     </div>
@@ -990,7 +1079,8 @@
             <label><input type="checkbox" id="darkModeSetting">Modo Escuro</label>
             <label><input type="checkbox" id="enterToSend">Enter Envia Mensagem</label>
             <!-- Adicionando a opção de imagem de fundo -->
-            <label for="backgroundImageInput" class="upload-button">Imagem de Fundo</label            <input type="file" id="backgroundImageInput" accept="image/*">
+            <label for="backgroundImageInput" class="upload-button">Imagem de Fundo</label>
+            <input type="file" id="backgroundImageInput" accept="image/*">
             <button class="close-button" id="closeSettingsPanel">Fechar</button>
         </div>
     </div>
@@ -1008,15 +1098,15 @@
 
     // Configuração do Firebase
     const firebaseConfig = {
-    apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
-    authDomain: "banco-5a678.firebaseapp.com",
-    databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
-    projectId: "banco-5a678",
-    storageBucket: "banco-5a678.firebasestorage.app",
-    messagingSenderId: "943801310064",
-    appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
-    measurementId: "G-DEER2QFNXL"
-  };
+        apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE", // REMOVER ESSA CHAVE ANTES DE COMPARTILHAR!
+        authDomain: "banco-5a678.firebaseapp.com",
+        databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
+        projectId: "banco-5a678",
+        storageBucket: "banco-5a678.firebasestorage.app",
+        messagingSenderId: "943801310064",
+        appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+        measurementId: "G-DEER2QFNXL"
+    };
     // Inicialização do Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
@@ -1038,9 +1128,12 @@
     const emojiPicker = document.getElementById('emojiPicker'); //Painel de Emojis
     const fileButton = document.getElementById('fileButton'); //Botão de Anexar Arquivo (agora com ícone de clipe)
     const fileInput = document.getElementById('fileInput'); //Input de Arquivo
+    const audioInput = document.getElementById('audioInput'); // Input de Áudio
+    const audioButton = document.getElementById('audioButton'); // Botão de áudio
     const mediaPreviewArea = document.getElementById('mediaPreviewArea'); // Área de visualização da mídia
     const mediaPreview = document.getElementById('mediaPreview'); // Elemento img para a visualização da imagem
     const videoPreview = document.getElementById('videoPreview'); // Elemento video para a visualização do vídeo
+    const audioPreview = document.getElementById('audioPreview'); // Elemento audio para a visualização do áudio
     const downloadButton = document.getElementById('downloadButton'); // Botão de download
     const cancelMediaButton = document.getElementById('cancelMediaButton'); // Botão de cancelar
 
@@ -1092,6 +1185,9 @@
     let conversationStarted = localStorage.getItem('conversationStarted') || null;
     let currentGroupId = null;
     let reactedTo = {};//Objeto para rastrear a reação à própria mensagem
+
+    let selectedMessageKey = null; // Rastreia a mensagem selecionada
+
     //Array de emojis (As opções da imagem)
     const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
 
@@ -1126,7 +1222,7 @@
         return Math.random().toString(36).substring(2, 15);
     }
 
-     /**
+    /**
      * Função para converter um arquivo para Base64.
      */
     function toBase64(file) {
@@ -1139,7 +1235,7 @@
     }
 
     /**
-     * Evento de mudança no input de arquivo.
+     * Evento de mudança no input de arquivo (imagens e vídeos).
      */
     fileInput.addEventListener('change', async (event) => {
         const file = event.target.files[0];
@@ -1156,18 +1252,19 @@
 
             mediaPreview.style.display = 'none';
             videoPreview.style.display = 'none';
+            audioPreview.style.display = 'none';
 
             if (isImage || isVideo) {
                 try {
                     const base64String = await toBase64(file);
 
                     if (isImage) {
-                      mediaPreview.src = base64String;
-                      mediaPreview.style.display = 'block';
+                        mediaPreview.src = base64String;
+                        mediaPreview.style.display = 'block';
                     } else {
-                      videoPreview.src = base64String;
-                      videoPreview.style.display = 'block';
-                      videoPreview.controls = true; //Mostra os controles do video
+                        videoPreview.src = base64String;
+                        videoPreview.style.display = 'block';
+                        videoPreview.controls = true; //Mostra os controles do video
                     }
 
                     mediaPreviewArea.style.display = 'flex';
@@ -1175,20 +1272,20 @@
                     cancelMediaButton.style.display = 'flex';
 
                     sendButton.addEventListener('click', () => {
-                      if (currentGroupId) {
-                        let mediaType = isImage ? 'image' : 'video';
-                        push(ref(database, `messages/${currentGroupId}`), {
-                          userId: currentUserId,
-                          nick: currentNick,
-                          message: base64String, // Envia o Base64
-                          timestamp: Date.now(),
-                          mediaType: mediaType
-                        });
-                        resetMediaPreview();
-                        set(ref(database, `typing/${currentUserId}`), null);
-                      } else {
-                        alert('Selecione um grupo para enviar a mensagem.');
-                      }
+                        if (currentGroupId) {
+                            let mediaType = isImage ? 'image' : 'video';
+                            push(ref(database, `messages/${currentGroupId}`), {
+                                userId: currentUserId,
+                                nick: currentNick,
+                                message: base64String, // Envia o Base64
+                                timestamp: Date.now(),
+                                mediaType: mediaType
+                            });
+                            resetMediaPreview();
+                            set(ref(database, `typing/${currentUserId}`), null);
+                        } else {
+                            alert('Selecione um grupo para enviar a mensagem.');
+                        }
                     }, { once: true });
 
                 } catch (error) {
@@ -1201,98 +1298,208 @@
         }
     });
 
+    /**
+     * Evento de mudança no input de arquivo (áudio).
+     */
+    audioInput.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // Verifica o tamanho do arquivo
+            if (file.size > 5 * 1024 * 1024) { // Limite para 5MB (ajuste conforme necessário)
+                alert("O arquivo excede o tamanho máximo permitido (5MB).");
+                audioInput.value = ''; // Limpa o input
+                return;
+            }
+
+            mediaPreview.style.display = 'none';
+            videoPreview.style.display = 'none';
+            audioPreview.style.display = 'none';
+
+            try {
+                const base64String = await toBase64(file);
+
+                audioPreview.src = base64String;
+                audioPreview.style.display = 'block';
+                audioPreview.controls = true; //Mostra os controles do áudio
+
+                mediaPreviewArea.style.display = 'flex';
+                chatInput.classList.add('hidden');
+                cancelMediaButton.style.display = 'flex';
+
+                sendButton.addEventListener('click', () => {
+                    if (currentGroupId) {
+                        push(ref(database, `messages/${currentGroupId}`), {
+                            userId: currentUserId,
+                            nick: currentNick,
+                            message: base64String, // Envia o Base64
+                            timestamp: Date.now(),
+                            mediaType: 'audio'
+                        });
+                        resetMediaPreview();
+                        set(ref(database, `typing/${currentUserId}`), null);
+                    } else {
+                        alert('Selecione um grupo para enviar a mensagem.');
+                    }
+                }, { once: true });
+
+            } catch (error) {
+                console.error("Erro ao converter para Base64:", error);
+                alert("Erro ao processar o arquivo de áudio.");
+            }
+        }
+    });
 
     /**
-     * Função para exibir uma mensagem no chat.
+     * Remove a seleção visual de todas as mensagens.
      */
-    function displayMessage(userId, nick, message, timestamp, key, reactions, mediaType = null, mediaUrl = null) {
-      const messageElement = document.createElement('div');
-      messageElement.classList.add('message');
+    function clearMessageSelection() {
+        document.querySelectorAll('.message').forEach(msg => {
+            msg.classList.remove('selected');
+        });
+        selectedMessageKey = null;
+    }
 
-      // Adiciona classe 'sent' ou 'received' dependendo do autor
-      if (userId === currentUserId) {
-          messageElement.classList.add('sent');
-      } else {
-          messageElement.classList.add('received');
-      }
+    /**
+     * Exibe uma mensagem no chat.
+     */
+    function displayMessage(userId, nick, message, timestamp, key, reactions, mediaType = null) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
 
-      // Cria o elemento de conteúdo da mensagem
-      const messageContent = document.createElement('div');
-      messageContent.className = 'message-content';
+        // Adiciona classe 'sent' ou 'received' dependendo do autor
+        if (userId === currentUserId) {
+            messageElement.classList.add('sent');
+        } else {
+            messageElement.classList.add('received');
+        }
 
-      let mediaElement = null;
+        // Cria o elemento de conteúdo da mensagem
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
 
-      if (mediaType === 'image') {
-          mediaElement = document.createElement('img');
-          mediaElement.src = message; //message já é o base64
-          mediaElement.alt = 'Imagem';
-          mediaElement.style.maxWidth = '100%';
-          mediaElement.style.borderRadius = '5px';
-          mediaElement.style.marginTop = '5px';
-          messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-          messageContent.appendChild(mediaElement);
-      } else if (mediaType === 'video') {
-          mediaElement = document.createElement('video');
-          mediaElement.src = message; //message já é o base64
-          mediaElement.alt = 'Vídeo';
-          mediaElement.controls = true;
-          mediaElement.style.maxWidth = '100%';
-          mediaElement.style.borderRadius = '5px';
-          mediaElement.style.marginTop = '5px';
+        let mediaElement = null;
 
-          messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-          messageContent.appendChild(mediaElement);
-      } else {
-          messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
-      }
+        if (mediaType === 'image') {
+            mediaElement = document.createElement('img');
+            mediaElement.src = message; //message já é o base64
+            mediaElement.alt = 'Imagem';
+            mediaElement.style.maxWidth = '100%';
+            mediaElement.style.borderRadius = '5px';
+            mediaElement.style.marginTop = '5px';
+            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+            messageContent.appendChild(mediaElement);
+        } else if (mediaType === 'video') {
+            mediaElement = document.createElement('video');
+            mediaElement.src = message; //message já é o base64
+            mediaElement.alt = 'Vídeo';
+            mediaElement.controls = true;
+            mediaElement.style.maxWidth = '100%';
+            mediaElement.style.borderRadius = '5px';
+            mediaElement.style.marginTop = '5px';
+            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+            messageContent.appendChild(mediaElement);
+        } else if (mediaType === 'audio') {
+            mediaElement = document.createElement('audio');
+            mediaElement.src = message; //message já é o base64
+            mediaElement.alt = 'Áudio';
+            mediaElement.controls = true;
+            mediaElement.style.width = '100%';
+            mediaElement.style.marginTop = '5px';
+            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+            messageContent.appendChild(mediaElement);
 
-      messageElement.appendChild(messageContent);
-      messagesDiv.appendChild(messageElement);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        } else {
+            messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
+        }
 
-      const reactionContainer = document.createElement('div');
-      reactionContainer.className = 'reaction-container';
+        messageElement.appendChild(messageContent);
 
-      const emojiPanel = document.createElement('div');
-      emojiPanel.className = 'emoji-panel';
+        // Adiciona as opções de mensagem (Reagir, Editar)
+        const messageOptions = document.createElement('div');
+        messageOptions.className = 'message-options';
 
-      emojis.forEach(emoji => {
-          const emojiOption = document.createElement('span');
-          emojiOption.className = 'emoji-option';
-          emojiOption.textContent = emoji;
+        const reactButton = document.createElement('button');
+        reactButton.textContent = 'Reagir';
+        reactButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Evita que a mensagem seja deselecionada ao clicar no botão
+            openEmojiPanel(key, messageElement);
+        });
+        messageOptions.appendChild(reactButton);
 
-          emojiOption.addEventListener('click', () => {
-              if (userId !== currentUserId) {
-                  update(ref(database, `messages/${currentGroupId}/${key}`), {
-                      reactions: {
-                          [currentUserId]: emoji
-                      }
-                  });
-              }
-              emojiPanel.classList.remove('show');
-          });
-          emojiPanel.appendChild(emojiOption);
-      });
-      reactionContainer.appendChild(emojiPanel);
-
-      if (userId === currentUserId) {
+          //Botão de editar
           const editButton = document.createElement('button');
-          editButton.textContent = 'Editar';
-          editButton.classList.add('edit-button');
-          editButton.addEventListener('click', () => {
-              const newMessage = prompt('Editar mensagem:', message);
-              if (newMessage && newMessage !== message) {
-                  update(ref(database, `messages/${currentGroupId}/${key}`), {
-                      message: newMessage,
-                      timestamp: Date.now()
-                  });
-              }
+            editButton.textContent = 'Editar';
+            editButton.classList.add('edit-button');
+            editButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Evita que a mensagem seja deselecionada ao clicar no botão
+                editMessage(key, message, messageElement);
+            });
+            messageOptions.appendChild(editButton);
+
+        messageElement.appendChild(messageOptions);
+
+        // Lógica de seleção da mensagem
+        messageElement.addEventListener('click', () => {
+            // Se esta mensagem já está selecionada, desmarca
+            if (selectedMessageKey === key) {
+                clearMessageSelection();
+                selectedMessageKey = null;
+                messageElement.classList.remove('selected');
+
+            } else {
+                // Desmarca qualquer mensagem previamente selecionada
+                clearMessageSelection();
+                // Marca esta mensagem como selecionada
+                messageElement.classList.add('selected');
+                selectedMessageKey = key;
+            }
+        });
+
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+      /**
+       * Abre o painel de emojis para reagir à mensagem.
+       */
+      function openEmojiPanel(key, messageElement) {
+          // Cria o painel de emojis
+          const emojiPanel = document.createElement('div');
+          emojiPanel.className = 'emoji-panel';
+
+          emojis.forEach(emoji => {
+              const emojiOption = document.createElement('span');
+              emojiOption.className = 'emoji-option';
+              emojiOption.textContent = emoji;
+              emojiOption.addEventListener('click', () => {
+                  updateReaction(key, emoji);
+                  emojiPanel.remove();
+              });
+              emojiPanel.appendChild(emojiOption);
           });
-          messageElement.appendChild(editButton);
+
+          // Adiciona o painel de emojis ao elemento da mensagem
+          messageElement.appendChild(emojiPanel);
       }
 
-      messagesDiv.appendChild(messageElement);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    /**
+     * Abre um prompt para editar a mensagem.
+     */
+     function editMessage(key, message, messageElement) {
+        const newMessage = prompt('Editar mensagem:', message);
+        if (newMessage && newMessage !== message) {
+            update(ref(database, `messages/${currentGroupId}/${key}`), {
+                message: newMessage,
+                timestamp: Date.now()
+            });
+        }
+     }
+
+    function updateReaction(key, emoji) {
+        update(ref(database, `messages/${currentGroupId}/${key}`), {
+            reactions: {
+                [currentUserId]: emoji
+            }
+        });
     }
 
     function loadMessages(groupId) {
@@ -1388,10 +1595,17 @@
     });
 
     /**
-     * Evento de clique no botão de anexar arquivo.
+     * Evento de clique no botão de anexar arquivo (imagem/vídeo).
      */
     fileButton.addEventListener('click', () => {
         fileInput.click(); // Aciona o input de arquivo
+    });
+
+    /**
+     * Evento de clique no botão de anexar áudio.
+     */
+    audioButton.addEventListener('click', () => {
+        audioInput.click(); // Aciona o input de áudio
     });
 
     /**
@@ -1400,12 +1614,15 @@
     function resetMediaPreview() {
         mediaPreview.src = "";
         videoPreview.src = "";
+        audioPreview.src = "";
         mediaPreview.style.display = 'none';
         videoPreview.style.display = 'none';
+        audioPreview.style.display = 'none';
         mediaPreviewArea.style.display = 'none';
         chatInput.classList.remove('hidden');
         cancelMediaButton.style.display = 'none';
         fileInput.value = '';
+        audioInput.value = '';
 
         // Remove o event listener (se adicionado) para não acumular
         sendButton.onclick = null;
@@ -1622,94 +1839,99 @@
             name: groupName,
         }).then((snapshot) => {
             loadMessages(snapshot.key);
-            createGroupContainer.classList.remove('show');
-            groupNameInput.value = ''; // Limpa o campo de entrada
+                createGroupContainer.classList.remove('show');
+                groupNameInput.value = ''; // Limpa o campo de entrada
+            });
         });
-    });
 
-    // Fechar a tela de criação de grupos ao clicar fora dela
-    createGroupContainer.addEventListener('click', (event) => {
-        if (event.target === createGroupContainer) {
-            createGroupContainer.classList.remove('show');
-        }
-    });
+        // Fechar a tela de criação de grupos ao clicar fora dela
+        createGroupContainer.addEventListener('click', (event) => {
+            if (event.target === createGroupContainer) {
+                createGroupContainer.classList.remove('show');
+            }
+        });
 
-    // Evento para mostrar a lista de grupos
-    viewGroupsButton.addEventListener('click', () => {
-        groupListContainer.classList.add('show');
-        loadGroups();
-    });
+        // Evento para mostrar a lista de grupos
+        viewGroupsButton.addEventListener('click', () => {
+            groupListContainer.classList.add('show');
+            loadGroups();
+        });
 
-    // Fechar a tela de lista de grupos ao clicar fora dela
-    groupListContainer.addEventListener('click', (event) => {
-        if (event.target === groupListContainer) {
-            groupListContainer.classList.remove('show');
-        }
-    });
+        // Fechar a tela de lista de grupos ao clicar fora dela
+        groupListContainer.addEventListener('click', (event) => {
+            if (event.target === groupListContainer) {
+                groupListContainer.classList.remove('show');
+            }
+        });
 
-    // Carregar as configurações salvas
-    const loadSettings = () => {
-        notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
-        darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
-        enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
+        // Carregar as configurações salvas
+        const loadSettings = () => {
+            notificationSetting.checked = localStorage.getItem('notificationSetting') === 'true';
+            darkModeSetting.checked = localStorage.getItem('darkModeSetting') === 'true';
+            enterToSend.checked = localStorage.getItem('enterToSend') === 'true';
 
-        //Carregar imagem de fundo
-        const backgroundImage = localStorage.getItem('backgroundImage');
-        if (backgroundImage) {
-            document.documentElement.style.setProperty('--chat-background-image', `url(${backgroundImage})`);
-        }
-        applySettings(); // Aplicar as configurações carregadas
-    };
+            //Carregar imagem de fundo
+            const backgroundImage = localStorage.getItem('backgroundImage');
+            if (backgroundImage) {
+                document.documentElement.style.setProperty('--chat-background-image', `url(${backgroundImage})`);
+            }
+            applySettings(); // Aplicar as configurações carregadas
+        };
 
-    // Aplicar as configurações
-    const applySettings = () => {
-        // Modo Escuro
-        if (darkModeSetting.checked) {
-            document.body.classList.add('dark-mode');
-        } else {
-            document.body.classList.remove('dark-mode');
+        // Aplicar as configurações
+        const applySettings = () => {
+            // Modo Escuro
+            if (darkModeSetting.checked) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
         }
         //Notificações
         //Lógica de notificação aqui (pode usar a API de notificação do navegador)
-    };
+        };
 
-    // Salvar as configurações
-    const saveSettings = () => {
+        // Salvar as configurações
+        const saveSettings = () => {
         localStorage.setItem('notificationSetting', notificationSetting.checked);
         localStorage.setItem('darkModeSetting', darkModeSetting.checked);
         localStorage.setItem('enterToSend', enterToSend.checked);
-        applySettings(); //Aplicar as configurações ao salvar
-    };
+            applySettings(); //Aplicar as configurações ao salvar
+        };
 
-    // Eventos para salvar as configurações quando os checkboxes mudarem
-    notificationSetting.addEventListener('change', saveSettings);
-    darkModeSetting.addEventListener('change', saveSettings);
-    enterToSend.addEventListener('change', saveSettings);
+        // Eventos para salvar as configurações quando os checkboxes mudarem
+        notificationSetting.addEventListener('change', saveSettings);
+        darkModeSetting.addEventListener('change', saveSettings);
+        enterToSend.addEventListener('change', saveSettings);
 
-    // Evento para "Enter Envia"
-    chatInput.addEventListener('keydown', (event) => {
-        if (enterToSend.checked && event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            sendButton.click();
-        }
-    });
-
-    // Evento para processar a imagem de fundo
-    backgroundImageInput.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const imageUrl = e.target.result;
-                localStorage.setItem('backgroundImage', imageUrl);
-                document.documentElement.style.setProperty('--chat-background-image', `url(${imageUrl})`);
+        // Evento para "Enter Envia"
+        chatInput.addEventListener('keydown', (event) => {
+            if (enterToSend.checked && event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendButton.click();
             }
-            reader.readAsDataURL(file);
-        }
-    });
+        });
 
-    // Carregar as configurações ao iniciar o aplicativo
-    loadSettings();
+        // Evento para processar a imagem de fundo
+        if (backgroundImageInput) { // Verifica se o elemento existe
+        backgroundImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const imageUrl = e.target.result;
+                    localStorage.setItem('backgroundImage', imageUrl);
+                    document.documentElement.style.setProperty('--chat-background-image', `url(${imageUrl})`);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        } else {
+        console.error("Elemento backgroundImageInput não encontrado.");
+        }
+
+        // Carregar as configurações ao iniciar o aplicativo
+        loadSettings();
+
 </script>
 </body>
 </html>
