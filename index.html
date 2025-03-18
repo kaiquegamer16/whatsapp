@@ -27,6 +27,9 @@
             max-width: 600px;
             margin: 0 auto;
             padding: 0;
+            display: grid;
+            grid-template-rows: auto auto auto 1fr auto;
+            height: 100vh;
         }
 
         /* Header */
@@ -48,15 +51,13 @@
             display: flex;
             gap: 15px;
             font-size: 1.3em;
+            align-items: center;
         }
 
         /* Search Bar */
         .search-bar {
             padding: 10px;
             background-color: var(--panel-color);
-            /* Ajustado para ocupar 95% da largura */
-            width: 95%;
-            margin: 0 auto;
         }
 
         .search-bar input {
@@ -613,15 +614,13 @@
               if( loadLocalStorage("userProfile")) {
                 document.getElementById("userCreationModal").style.display = "none";
               }
+              loadUserProfile()
             loadGroupsFromFirebase();
         }
         // Exibir o modal de criação de usuário ao carregar a página
         document.addEventListener("DOMContentLoaded", function() {
           checkIfuserCreated()
         });
-
-        loadUserProfile()
-           
     </script>
 </body>
 </html>
