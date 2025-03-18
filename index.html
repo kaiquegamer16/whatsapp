@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Chat Público (Beta) - Tema Escuro</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Público (Beta) - Tema Escuro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
           integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
@@ -346,7 +347,7 @@
 
         #welcomeProfileImagePreview {
             width: 100px;
-            height: 100px;
+            height: 100%;
             border-radius: 50%;
             object-fit: cover;
             margin-bottom: 10px;
@@ -864,20 +865,21 @@
             resize: none;
             min-height: 40px;
         }
-    /* Estilo para o botão de download */
-    .download-button {
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-    }
 
-    .download-button:hover {
-        background-color: #388E3C;
-    }
+        /* Estilo para o botão de download */
+        .download-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .download-button:hover {
+            background-color: #388E3C;
+        }
     </style>
 </head>
 <body>
@@ -897,8 +899,9 @@
         <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
         <div id="mediaPreviewArea">
             <img id="mediaPreview" src="#" alt="Prévia da Mídia">
-            <video id="videoPreview" controls style="display: none;"></video> <!-- Elemento de vídeo -->
-            <button id="downloadButton">Baixar Mídia</button>
+            <video id="videoPreview" controls style="display: none;"></video>
+            <!-- Elemento de vídeo -->
+            <button id="downloadButton" style="display: none;">Baixar Mídia</button>
         </div>
         <input type="file" id="fileInput" accept="image/*, video/*">
         <button id="fileButton" class="icon-button"><i class="fas fa-paperclip"></i></button>
@@ -971,7 +974,7 @@
         </div>
     </div>
     <!-- Painel de Lista de Grupos -->
-    <div class="group-list-container" id="groupListContainer">
+    <div class="group-list-container"id="groupListContainer">
         <div class="group-list-box">
             <h2>Grupos</h2>
             <ul id="groupList">
@@ -1004,7 +1007,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getDatabase, ref, push, onValue, set, update, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
-      // Configuração do Firebase
+    // Configuração do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
         authDomain: "banco-5a678.firebaseapp.com",
@@ -1126,15 +1129,9 @@
 
     /**
      * Função para exibir uma mensagem no chat.
-     * @param {string} userId - ID do usuário que enviou a mensagem.
-     * @param {string} nick - Nick do usuário.
-     * @param {string} message - Conteúdo da mensagem (texto ou chave do localForage).
-     * @param {number} timestamp - Timestamp da mensagem.
-     * @param {string} key - Chave da mensagem no Firebase.
-     * @param {object} reactions - Objeto contendo as reações à mensagem.
-     * @param {string} mediaType - Tipo de mídia ('image' ou 'video').
      */
-    function displayMessage(userId, nick, message, timestamp, key, reactions, mediaType = null) {
+    function displayMessage(userId, nick, message, timestamp, key, reactions, mediaType = null,
+                           mediaUrl = null) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
 
@@ -1149,87 +1146,57 @@
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
 
-        // Formata a exibição do conteúdo da mensagem (texto ou mídia)
         let mediaElement = null;
 
         if (mediaType === 'image') {
-            localforage.getItem(message)
-                .then(imageData => {
-                    if (imageData) {
-                        mediaElement = document.createElement('img');
-                        mediaElement.src = imageData;
-                        mediaElement.alt = 'Imagem';
-                        messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-                        messageContent.appendChild(mediaElement);
-                    } else {
-                        console.log('Imagem não encontrada no localForage.');
-                    }
-                    messageElement.appendChild(messageContent);
-                    messagesDiv.appendChild(messageElement);
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                })
-                .catch(err => console.error("Erro ao recuperar imagem do localForage:", err));
-            return;
-        } else if (mediaType === 'video') {
-            // Exibe o botão de download
-            const downloadButton = document.createElement('button');
-            downloadButton.textContent = 'Baixar Vídeo';
-            downloadButton.classList.add('download-button'); // Adiciona a classe para estilo
-            downloadButton.addEventListener('click', () => {
-                localforage.getItem(message)
-                    .then(videoData => {
-                        if (videoData) {
-                            const blob = new Blob([videoData]);
-                            const videoURL = URL.createObjectURL(blob);
-
-                            mediaElement = document.createElement('video');
-                            mediaElement.src = videoURL;
-                            mediaElement.alt = 'Vídeo';
-                            mediaElement.controls = true;
-                            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-                            messageContent.appendChild(mediaElement);
-
-                            // Remove o botão de download
-                            downloadButton.remove();
-
-                            messageElement.appendChild(messageContent);
-                            messagesDiv.appendChild(messageElement);
-                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        } else {
-                            console.log('Vídeo não encontrado no localForage.');
-                        }
-                    })
-                    .catch(err => console.error("Erro ao recuperar vídeo do localForage:", err));
-            });
+            mediaElement = document.createElement('img');
+            mediaElement.src = mediaUrl;
+            mediaElement.alt = 'Imagem';
+            mediaElement.style.maxWidth = '100%';
+            mediaElement.style.borderRadius = '5px';
+            mediaElement.style.marginTop = '5px';
             messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
-            messageContent.appendChild(downloadButton); // Adiciona o botão de download
-            messageElement.appendChild(messageContent);
-            messagesDiv.appendChild(messageElement);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            messageContent.appendChild(mediaElement);
+        } else if (mediaType === 'video') {
+            mediaElement = document.createElement('video');
+            mediaElement.src = mediaUrl;
+            mediaElement.alt = 'Vídeo';
+            mediaElement.controls = true;
+            mediaElement.style.maxWidth = '100%';
+            mediaElement.style.borderRadius = '5px';
+            mediaElement.style.marginTop = '5px';
 
-            return;
-        }
-
-        if (!mediaElement) {
+            messageContent.innerHTML = `<strong>${nick}:</strong> <span class="message-time">${formatTime(timestamp)}</span>`;
+            messageContent.appendChild(mediaElement);
+            // Esconde o botão de download para quem envia a mensagem
+            if (userId !== currentUserId) {
+                const downloadButton = document.createElement('a');
+                downloadButton.href = mediaUrl;
+                downloadButton.download = 'video.mp4'; // ajuste o nome do arquivo e a extensão conforme necessário
+                downloadButton.textContent = 'Baixar Vídeo';
+                downloadButton.classList.add('download-button');
+                messageContent.appendChild(downloadButton);
+            }
+        } else {
             messageContent.innerHTML = `<strong>${nick}:</strong> ${message} <span class="message-time">${formatTime(timestamp)}</span>`;
-            messageElement.appendChild(messageContent);
-            messagesDiv.appendChild(messageElement);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        // Cria o contêiner para as reações
+        messageElement.appendChild(messageContent);
+        messagesDiv.appendChild(messageElement);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
         const reactionContainer = document.createElement('div');
         reactionContainer.className = 'reaction-container';
 
-        // Cria o painel de emojis
         const emojiPanel = document.createElement('div');
         emojiPanel.className = 'emoji-panel';
+
         emojis.forEach(emoji => {
             const emojiOption = document.createElement('span');
             emojiOption.className = 'emoji-option';
             emojiOption.textContent = emoji;
+
             emojiOption.addEventListener('click', () => {
-                // Apenas outros usuários podem reagir à mensagem
                 if (userId !== currentUserId) {
                     update(ref(database, `messages/${currentGroupId}/${key}`), {
                         reactions: {
@@ -1243,7 +1210,6 @@
         });
         reactionContainer.appendChild(emojiPanel);
 
-        // Adicionar botão de edição para mensagens enviadas
         if (userId === currentUserId) {
             const editButton = document.createElement('button');
             editButton.textContent = 'Editar';
@@ -1264,13 +1230,10 @@
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    /**
-     * Carrega as mensagens de um grupo do Firebase e as exibe no chat.
-     * @param {string} groupId - ID do grupo a ser carregado.
-     */
     function loadMessages(groupId) {
         currentGroupId = groupId;
         messagesDiv.innerHTML = '';
+
         const messagesGroupRef = ref(database, `messages/${groupId}`);
 
         onValue(messagesGroupRef, (snapshot) => {
@@ -1278,15 +1241,42 @@
             const data = snapshot.val();
             if (data) {
                 for (let key in data) {
-                    displayMessage(
-                        data[key].userId,
-                        data[key].nick,
-                        data[key].message,
-                        data[key].timestamp,
-                        key,
-                        data[key].reactions,
-                        data[key].mediaType //Passa a informação se é imagem ou vídeo
-                    );
+                    let mediaUrl = null;
+
+                    if (data[key].mediaType === 'video' || data[key].mediaType === 'image') {
+                        // Se a mensagem é um vídeo, obtenha a URL do vídeo do LocalForage
+                        localforage.getItem(data[key].message)
+                            .then(blob => {
+                                if (blob) {
+                                    // Cria a URL temporária para o objeto Blob
+                                    const videoUrl = createObjectURL(blob);
+                                    // Exibe a mensagem com a URL do vídeo
+                                    displayMessage(
+                                        data[key].userId,
+                                        data[key].nick,
+                                        data[key].message,
+                                        data[key].timestamp,
+                                        key,
+                                        data[key].reactions,
+                                        data[key].mediaType, //Passa a informação se é imagem ou vídeo
+                                        videoUrl
+                                    );
+                                } else {
+                                    console.error('Erro ao recuperar vídeo do LocalForage.');
+                                }
+                            })
+                            .catch(err => console.error("Erro ao recuperar vídeo do LocalForage:", err));
+                    } else {
+                        // Se não é um vídeo, exiba a mensagem normalmente
+                        displayMessage(
+                            data[key].userId,
+                            data[key].nick,
+                            data[key].message,
+                            data[key].timestamp,
+                            key,
+                            data[key].reactions
+                        );
+                    }
                 }
             }
         });
@@ -1416,17 +1406,10 @@
             chatInput.classList.add('hidden'); // Esconde a área de texto
             cancelMediaButton.style.display = 'flex'; // Exibe o botão de cancelar
 
-            // Evento de clique no botão de download
-            downloadButton.addEventListener('click', () => {
-                downloadMedia(mediaUrl, file.name);
-            });
-
             // Evento para enviar a URL da mídia ao clicar no botão enviar
             sendButton.addEventListener('click', () => {
                 if (currentGroupId) {
                     let mediaType = isImage ? 'image' : (isVideo ? 'video' : null);
-
-                    // Salva o arquivo no localForage
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         let fileData = e.target.result;
@@ -1465,7 +1448,21 @@
         }
     });
 
-     /**
+    /**
+     * Revoga uma URL temporária
+     */
+    function revokeObjectURL(url) {
+        URL.revokeObjectURL(url);
+    }
+
+    /**
+     * Cria uma URL temporária para o arquivo.
+     */
+    function createObjectURL(file) {
+        return URL.createObjectURL(file);
+    }
+
+    /**
      * Função para gerar uma chave única para o arquivo.
      */
     function generateFileKey() {
@@ -1476,16 +1473,17 @@
      * Função para resetar a visualização da mídia
      */
     function resetMediaPreview() {
-        mediaPreview.src = "#";
-        videoPreview.src = "#";
+        mediaPreview.src = "";
+        videoPreview.src = "";
         mediaPreview.style.display = 'none';
         videoPreview.style.display = 'none';
         mediaPreviewArea.style.display = 'none';
-        chatInput.classList.remove('hidden'); // Mostra a área de texto
-        cancelMediaButton.style.display = 'none'; // Esconde o botão de cancelar
-        fileInput.value = ''; // Limpa o input
-        sendButton.removeEventListener('click', () => {
-        }); // Remove o event listener para evitar duplicatas
+        chatInput.classList.remove('hidden');
+        cancelMediaButton.style.display = 'none';
+        fileInput.value = '';
+
+        // Remove o event listener (se adicionado) para não acumular
+        sendButton.onclick = null;
     }
 
     /**
@@ -1561,20 +1559,20 @@
         }
     });
 
-        //Evento para "Limpar Chat"
-        clearChatOption.addEventListener('click', () => {
-            profileMenu.classList.remove('show');
-            if (confirm('Tem certeza que deseja limpar o chat?')) {
-                //Limpa as mensagens do Firebase (simulação)
-                set(ref(database, `messages/${currentGroupId}`), null)
-                    .then(() => {
-                        alert('Chat limpo com sucesso!');
-                    })
-                    .catch((error) => {
-                        alert('Ocorreu um erro ao limpar o chat: ' + error.message);
-                    });
-            }
-        });
+    //Evento para "Limpar Chat"
+    clearChatOption.addEventListener('click', () => {
+        profileMenu.classList.remove('show');
+        if (confirm('Tem certeza que deseja limpar o chat?')) {
+            //Limpa as mensagens do Firebase (simulação)
+            set(ref(database, `messages/${currentGroupId}`), null)
+                .then(() => {
+                    alert('Chat limpo com sucesso!');
+                })
+                .catch((error) => {
+                    alert('Ocorreu um erro ao limpar o chat: ' + error.message);
+                });
+        }
+    });
 
     //Controle do "digitando..."
     chatInput.addEventListener('input', () => {
