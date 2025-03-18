@@ -316,6 +316,28 @@
     </div>
 
     <script>
+        // Import the functions you need from the SDKs you need
+        //import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        //import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+        //import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+        // Firebase configuration (substitua com suas credenciais)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
+            authDomain: "banco-5a678.firebaseapp.com",
+            databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
+            projectId: "banco-5a678",
+            storageBucket: "banco-5a678.firebasestorage.app",
+            messagingSenderId: "943801310064",
+            appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+            measurementId: "G-DEER2QFNXL"
+          };
+
+        // Initialize Firebase
+        //const app = initializeApp(firebaseConfig);
+        //const analytics = getAnalytics(app);
+        //const database = getDatabase(app);
+
         let newGroup; // Armazenar informações do novo grupo
 
         function openNewGroupModal() {
@@ -366,13 +388,13 @@
                 <span class="time">Agora</span>
             `;
             // Adiciona um evento de clique para abrir chat.html
-            listItem.addEventListener('click', () => openChatPage(group)); 
+            listItem.addEventListener('click', () => openChatPage(group.id)); // Passa o ID do grupo
             chatList.appendChild(listItem);
         }
 
-        function openChatPage(group) {
-            // Salvar as informações do grupo no localStorage
-            localStorage.setItem('currentGroup', JSON.stringify(group));
+        function openChatPage(groupId) {
+            // Salvar o ID do grupo no localStorage (usaremos para buscar os dados no chat.html)
+            localStorage.setItem('currentGroupId', groupId);
 
             // Abrir o chat.html em uma nova janela
             window.open('chat.html', '_blank');
