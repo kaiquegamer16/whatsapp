@@ -1,24 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Público (Beta) - Tema Escuro</title>
+    <title>Chat Público (Beta) - Tema Escuro Moderno</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
           integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <style>
-        /* Estilos Globais */
+        /* Variáveis de estilo para facilitar a customização */
+        :root {
+            --primary-color: #64ffda;          /* Cor principal (destaque) */
+            --secondary-color: #ccd6f6;       /* Cor secundária (texto) */
+            --background-color: #0a192f;      /* Cor de fundo */
+            --panel-background-color: #112240; /* Cor de fundo dos painéis */
+            --header-height: 60px;             /* Altura do cabeçalho */
+            --border-radius: 8px;              /* Raio dos cantos */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte */
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilos globais */
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #181818;
-            color: #e0e0e0;
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--secondary-color);
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            line-height: 1.6;
         }
 
         .chat-container {
@@ -26,40 +39,47 @@
             flex-direction: column;
             height: 85vh;
             width: 90%;
-            max-width: 500px;
-            border-radius: 12px;
+            max-width: 600px; /* Aumentando a largura máxima */
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            background-color: #2c2c2c;
+            box-shadow: var(--box-shadow);
+            background-color: var(--panel-background-color);
         }
 
-        /* Cabeçalho do Chat */
+        /* Cabeçalho do chat */
         .chat-header {
-            background-color: #3e3e3e;
-            color: #e0e0e0;
+            background-color: #1e3a8a; /* Cor mais vibrante */
+            color: var(--secondary-color);
             padding: 1em;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #444;
+            height: var(--header-height);
+            border-bottom: 1px solid #2d3748;
         }
 
         .chat-header .title {
-            font-weight: bold;
-            font-size: 1.2em;
+            font-size: 1.5em; /* Tamanho maior */
+            font-weight: 600;  /* Mais forte */
+            letter-spacing: 0.5px; /* Espaçamento entre letras */
         }
 
         .profile-icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            background-color: #555;
+            background-color: #4a5568;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            border: 2px solid #777;
+            border: 2px solid var(--primary-color); /* Destaque */
+            transition: transform 0.3s ease;
+        }
+
+        .profile-icon:hover {
+            transform: scale(1.1); /* Leve efeito de zoom */
         }
 
         .profile-icon img {
@@ -68,22 +88,22 @@
             object-fit: cover;
         }
 
-        /* Área de Mensagens */
+        /* Área de mensagens */
         .chat-messages {
             flex-grow: 1;
-            padding: 1em;
+            padding: 1.5em; /* Aumentando o padding */
             overflow-y: auto;
-            background-color: #1e1e1e;
+            background-color: var(--background-color);
             background-image: var(--chat-background-image);
             background-size: cover;
             background-repeat: no-repeat;
         }
 
         .message {
-            margin-bottom: 0.8em;
-            padding: 0.7em;
-            border-radius: 10px;
-            max-width: 70%;
+            margin-bottom: 1em; /* Aumentando o espaçamento */
+            padding: 1em;
+            border-radius: var(--border-radius);
+            max-width: 75%; /* Aumentando a largura máxima */
             position: relative;
             display: flex;
             flex-direction: column;
@@ -91,154 +111,100 @@
         }
 
         .message:hover {
-            background-color: #333;
-        }
-
-        .message.selected {
-            background-color: #444;
+            background-color: #2d3748; /* Feedback visual */
         }
 
         .sent {
-            background-color: #2e7d32;
+            background-color: var(--primary-color);
+            color: var(--background-color);
             align-self: flex-end;
-            color: #fff;
+            border-radius: 15px 5px 15px 15px;
         }
 
         .received {
-            background-color: #3e3e3e;
+            background-color: #4a5568;
             align-self: flex-start;
-            color: #e0e0e0;
+            color: var(--secondary-color);
+            border-radius: 5px 15px 15px 15px;
         }
 
         .message strong {
-            color: #a5d6a7;
-            margin-right: 0.3em;
+            color: #a0aec0;
+            margin-right: 0.5em;
         }
 
         .message-content {
             word-break: break-word;
         }
 
-        .message-options {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            display: none;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 5px;
-            padding: 5px;
-            z-index: 1;
-            flex-direction: column;
+        .message-time {
+            font-size: 0.75em;
+            color: #718096;
+            margin-left: auto;
         }
 
-        .message.selected .message-options {
-            display: flex;
-        }
-
-        .message-options button {
-            background-color: #555;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            margin-bottom: 5px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .message-options button:hover {
-            background-color: #777;
-        }
-
-        .emoji-panel {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: #4f4f4f;
-            border: 1px solid #555;
-            border-radius: 5px;
-            padding: 5px;
-            z-index: 2;
-            display: none;
-            white-space: nowrap;
-        }
-
-        .emoji-panel.show {
-            display: flex;
-        }
-
-        .emoji-option {
-            font-size: 1.5em;
-            cursor: pointer;
-            margin: 3px;
-            display: inline-block;
-        }
-
-        /* Área de Input de Mensagem */
+        /* Área de input de mensagem */
         .chat-input-area {
-            background-color: #3e3e3e;
-            padding: 0.7em;
+            background-color: var(--panel-background-color);
+            padding: 0.8em;
             display: flex;
             align-items: center;
-            border-top: 1px solid #444;
+            border-top: 1px solid #2d3748;
         }
 
         #chatInput {
             flex-grow: 1;
-            padding: 0.7em;
+            padding: 0.8em;
             border: none;
             border-radius: 25px;
             margin-right: 0.5em;
-            background-color: #4f4f4f;
-            color: #e0e0e0;
+            background-color: #2d3748;
+            color: var(--secondary-color);
             resize: none;
-            min-height: 40px;
+            min-height: 45px;
+            font-size: 1em;
         }
 
         #chatInput::placeholder {
-            color: #999;
+            color: #a0aec0;
         }
 
-        .icon-button { /* Classe genérica para botões com ícones */
-            background-color: #4caf50;
-            color: white;
+        .icon-button {
+            background-color: var(--primary-color);
+            color: var(--background-color);
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-left: 0.3em;
-            transition: background-color 0.3s ease; /* Animação suave */
+            transition: background-color 0.3s ease;
         }
 
         .icon-button:hover {
-            background-color: #388e3c; /* Escurece ao passar o mouse */
+            background-color: #4caf50;
         }
 
         .icon-button i {
             margin: auto;
         }
 
-        #sendButton {
-            margin-left: auto; /* Empurra para a direita */
-        }
-
-        /* Menu de Perfil */
+        /* Menu de perfil */
         .profile-menu {
             position: absolute;
-            top: 65px;
+            top: 70px;
             right: 15px;
-            background-color: #3e3e3e;
-            border: 1px solid #555;
-            border-radius: 5px;
+            background-color: var(--panel-background-color);
+            border: 1px solid #2d3748;
+            border-radius: var(--border-radius);
             padding: 10px;
-            width: 200px;
+            width: 220px;
             display: none;
             z-index: 10;
+            box-shadow: var(--box-shadow);
         }
 
         .profile-menu ul {
@@ -248,22 +214,27 @@
         }
 
         .profile-menu li {
-            padding: 10px;
+            padding: 12px;
             cursor: pointer;
-            color: #e0e0e0;
-            border-radius: 5px;
+            color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s ease;
         }
 
         .profile-menu li:hover {
-            background-color: #4f4f4f;
+            background-color: #2d3748;
         }
 
         .profile-menu.show {
             display: block;
         }
 
-        /* Tela de Edição de Perfil */
-        .edit-profile-container {
+        /* Tela de edição de perfil */
+        .edit-profile-container,
+        .create-group-container,
+        .group-list-container,
+        #settingsPanel,
+        #welcomeScreen {
             position: fixed;
             top: 0;
             left: 0;
@@ -276,277 +247,301 @@
             z-index: 11;
         }
 
-        .edit-profile-container.show {
+        .edit-profile-container.show,
+        .create-group-container.show,
+        .group-list-container.show,
+        #settingsPanel.show,
+        #welcomeScreen.show {
             display: flex;
         }
 
-        .edit-profile-box {
-            background-color: #3e3e3e;
+        .edit-profile-box,
+        .create-group-box,
+        .group-list-box,
+        #settingsBox,
+        #welcomeBox {
+            background-color: var(--panel-background-color);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: var(--border-radius);
             width: 80%;
-            max-width: 400px;
+            max-width: 450px;
             text-align: center;
+            box-shadow: var(--box-shadow);
         }
 
-        .edit-profile-box h2 {
-            color: #e0e0e0;
+        .edit-profile-box h2,
+        .create-group-box h2,
+        .group-list-box h2,
+        #settingsBox h2,
+        #welcomeBox h2 {
+            color: var(--secondary-color);
             margin-bottom: 15px;
         }
 
         .edit-profile-box input[type="text"],
-        .edit-profile-box input[type="file"] {
+        .edit-profile-box input[type="file"],
+        .create-group-box input[type="text"],
+        #settingsBox input[type="file"],
+        #welcomeBox input[type="text"],
+        #welcomeBox input[type="file"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #4f4f4f;
-            color: #e0e0e0;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #4a5568;
+            border-radius: var(--border-radius);
+            background-color: #2d3748;
+            color: var(--secondary-color);
+            font-size: 1em;
+            transition: border-color 0.3s ease;
         }
 
-        .edit-profile-box input[type="text"]::placeholder {
-            color: #999;
+        .edit-profile-box input[type="text"]::placeholder,
+        .create-group-box input[type="text"]::placeholder,
+        #welcomeBox input[type="text"]::placeholder {
+            color: #a0aec0;
         }
 
-        .edit-profile-box button {
-            background-color: #4caf50;
-            color: white;
+        .edit-profile-box input[type="text"]:focus,
+        .edit-profile-box input[type="file"]:focus,
+        .create-group-box input[type="text"]:focus,
+        #settingsBox input[type="file"]:focus,
+        #welcomeBox input[type="text"]:focus,
+        #welcomeBox input[type="file"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .edit-profile-box button,
+        .create-group-box button,
+        #settingsBox .close-button,
+        #welcomeBox button {
+            background-color: var(--primary-color);
+            color: var(--background-color);
             border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
             cursor: pointer;
             width: 100%;
             transition: background-color 0.3s ease;
+            font-size: 1.1em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
-        .edit-profile-box button:hover {
-            background-color: #388e3c;
+        .edit-profile-box button:hover,
+        .create-group-box button:hover,
+        #settingsBox .close-button:hover,
+        #welcomeBox button:hover {
+            background-color: #4caf50;
         }
 
         /* Estilos para a imagem de perfil */
-        #profileImagePreview {
-            width: 100px;
-            height: 100px;
+        #profileImagePreview,
+        #welcomeProfileImagePreview {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 10px;
-            border: 2px solid #777;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary-color);
         }
 
-        #profileImageInput {
+        #profileImageInput,
+        #welcomeProfileImageInput,
+        #backgroundImageInput {
             display: none;
         }
 
         .upload-button {
-            background-color: #555;
+            background-color: #4a5568;
             border: none;
-            color: white;
-            padding: 10px 20px;
+            color: var(--secondary-color);
+            padding: 12px 20px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
-            font-size: 16px;
-            margin-bottom: 10px;
+            font-size: 1em;
+            margin-bottom: 15px;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: var(--border-radius);
             transition: background-color 0.3s ease;
         }
 
         .upload-button:hover {
-            background-color: #777;
+            background-color: #718096;
         }
 
         /* Estilos para as mensagens de aviso */
-        .beta-message {
-            color: #999;
+        .beta-message,
+        #typingIndicator {
+            color: #718096;
             font-style: italic;
             text-align: center;
             margin: 10px 0;
         }
 
-        /* Estilo para o "digitando..." */
-        #typingIndicator {
-            font-style: italic;
-            color: #999;
-            text-align: center;
-            margin-top: 10px;
+        /* Estilos para a lista de grupos */
+        .group-list-box ul {
+            list-style: none;
+            padding: 0;
         }
 
-        /* Tela de boas vindas */
-        #welcomeScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 12;
-        }
-
-        #welcomeScreen.show {
+        .group-list-box li {
+            color: var(--secondary-color);
+            margin-bottom: 12px;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background-color: #2d3748;
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s ease;
+            cursor: pointer;
         }
 
-        #welcomeBox {
-            background-color: #3e3e3e;
-            padding: 20px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
+        .group-list-box li:hover {
+            background-color: #4a5568;
         }
 
-        #welcomeBox h2 {
-            color: #e0e0e0;
+        .group-list-box .delete-button {
+            background-color: #e53e3e;
+            color: var(--secondary-color);
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .group-list-box .delete-button:hover {
+            background-color: #c53030;
+        }
+
+        /* Painel de Configurações */
+        #settingsBox label {
+            color: var(--secondary-color);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #settingsBox input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        /* Estilos para o modo escuro (se necessário, ajuste as cores) */
+        body.dark-mode {
+            --background-color: #1a202c;
+            --panel-background-color: #2d3748;
+            --secondary-color: #edf2f7;
+        }
+
+        /* Estilos para a imagem */
+        .message img,
+        .message video {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 8px;
+        }
+
+        /* Esconde o input de arquivo */
+        #fileInput,
+        #audioInput {
+            display: none;
+        }
+
+        /* Estilos para a área de visualização de mídia */
+        #mediaPreviewArea {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #718096;
             margin-bottom: 15px;
-        }
-
-        #welcomeBox p {
-            color: #e0e0e0;
-            margin-bottom: 20px;
-        }
-
-        #welcomeProfileImagePreview {
-            width: 100px;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 10px;
-            border: 2px solid #777;
-        }
-
-        #welcomeBox input[type="text"],
-        #welcomeBox input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #4f4f4f;
-            color: #e0e0e0;
-        }
-
-        #welcomeBox input[type="text"]::placeholder {
-            color: #999;
-        }
-
-        #welcomeBox .upload-button {
-            background-color: #555;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        #welcomeBox .upload-button:hover {
-            background-color: #777;
-        }
-
-        #welcomeBox button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-
-        #welcomeBox button:hover {
-            background-color: #388e3c;
-        }
-
-        /* Estilo para a hora da mensagem */
-        .message-time {
-            font-size: 0.8em;
-            color: #999;
-            margin-left: auto;
-        }
-
-        /* Estilos para as reações */
-        .reaction-container {
-            display: flex;
-            position: absolute;
-            bottom: 5px;
-            left: 5px;
-            z-index: 1;
-        }
-
-        /* Painel de reações */
-        .emoji-panel {
-            background-color: #4f4f4f;
-            border: 1px solid #555;
-            border-radius: 5px;
-            padding: 5px;
-            z-index: 2;
             display: none;
-            white-space: nowrap;
-            position: absolute;
-            top: 100%; /* Abaixo do botão "Reagir" */
-            left: 0;
-        }
-
-        .emoji-panel.show {
-            display: flex;
-        }
-
-        .emoji-option {
-            font-size: 1.5em;
-            cursor: pointer;
-            margin: 3px;
-            display: inline-block;
-        }
-
-        /* Estilo da mensagem de denúncia */
-        .report-message {
-            color: #ff5722;
-            font-style: italic;
-        }
-
-        /* Reação de emoji posicionada do lado da mensagem */
-        .reactions {
-            position: relative;
-            padding: 2px;
-        }
-
-        /* Painel de Emojis para Envio */
-        #emojiPicker {
-            position: absolute;
-            bottom: 60px;
-            left: 0;
-            width: 100%;
-            background-color: #3e3e3e;
-            border: 1px solid #555;
-            border-radius: 5px;
-            padding: 10px;
-            display: none;
-            overflow-x: auto;
-            white-space: nowrap;
             justify-content: center;
             align-items: center;
-            z-index: 2;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius);
         }
 
-        #emojiPicker.show {
-            display: flex;
+        #mediaPreview {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
 
-        #emojiPicker span {
-            font-size: 2em;
+        #mediaPreviewArea #downloadButton {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.6);
+            color: var(--secondary-color);
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            margin: 5px;
+            display: none;
+        }
+
+        #mediaPreviewArea:hover #downloadButton {
+            display: block;
+        }
+
+        /* Esconde o input de texto quando a mídia está selecionada */
+        #chatInput.hidden {
+            display: none;
+        }
+
+        /* Estilos para o botão de cancelar */
+        #cancelMediaButton {
+            background-color: #e53e3e;
+            color: var(--secondary-color);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 0.3em;
+        }
+
+        /* Estilos para o campo de texto quando a mídia está sendo exibida */
+        #chatInput {
+            flex-grow: 1;
+            padding: 0.8em;
+            border: none;
+            border-radius: 25px;
+            margin-right: 0.5em;
+            background-color: #2d3748;
+            color: var(--secondary-color);
+            resize: none;
+            min-height: 45px;
+        }
+
+        /* Estilos para o áudio */
+        .message audio {
+            width: 100%;
+            margin-top: 8px;
+            border-radius: var(--border-radius);
+        }
+
+        /* Estilos para a pré-visualização de áudio */
+        #audioPreviewArea {
+            width: 100%;
+            border: 2px dashed #718096;
+            margin-bottom: 15px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--border-radius);
+        }
+
+        #audioPreview {
+            max-width: 100%;
+            object-fit: contain;
         }
 
         /* Estilos para o painel de atualizações */
@@ -555,7 +550,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #3e3e3e;
+            background-color: var(--panel-background-color);
             border: 1px solid #555;
             border-radius: 5px;
             padding: 20px;
@@ -595,377 +590,6 @@
             background-color: #388e3c;
         }
 
-        /* Estilos para o painel de criação de grupos */
-        .create-group-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 14;
-        }
-
-        .create-group-container.show {
-            display: flex;
-        }
-
-        .create-group-box {
-            background-color: #3e3e3e;
-            padding: 20px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .create-group-box h2 {
-            color: #e0e0e0;
-            margin-bottom: 15px;
-        }
-
-        .create-group-box input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background-color: #4f4f4f;
-            color: #e0e0e0;
-        }
-
-        .create-group-box input[type="text"]::placeholder {
-            color: #999;
-        }
-
-        .create-group-box button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-
-        .create-group-box button:hover {
-            background-color: #388e3c;
-        }
-
-        /* Estilos para a lista de grupos */
-        .group-list-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 15;
-        }
-
-        .group-list-container.show {
-            display: flex;
-        }
-
-        .group-list-box {
-            background-color: #3e3e3e;
-            padding: 20px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .group-list-box h2 {
-            color: #e0e0e0;
-            margin-bottom: 15px;
-        }
-
-        .group-list-box ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .group-list-box li {
-            color: #e0e0e0;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .group-list-box button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .group-list-box button:hover {
-            background-color: #388e3c;
-        }
-
-        .group-list-box .delete-button {
-            background-color: #f44336;
-        }
-
-        .group-list-box .delete-button:hover {
-            background-color: #e57373;
-        }
-
-        /* Painel de Configurações */
-        #settingsPanel {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 16;
-        }
-
-        #settingsPanel.show {
-            display: flex;
-        }
-
-        #settingsBox {
-            background-color: #3e3e3e;
-            padding: 20px;
-            border-radius: 8px;
-            width: 80%;
-            max-width: 400px;
-            text-align: left;
-        }
-
-        #settingsBox h2 {
-            color: #e0e0e0;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        #settingsBox label {
-            color: #e0e0e0;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        #settingsBox input[type="checkbox"] {
-            margin-right: 5px;
-        }
-
-        #settingsBox #backgroundImageInput {
-            display: none;
-        }
-
-        #settingsBox .upload-button {
-            background-color: #555;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        #settingsBox .upload-button:hover {
-            background-color: #777;
-        }
-
-        #settingsBox .close-button {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
-
-        #settingsBox .close-button:hover {
-            background-color: #388e3c;
-        }
-
-        /* Estilos para o modo escuro */
-        body.dark-mode {
-            background-color: #000;
-            color: #fff;
-        }
-
-        body.dark-mode .chat-container {
-            background-color: #333;
-        }
-
-        body.dark-mode .chat-header {
-            background-color: #444;
-            border-bottom: 1px solid #555;
-        }
-
-        body.dark-mode .chat-input-area {
-            background-color: #444;
-            border-top: 1px solid #555;
-        }
-
-        body.dark-mode #chatInput {
-            background-color: #555;
-            color: #fff;
-        }
-
-        body.dark-mode .profile-menu {
-            background-color: #444;
-            border: 1px solid #666;
-        }
-
-        body.dark-mode .profile-menu li:hover {
-            background-color: #666;
-        }
-
-        body.dark-mode #settingsBox {
-            background-color: #444;
-        }
-
-        /* Estilos para a imagem */
-        .message img,
-        .message video {
-            max-width: 100%;
-            border-radius: 5px;
-            margin-top: 5px;
-        }
-
-        /* Esconde o input de arquivo */
-        #fileInput, #audioInput {
-            display: none;
-        }
-
-        /* Estilos para a área de visualização de mídia */
-        #mediaPreviewArea {
-            width: 100%;
-            height: 200px;
-            border: 1px dashed #777;
-            margin-bottom: 10px;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #mediaPreview {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        #mediaPreviewArea #downloadButton {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            display: none;
-        }
-
-        #mediaPreviewArea:hover #downloadButton {
-            display: block;
-        }
-
-        /* Esconde o input de texto quando a mídia está selecionada */
-        #chatInput.hidden {
-            display: none;
-        }
-
-        /* Estilos para o botão de cancelar */
-        #cancelMediaButton {
-            background-color: #f44336;
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-left: 0.3em;
-        }
-
-        /* Estilos para o campo de texto quando a mídia está sendo exibida */
-        #chatInput {
-            flex-grow: 1;
-            padding: 0.7em;
-            border: none;
-            border-radius: 25px;
-            margin-right: 0.5em;
-            background-color: #4f4f4f;
-            color: #e0e0e0;
-            resize: none;
-            min-height: 40px;
-        }
-
-        /* Estilo para o botão de download */
-        .download-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .download-button:hover {
-            background-color: #388E3C;
-        }
-
-        /* Estilos para o áudio */
-        .message audio {
-            width: 100%;
-            margin-top: 5px;
-            border-radius: 5px;
-             background-color: #444; /* Cor de fundo para o player de áudio */
-        }
-
-        /* Estilos para a pré-visualização de áudio */
-        #audioPreviewArea {
-            width: 100%;
-            border: 1px dashed #777;
-            margin-bottom: 10px;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #audioPreview {
-            max-width: 100%;
-            object-fit: contain;
-        }
-
     </style>
 </head>
 <body>
@@ -981,7 +605,6 @@
     </div>
     <div id="typingIndicator"></div>
     <div class="chat-input-area">
-        <button id="emojiButton" class="icon-button"><i class="far fa-smile"></i></button>
         <textarea id="chatInput" placeholder="Digite sua mensagem"></textarea>
         <div id="mediaPreviewArea">
             <img id="mediaPreview" src="#" alt="Prévia da Mídia" style="display: none;">
@@ -999,10 +622,6 @@
         <button id="createGroupButton" class="icon-button"><i class="fas fa-users"></i></button>
         <button id="viewGroupsButton" class="icon-button"><i class="fas fa-list"></i></button>
         <button id="cancelMediaButton" class="icon-button" style="display: none;"><i class="fas fa-times"></i></button>
-        <div id="emojiPicker">
-            <span>😀</span> <span>😂</span> <span>😊</span> <span>🤔</span> <span>👍</span> <span>❤️</span> <span>😎</span>
-            <span>😭</span>
-        </div>
     </div>
     <div class="profile-menu" id="profileMenu">
         <ul>
@@ -1039,18 +658,11 @@
         <h3>Novas Funcionalidades</h3>
         <ul>
             <li>✅ Adicionado painel de emojis para enviar mensagens.</li>
-            <li>✅ Reações às mensagens (estilo WhatsApp).</li>
             <li>✅ Tema escuro aprimorado.</li>
-            <li>✅ Edição de mensagens enviadas.</li>
             <li>✅ Criação de grupos.</li>
             <li>✅ Lista de grupos com opções de editar e deletar.</li>
             <li>✅ Correções de bugs e melhorias de desempenho.</li>
             <li>✅ Envio de imagens, vídeos e áudios no chat.</li>
-            <li>✅ Apenas outros usuários podem reagir às mensagens.</li>
-            <li>✅ Feedback visual quando sua própria mensagem é reagida por outros.</li>
-            <li>✅ Área de visualização da mídia antes do envio.</li>
-            <li>✅ Botão de download da mídia.</li>
-            <li>✅ Painel lateral de opções ao selecionar mensagem.</li>
         </ul>
         <button class="close-button" id="closeUpdatePanel">Fechar</button>
     </div>
@@ -1124,8 +736,6 @@
     const profileMenu = document.getElementById('profileMenu');
     const typingIndicator = document.getElementById('typingIndicator'); //Elemento "digitando..."
     const notificationSound = document.getElementById('notificationSound'); //Elemento de áudio
-    const emojiButton = document.getElementById('emojiButton'); //Botão de Emoji
-    const emojiPicker = document.getElementById('emojiPicker'); //Painel de Emojis
     const fileButton = document.getElementById('fileButton'); //Botão de Anexar Arquivo (agora com ícone de clipe)
     const fileInput = document.getElementById('fileInput'); //Input de Arquivo
     const audioInput = document.getElementById('audioInput'); // Input de Áudio
@@ -1184,12 +794,8 @@
     let currentNick = localStorage.getItem('nick') || null; //Mudado para null, vamos usar esse valor para detectar se é a primeira vez
     let conversationStarted = localStorage.getItem('conversationStarted') || null;
     let currentGroupId = null;
-    let reactedTo = {};//Objeto para rastrear a reação à própria mensagem
 
     let selectedMessageKey = null; // Rastreia a mensagem selecionada
-
-    //Array de emojis (As opções da imagem)
-    const emojis = ["👍", "❤️", "😂", "😮", "😥", "🙏", "😎", "🤣"];
 
     //Funções de formatação de data e hora
     const formatDate = (timestamp) => {
@@ -1203,7 +809,7 @@
         const date = new Date(timestamp);
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
+                return `${hours}:${minutes}`;
     };
 
     //Salva o userId no localStorage ao gerar um novo
@@ -1350,7 +956,7 @@
     });
 
     /**
-     * Remove a seleção visual de todas as mensagens.
+     * Remove a seleção visual de todas as mensagens. (Não utilizado pois não há edição/reação)
      */
     function clearMessageSelection() {
         document.querySelectorAll('.message').forEach(msg => {
@@ -1362,7 +968,7 @@
     /**
      * Exibe uma mensagem no chat.
      */
-    function displayMessage(userId, nick, message, timestamp, key, reactions, mediaType = null) {
+    function displayMessage(userId, nick, message, timestamp, key, mediaType = null) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
 
@@ -1413,93 +1019,8 @@
         }
 
         messageElement.appendChild(messageContent);
-
-        // Adiciona as opções de mensagem (Reagir, Editar)
-        const messageOptions = document.createElement('div');
-        messageOptions.className = 'message-options';
-
-        const reactButton = document.createElement('button');
-        reactButton.textContent = 'Reagir';
-        reactButton.addEventListener('click', (event) => {
-            event.stopPropagation(); // Evita que a mensagem seja deselecionada ao clicar no botão
-            openEmojiPanel(key, messageElement);
-        });
-        messageOptions.appendChild(reactButton);
-
-          //Botão de editar
-          const editButton = document.createElement('button');
-            editButton.textContent = 'Editar';
-            editButton.classList.add('edit-button');
-            editButton.addEventListener('click', (event) => {
-                event.stopPropagation(); // Evita que a mensagem seja deselecionada ao clicar no botão
-                editMessage(key, message, messageElement);
-            });
-            messageOptions.appendChild(editButton);
-
-        messageElement.appendChild(messageOptions);
-
-        // Lógica de seleção da mensagem
-        messageElement.addEventListener('click', () => {
-            // Se esta mensagem já está selecionada, desmarca
-            if (selectedMessageKey === key) {
-                clearMessageSelection();
-                selectedMessageKey = null;
-                messageElement.classList.remove('selected');
-
-            } else {
-                // Desmarca qualquer mensagem previamente selecionada
-                clearMessageSelection();
-                // Marca esta mensagem como selecionada
-                messageElement.classList.add('selected');
-                selectedMessageKey = key;
-            }
-        });
-
         messagesDiv.appendChild(messageElement);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-      /**
-       * Abre o painel de emojis para reagir à mensagem.
-       */
-      function openEmojiPanel(key, messageElement) {
-          // Cria o painel de emojis
-          const emojiPanel = document.createElement('div');
-          emojiPanel.className = 'emoji-panel';
-
-          emojis.forEach(emoji => {
-              const emojiOption = document.createElement('span');
-              emojiOption.className = 'emoji-option';
-              emojiOption.textContent = emoji;
-              emojiOption.addEventListener('click', () => {
-                  updateReaction(key, emoji);
-                  emojiPanel.remove();
-              });
-              emojiPanel.appendChild(emojiOption);
-          });
-
-          // Adiciona o painel de emojis ao elemento da mensagem
-          messageElement.appendChild(emojiPanel);
-      }
-
-    /**
-     * Abre um prompt para editar a mensagem.
-     */
-     function editMessage(key, message, messageElement) {
-        const newMessage = prompt('Editar mensagem:', message);
-        if (newMessage && newMessage !== message) {
-            update(ref(database, `messages/${currentGroupId}/${key}`), {
-                message: newMessage,
-                timestamp: Date.now()
-            });
-        }
-     }
-
-    function updateReaction(key, emoji) {
-        update(ref(database, `messages/${currentGroupId}/${key}`), {
-            reactions: {
-                [currentUserId]: emoji
-            }
-        });
     }
 
     function loadMessages(groupId) {
@@ -1519,7 +1040,6 @@
                         data[key].message,
                         data[key].timestamp,
                         key,
-                        data[key].reactions,
                         data[key].mediaType //Passa a informação se é imagem ou vídeo
                     );
                 }
@@ -1539,18 +1059,6 @@
                     const li = document.createElement('li');
                     li.textContent = data[key].name;
 
-                    const editButton = document.createElement('button');
-                    editButton.textContent = 'Editar';
-                    editButton.classList.add('edit-button');
-                    editButton.addEventListener('click', () => {
-                        const newGroupName = prompt('Editar nome do grupo:', data[key].name);
-                        if (newGroupName && newGroupName !== data[key].name) {
-                            update(ref(database, `groups/${key}`), {
-                                name: newGroupName
-                            });
-                        }
-                    });
-
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = '🗑️';
                     deleteButton.classList.add('delete-button');
@@ -1561,7 +1069,6 @@
                         }
                     });
 
-                    li.appendChild(editButton);
                     li.appendChild(deleteButton);
                     li.addEventListener('click', () => {
                         loadMessages(key);
@@ -1801,19 +1308,6 @@
 
     init();
 
-    // Evento para mostrar/esconder o painel de emojis
-    emojiButton.addEventListener('click', () => {
-        emojiPicker.classList.toggle('show');
-    });
-
-    // Adiciona os emojis ao textarea
-    emojiPicker.querySelectorAll('span').forEach((emoji) => {
-        emoji.addEventListener('click', () => {
-            chatInput.value += emoji.textContent;
-            emojiPicker.classList.remove('show');
-        });
-    });
-
     // Evento para fechar o painel de atualizações
     closeUpdatePanel.addEventListener('click', () => {
         updatePanel.style.display = 'none';
@@ -1931,7 +1425,6 @@
 
         // Carregar as configurações ao iniciar o aplicativo
         loadSettings();
-
-</script>
+        </script>
 </body>
 </html>
