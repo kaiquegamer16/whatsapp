@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat do Grupo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121b22;
+            color: white;
+        }
+
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #202c33;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <header>
+            <h1>Chat do Grupo</h1>
+            <h2 id="groupName"></h2>
+        </header>
+        <div id="chatMessages">
+            <!-- Mensagens do chat aqui -->
+        </div>
+    </div>
+
+    <script>
+        // Carregar as informações do grupo do localStorage
+        const groupInfo = JSON.parse(localStorage.getItem('currentGroup'));
+
+        if (groupInfo) {
+            document.getElementById('groupName').innerText = groupInfo.name || 'Nome do Grupo';
+            // Aqui você poderia carregar as mensagens do grupo, se tivesse
+        }
+    </script>
+</body>
+</html>
