@@ -57,12 +57,12 @@
         /* Search Bar */
         .search-bar {
             background-color: var(--panel-color);
-            padding: 5px;
+            padding: 10px;
             display: flex;
             align-items: center;
             /* Reduz a largura e centraliza */
-            width: 10p%;
-            margin: 0;
+            width: 90%;
+            margin: 0 auto;
         }
 
         .search-bar input {
@@ -480,7 +480,7 @@
         window.createNewGroup = async function () {
             const groupName = document.getElementById("groupName").value;
             newGroup.name = groupName;
-
+             newGroup.creator = userProfile.id
             // Salvar no Firebase
             const groupRef = ref(database, 'groups'); // Referência ao nó "groups"
             const newGroupRef = push(groupRef); // Cria um novo nó com um ID único
@@ -488,7 +488,8 @@
             // Salvar os dados do grupo
             await set(newGroupRef, {
                 name: newGroup.name,
-                image: newGroup.image
+                image: newGroup.image,
+                 creator: userProfile.id
             });
 
             newGroup.id = newGroupRef.key;  // Salva o ID gerado pelo Firebase
@@ -498,6 +499,7 @@
         }
 
         function addGroupToChatList(group) {
+                 const userProfile = loadLocalStorage("userProfile")
             const chatList = document.getElementById("chatList");
             const listItem = document.createElement("li");
             listItem.className = "chat-item";
@@ -508,7 +510,7 @@
                     <div class="message">Grupo criado!</div>
                 </div>
                 <span class="time">Agora</span>
-                <i class="fas fa-trash delete-group" onclick="deleteGroup('${group.id}')"></i>
+                ${userProfile && userProfile.id === group.creator ? `<i class="fas fa-trash delete-group" onclick="deleteGroup('${group.id}')"></i>` : ""}
             `;
             // Adiciona um evento de clique para abrir chat.html
             listItem.addEventListener('click', (event) => {
@@ -545,10 +547,11 @@
             if (snapshot.exists()) {
                 const groups = snapshot.val();
                 for (const groupId in groups) {
-                    const group = {
+                  const group = {
                         id: groupId,
                         name: groups[groupId].name,
-                        image: groups[groupId].image
+                        image: groups[groupId].image,
+                        creator: groups[groupId].creator
                     };
                     addGroupToChatList(group);
                 }
@@ -599,16 +602,22 @@
             }
         }
 
-        window.createUserProfile = function() {
+        window.createUserProfile = async function() {
+          
+              const profileRef = ref(database, 'users'); // Referência ao nó "groups"
+            const newProfileRef = push(profileRef); // Cria um novo nó com um ID único
             const userName = document.getElementById("userNameInput").value;
             userProfile = userProfile || {};
-            userProfile.name = userName;
-          
+            userProfile.name = userName
+            userProfile.id = newProfileRef.key
+             await set(newProfileRef, {
+                name: userName,
+                image: userProfile.image,
+                  id: newProfileRef.key
+            });
             saveLocalStorage("userProfile", userProfile)
-            // Aqui você pode salvar os dados do perfil do usuário no Firebase ou localStorage
             document.getElementById("userCreationModal").style.display = "none";
-            // Atualizar interface
-             loadUserProfile()
+               loadUserProfile()
         }
 
             function loadUserProfile() {
@@ -618,10 +627,11 @@
            function checkIfuserCreated() {
               if( loadLocalStorage("userProfile")) {
                 document.getElementById("userCreationModal").style.display = "none";
+            loadUserProfile();
               }
-              loadUserProfile()
             loadGroupsFromFirebase();
         }
+
         // Exibir o modal de criação de usuário ao carregar a página
         document.addEventListener("DOMContentLoaded", function() {
           checkIfuserCreated()
