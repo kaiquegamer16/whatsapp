@@ -54,6 +54,9 @@
         .search-bar {
             padding: 10px;
             background-color: var(--panel-color);
+            /* Ajustado para ocupar 95% da largura */
+            width: 95%;
+            margin: 0 auto;
         }
 
         .search-bar input {
@@ -316,6 +319,15 @@
             padding: 10px 20px;
             cursor: pointer;
         }
+
+        /* User Image Display */
+        #userImageDisplay {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -325,7 +337,10 @@
             <div class="icons">
                 <i class="fas fa-camera"></i>
                 <i class="fas fa-search"></i>
-                <i class="fas fa-ellipsis-v" onclick="openSettingsModal()"></i>
+                <div id="userInfo" style="display: flex; align-items: center;">
+                    <img id="userImageDisplay" src="https://via.placeholder.com/40" alt="Imagem do Usuário" style="border-radius: 50%;">
+                    <i class="fas fa-ellipsis-v" onclick="openSettingsModal()"></i>
+                </div>
             </div>
         </header>
 
@@ -411,7 +426,25 @@
 
         let newGroup; // Armazenar informações do novo grupo
         let userProfile = null; // Armazenar informações do usuário
+          // Função auxiliar para salvar dados no localStorage
+        function saveLocalStorage(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (e) {
+                console.error("Erro ao salvar no localStorage", e);
+            }
+        }
 
+           // Função auxiliar para carregar dados do localStorage
+        function loadLocalStorage(key) {
+            try {
+                const storedValue = localStorage.getItem(key);
+                return storedValue ? JSON.parse(storedValue) : null;
+            } catch (e) {
+                console.error("Erro ao carregar do localStorage", e);
+                return null;
+            }
+        }
         window.openNewGroupModal = function () {
             document.getElementById("newGroupModal").style.display = "block";
             newGroup = {
@@ -553,32 +586,42 @@
             }
         }
 
+          function updateUserDisplay() {
+            if (userProfile && userProfile.image && userProfile.name) {
+                document.getElementById("userImageDisplay").src = userProfile.image;
+                document.getElementById("userNameDisplay").innerText = userProfile.name;
+            }
+        }
+
         window.createUserProfile = function() {
             const userName = document.getElementById("userNameInput").value;
             userProfile = userProfile || {};
             userProfile.name = userName;
-            console.log("Perfil do Usuário Criado:", userProfile);
+          
+            saveLocalStorage("userProfile", userProfile)
             // Aqui você pode salvar os dados do perfil do usuário no Firebase ou localStorage
             document.getElementById("userCreationModal").style.display = "none";
             // Atualizar interface
+             loadUserProfile()
+        }
+
+            function loadUserProfile() {
+            userProfile = loadLocalStorage("userProfile")
             updateUserDisplay();
         }
-
-        function updateUserDisplay() {
-            if (userProfile && userProfile.image && userProfile.name) {
-                console.log("Nome do usuario", userProfile.name, "Image do usuario", userProfile.image )
-                //document.getElementById("userImageDisplay").src = userProfile.image;
-                //document.getElementById("userNameDisplay").innerText = userProfile.name;
-            }
+           function checkIfuserCreated() {
+              if( loadLocalStorage("userProfile")) {
+                document.getElementById("userCreationModal").style.display = "none";
+              }
+            loadGroupsFromFirebase();
         }
-
         // Exibir o modal de criação de usuário ao carregar a página
         document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("userCreationModal").style.display = "flex";
+          checkIfuserCreated()
         });
 
-        // Carrega os grupos do Firebase ao carregar a página
-        loadGroupsFromFirebase();
+        loadUserProfile()
+           
     </script>
 </body>
 </html>
