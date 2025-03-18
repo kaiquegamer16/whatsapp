@@ -70,7 +70,6 @@
             padding: 10px;
             display: flex;
             align-items: center;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .message-input-container input {
@@ -102,12 +101,12 @@
         /* Ajuste para o teclado */
         @media (max-height: 600px) {
             .chat-container {
-                height: auto;
+                height: auto; /* Permite que o contêiner se ajuste ao teclado */
             }
 
             #chatMessages {
-                flex-grow: 0;
-                height: 300px;
+                flex-grow: 0; /* Impede que as mensagens ocupem todo o espaço disponível */
+                height: 300px; /* Define uma altura máxima para as mensagens */
             }
         }
     </style>
