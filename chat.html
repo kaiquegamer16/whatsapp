@@ -29,7 +29,7 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 90vh;
         }
 
         /* Header */
@@ -59,10 +59,9 @@
             flex-grow: 1;
             padding: 20px;
             overflow-y: auto;
-            /* Adicionado para ocupar todo o espaço disponível */
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: flex-start; /* Mantenha o alinhamento no topo */
         }
 
         /* Input de Mensagem */
@@ -91,16 +90,24 @@
             padding: 8px 16px;
             cursor: pointer;
         }
+        .message {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-radius: 5px;
+            padding: 8px;
+            margin-bottom: 8px;
+            word-wrap: break-word;
+        }
 
         /* Ajuste para o teclado */
         @media (max-height: 600px) {
             .chat-container {
-                height: auto; /* Permite que o contêiner se ajuste ao teclado */
+                height: auto;
             }
 
             #chatMessages {
-                flex-grow: 0; /* Impede que as mensagens ocupem todo o espaço disponível */
-                height: 300px; /* Define uma altura máxima para as mensagens */
+                flex-grow: 0;
+                height: 300px;
             }
         }
     </style>
@@ -126,7 +133,7 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
-        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+        import { getDatabase, ref, get, push, set } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
         // Firebase configuration (substitua com suas credenciais)
         const firebaseConfig = {
@@ -147,7 +154,7 @@
 
         // Carregar o ID do grupo do localStorage
         const groupId = localStorage.getItem('currentGroupId');
-
+          let user;
         async function loadGroupData(groupId) {
             if (groupId) {
                 const groupRef = ref(database, `groups/${groupId}`); // Referência ao nó do grupo específico
@@ -159,16 +166,52 @@
                 } else {
                     console.log("No data available for this group ID.");
                 }
+                // Recuperar o objeto do localStorage
+                 user = JSON.parse(localStorage.getItem("userProfile"));
             }
+            loadMessages(groupId)
         }
 
         loadGroupData(groupId);
+        function displayMessage(message) {
+             const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message');
+            messageContainer.innerText = message;
 
-        function sendMessage() {
+            document.getElementById('chatMessages').appendChild(messageContainer);
+        }
+           async function loadMessages(groupId) {
+          const messagesRef = ref(database, `groups/${groupId}/messages`);
+            
+          const snapshot = await get(messagesRef);
+            
+          if (snapshot.exists()) {
+              const messages = snapshot.val();
+              for (const messageId in messages) {
+                  displayMessage(messages[messageId].text)
+              }
+          } else {
+              console.log("No messages available for this group.");
+          }
+           document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }
+
+        window.sendMessage = async function() {
             const message = document.getElementById('messageInput').value;
-            // Aqui você enviaria a mensagem para o Firebase
-            console.log('Enviando mensagem:', message);
-            document.getElementById('messageInput').value = ''; // Limpa o input
+            if (message) {
+                 if (!groupId || !user) {
+                    console.error("Grupo ou usuário não encontrados!");
+                    return;
+                }
+            const messagesRef = ref(database, `groups/${groupId}/messages`);
+             await push(messagesRef, {
+                    text: message,
+                   // userId: user.id // caso vc queira criar usuario id no perfil  
+                });
+                document.getElementById('messageInput').value = '';
+                displayMessage(message);
+            }
+               document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }
     </script>
 </body>
