@@ -29,7 +29,7 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Garante que o chat ocupe toda a altura da tela */
+            height: 100vh;
         }
 
         /* Header */
@@ -39,6 +39,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         header img {
@@ -55,9 +56,13 @@
 
         /* Chat Messages */
         #chatMessages {
-            flex-grow: 1; /* Ocupa o espaço restante */
+            flex-grow: 1;
             padding: 20px;
-            overflow-y: auto; /* Adiciona rolagem se necessário */
+            overflow-y: auto;
+            /* Adicionado para ocupar todo o espaço disponível */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
         /* Input de Mensagem */
@@ -66,6 +71,7 @@
             padding: 10px;
             display: flex;
             align-items: center;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .message-input-container input {
@@ -84,6 +90,18 @@
             border-radius: 5px;
             padding: 8px 16px;
             cursor: pointer;
+        }
+
+        /* Ajuste para o teclado */
+        @media (max-height: 600px) {
+            .chat-container {
+                height: auto; /* Permite que o contêiner se ajuste ao teclado */
+            }
+
+            #chatMessages {
+                flex-grow: 0; /* Impede que as mensagens ocupem todo o espaço disponível */
+                height: 300px; /* Define uma altura máxima para as mensagens */
+            }
         }
     </style>
 </head>
