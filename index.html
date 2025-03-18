@@ -258,6 +258,64 @@
             display: block;
             margin-bottom: 10px;
         }
+
+        /* User Creation */
+        #userCreationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #userCreationModal .modal-content {
+            background-color: var(--panel-color);
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        #userCreationModal h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        #userCreationModal input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a3942;
+            color: var(--white);
+        }
+
+        #userCreationModal img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        #userCreationModal input[type="file"] {
+            display: none;
+        }
+
+        #userCreationModal button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -318,6 +376,16 @@
         </div>
     </div>
 
+    <!-- Modal para criação de usuário -->
+    <div id="userCreationModal">
+        <div class="modal-content">
+            <h2>Criar Perfil</h2>
+            <img id="userImagePreview" src="https://via.placeholder.com/100" alt="Imagem do Perfil" onclick="document.getElementById('userImageInput').click()">
+            <input type="file" id="userImageInput" accept="image/*" onchange="previewUserImage(this)">
+            <input type="text" id="userNameInput" placeholder="Nome de usuário">
+            <button onclick="createUserProfile()">Criar Perfil</button>
+        </div>
+    </div>
     <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
@@ -342,6 +410,7 @@
         const database = getDatabase(app);
 
         let newGroup; // Armazenar informações do novo grupo
+        let userProfile = null; // Armazenar informações do usuário
 
         window.openNewGroupModal = function () {
             document.getElementById("newGroupModal").style.display = "block";
@@ -470,6 +539,43 @@
             closeSettingsModal();
         }
         
+         window.previewUserImage = function (input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById("userImagePreview").src = e.target.result;
+                    userProfile = userProfile || {};
+                    userProfile.image = e.target.result; // Salva a imagem do usuário
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        window.createUserProfile = function() {
+            const userName = document.getElementById("userNameInput").value;
+            userProfile = userProfile || {};
+            userProfile.name = userName;
+            console.log("Perfil do Usuário Criado:", userProfile);
+            // Aqui você pode salvar os dados do perfil do usuário no Firebase ou localStorage
+            document.getElementById("userCreationModal").style.display = "none";
+            // Atualizar interface
+            updateUserDisplay();
+        }
+
+        function updateUserDisplay() {
+            if (userProfile && userProfile.image && userProfile.name) {
+                console.log("Nome do usuario", userProfile.name, "Image do usuario", userProfile.image )
+                //document.getElementById("userImageDisplay").src = userProfile.image;
+                //document.getElementById("userNameDisplay").innerText = userProfile.name;
+            }
+        }
+
+        // Exibir o modal de criação de usuário ao carregar a página
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("userCreationModal").style.display = "flex";
+        });
 
         // Carrega os grupos do Firebase ao carregar a página
         loadGroupsFromFirebase();
