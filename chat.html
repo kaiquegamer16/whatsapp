@@ -70,6 +70,10 @@
             padding: 10px;
             display: flex;
             align-items: center;
+             /* Define o tamanho máximo para o input */
+            max-width: 100%;
+           /* Garante que o conteúdo não vaze */
+            box-sizing: border-box;
         }
 
         .message-input-container input {
@@ -88,6 +92,8 @@
             border-radius: 5px;
             padding: 8px 16px;
             cursor: pointer;
+            /* Impede que o botão quebre para a linha de baixo */
+            white-space: nowrap;
         }
         .message {
             background-color: var(--primary-color);
