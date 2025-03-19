@@ -150,7 +150,6 @@
             min-height: 100vh;
         }
 
-        /* Centraliza os elementos no modal */
         #groupSettingsModal .modal-content > * {
             margin-bottom: 20px;
             width: 100%;
@@ -171,9 +170,13 @@
             cursor: pointer;
             margin: 0 auto;
             display: block;
-            /* Novas propriedades */
-            max-width: 100px;  /* Limita a largura máxima */
-            max-height: 100px; /* Limita a altura máxima */
+        }
+            /* Garante que a imagem do grupo seja redonda */
+        #groupSettingsModal #groupImageSettings {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         #groupSettingsModal input[type="text"] {
@@ -218,6 +221,13 @@
             border-radius: 50%;
             object-fit: cover;
             margin-right: 10px;
+        }
+              /* Estilo para a capa do usuário */
+        .user-cover {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 10px;
         }
 
         /* Estilos para Upload de Imagem */
@@ -287,22 +297,26 @@
         <span class="close-button" onclick="closeGroupSettingsModal()">×</span>
         <h2>Dados do Grupo</h2>
 
-        <img id="groupImageSettings" src="https://via.placeholder.com/100" alt="Imagem do Grupo">
+          <img id="groupImageSettings" src="https://via.placeholder.com/100" alt="Imagem do Grupo">
         <input type="text" id="groupNameSettings" placeholder="Nome do Grupo">
-
-        <!-- Upload de Imagem de Fundo -->
         <div class="upload-container">
             <label for="backgroundImageInput">Imagem de Fundo do Chat:</label>
             <input type="file" id="backgroundImageInput" accept="image/*" style="display: none;" onchange="uploadBackgroundImage(this)">
             <label for="backgroundImageInput" class="upload-button">Selecionar Imagem</label>
         </div>
-
         <button onclick="updateGroupNameAndImage()">Salvar Alterações</button>
-
+             <!-- Capa do usuário -->
+             <img id="userCover" class="user-cover" src="https://via.placeholder.com/600x150" alt="Capa do Usuário">
+            <div class="upload-container">
+                <label for="userCoverInput">Capa do Perfil:</label>
+                <input type="file" id="userCoverInput" accept="image/*" style="display: none;" onchange="uploadUserCover(this)">
+                <label for="userCoverInput" class="upload-button">Selecionar Imagem</label>
+            </div>
         <h3>Participantes</h3>
         <ul class="participants-list" id="participantsList">
             <!-- Lista de participantes aqui -->
         </ul>
+
     </div>
 </div>
 
@@ -330,7 +344,8 @@
     const groupId = localStorage.getItem('currentGroupId');
     let user;
     let groupData;
-    const imageBBApiKey = 'SUA_API_IMAGEBB';
+     const imageBBApiKey = '835a6a9a4193a5b6db165edcea73e014';
+      let typingUsers = {}; // Objeto para rastrear usuários digitando
 
     // Funções auxiliares para salvar e carregar dados do localStorage
     function saveLocalStorage(key, value) {
@@ -357,28 +372,129 @@
 
     loadUserProfile();
 
-    async function loadGroupData(groupId) {
+     async function loadGroupData(groupId) {
         if (groupId) {
             const groupRef = ref(database, `groups/${groupId}`);
-            const snapshot = await get(groupRef);
+            try {
+                const snapshot = await get(groupRef); // Use await aqui
+                if (snapshot.exists()) {
+                    groupData = snapshot.val();
+                    document.getElementById('groupName').innerText = groupData.name || 'Nome do Grupo';
+                    document.getElementById('groupImage').src = groupData.image || 'https://via.placeholder.com/40';
+                    document.getElementById('groupImageSettings').src = groupData.image || 'https://via.placeholder.com/100';
+                    document.getElementById('groupNameSettings').value = groupData.name || '';
+                    setBackgroundImage(groupData.backgroundImage);
 
-            if (snapshot.exists()) {
-                groupData = snapshot.val();
-                document.getElementById('groupName').innerText = groupData.name || 'Nome do Grupo';
-                document.getElementById('groupImage').src = groupData.image || 'https://via.placeholder.com/40';
-                document.getElementById('groupImageSettings').src = groupData.image || 'https://via.placeholder.com/100';
-                document.getElementById('groupNameSettings').value = groupData.name || '';
-                setBackgroundImage(groupData.backgroundImage);
-
-                loadParticipants(groupId);
-            } else {
-                console.log("No data available for this group ID.");
+                    loadParticipants(groupId);
+                } else {
+                    console.log("No data available for this group ID.");
+                }
+            } catch (error) {
+                console.error("Erro ao obter os dados do grupo:", error);
             }
         }
         loadMessages(groupId);
     }
+    // Carrega a capa do usuário do Firebase
+    async function loadUserCover() {
+        if (user) {
+            const userRef = ref(database, `users/${user.id}`);
+            try {
+                const snapshot = await get(userRef);
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    const coverImage = userData.coverImage || 'https://via.placeholder.com/600x150';
+                    document.getElementById('userCover').src = coverImage;
+                }
+            } catch (error) {
+                console.error("Erro ao carregar a capa do usuário:", error);
+            }
+        }
+    }
+    // Salva a capa do usuário no Firebase
+      window.uploadUserCover = async function (input) {
+        if (input.files && input.files[0]) {
+            const imageFile = input.files[0];
+            const imageUrl = await uploadImageToImageBB(imageFile);
 
-    loadGroupData(groupId);
+            if (imageUrl) {
+                // Salva a URL da capa no perfil do usuário no Firebase
+                const userRef = ref(database, `users/${user.id}`); // Assumindo que você tem um ID de usuário
+                try {
+                    await set(userRef, {
+                        ...user, // Mantém os outros dados do usuário
+                        coverImage: imageUrl // Salva a URL da capa
+                    });
+                      document.getElementById('userCover').src = imageUrl;
+                } catch (error) {
+                    console.error("Erro ao salvar a capa do usuário:", error);
+                    alert("Erro ao salvar a capa do usuário.");
+                }
+            }
+        }
+    };
+      function setTypingStatus(userId, isTyping) {
+        typingUsers[userId] = isTyping;
+        displayTypingUsers();
+    }
+        // Envia o status de digitação para o Firebase
+    function sendTypingStatus(isTyping) {
+        const typingRef = ref(database, `groups/${groupId}/typing/${user.id}`);
+        set(typingRef, isTyping);
+    }
+        // Exibe os usuários que estão digitando
+    function displayTypingUsers() {
+        const typingList = document.getElementById('typingUsers');
+        typingList.innerHTML = ''; // Limpa a lista anterior
+
+        for (const userId in typingUsers) {
+            if (typingUsers[userId]) {
+                const listItem = document.createElement('li');
+                listItem.innerText = `${userId} está digitando...`; // Adapte para exibir o nome do usuário
+                typingList.appendChild(listItem);
+            }
+        }
+    }
+
+      async function loadParticipants(groupId) {
+            const participantsList = document.getElementById('participantsList');
+            participantsList.innerHTML = ''; // Limpa a lista existente
+
+            const participantsRef = ref(database, `groups/${groupId}/participants`);
+            try {
+                const snapshot = await get(participantsRef);
+
+                if (snapshot.exists()) {
+                    const participants = snapshot.val();
+                    for (const userId in participants) {
+                        const userRef = ref(database, `users/${userId}`);
+                        try {
+                            const userSnapshot = await get(userRef);
+                            if (userSnapshot.exists()) {
+                                const userData = userSnapshot.val();
+                                addParticipantToList(userData);
+                            } else {
+                                console.log(`User with ID ${userId} not found.`);
+                            }
+                        } catch (error) {
+                            console.error("Erro ao obter os dados do usuário:", error);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("Erro ao obter a lista de participantes:", error);
+            }
+        }
+
+        function addParticipantToList(user) {
+            const participantsList = document.getElementById('participantsList');
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <img src="${user.image || 'https://via.placeholder.com/30'}" alt="Foto de ${user.name}">
+                <span>${user.name}</span>
+            `;
+            participantsList.appendChild(listItem);
+        }
 
     async function uploadImageToImageBB(imageFile) {
         const formData = new FormData();
@@ -434,7 +550,9 @@
         const messagesRef = ref(database, `groups/${groupId}/messages`);
         await push(messagesRef, {
             text: messageText,
-            type: 'text'
+            type: 'text',
+            userId: user.id, // Adiciona o ID do usuário
+            userName: user.name // Adiciona o nome do usuário
         });
 
         document.getElementById('messageInput').value = '';
@@ -453,7 +571,9 @@
             const messagesRef = ref(database, `groups/${groupId}/messages`);
             await push(messagesRef, {
                 type: 'image',
-                url: imageUrl
+                url: imageUrl,
+                userId: user.id, // Adiciona o ID do usuário
+                userName: user.name // Adiciona o nome do usuário
             });
 
             loadMessages(groupId);
@@ -475,8 +595,6 @@
                     });
 
                     setBackgroundImage(imageUrl);
-
-                    // Atualiza groupData com a nova imagem de fundo
                     groupData.backgroundImage = imageUrl;
 
                 } catch (error) {
@@ -495,70 +613,11 @@
             chatMessages.style.backgroundImage = '';
         }
     }
-
-   async function loadParticipants(groupId) {
-    const participantsList = document.getElementById('participantsList');
-    participantsList.innerHTML = ''; // Limpa a lista existente
-    const groupRef = ref(database, `groups/${groupId}`);
-    let snapshot = null; // Inicializa snapshot como null
-
-    try {
-        snapshot = await get(groupRef); // Atribui o resultado da função assíncrona
-
-        if (snapshot.exists()) {
-            groupData = snapshot.val(); // Armazena os dados do grupo
-            const participantsRef = ref(database, `groups/${groupId}/participants`);
-            const participantsSnapshot = await get(participantsRef);
-
-            if (participantsSnapshot.exists()) {
-                const participants = participantsSnapshot.val();
-                for (const userId in participants) {
-                    const userRef = ref(database, `users/${userId}`);
-                    get(userRef).then((userSnapshot) => {
-                        if (userSnapshot.exists()) {
-                            const userData = userSnapshot.val();
-                            addParticipantToList(userData);
-                        } else {
-                            console.log(`User with ID ${userId} not found.`);
-                        }
-                    }).catch((error) => {
-                        console.error("Erro ao obter os dados do usuário:", error);
-                    });
-                }
-            }
-        }
-    } catch (error) {
-        console.error("Erro ao carregar participantes:", error);
-    }
-}
-
-    function addParticipantToList(user) {
-        const participantsList = document.getElementById('participantsList');
-        const listItem = document.createElement('li');
-        listItem.innerHTML = `
-            <img src="${user.image || 'https://via.placeholder.com/30'}" alt="Foto de ${user.name}">
-            <span>${user.name}</span>
-        `;
-        participantsList.appendChild(listItem);
-    }
-
-    function displayImageMessage(imageUrl) {
-        const messageContainer = document.createElement('div');
-        messageContainer.classList.add('message');
-        messageContainer.innerHTML = `<img src="${imageUrl}" alt="Imagem enviada">`;
-
-        document.getElementById('chatMessages').appendChild(messageContainer);
-        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-    }
-
-    function displayMessage(message) {
-        const messageContainer = document.createElement('div');
-        messageContainer.classList.add('message');
-        messageContainer.innerText = message;
-
-        document.getElementById('chatMessages').appendChild(messageContainer);
-        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-    }
+        // Ouvinte para o campo de texto de mensagem
+    document.getElementById('messageInput').addEventListener('input', (event) => {
+        const isTyping = event.target.value.length > 0;
+        sendTypingStatus(isTyping); // Envia o status de digitação
+    });
 
     async function loadMessages(groupId) {
         const chatMessages = document.getElementById('chatMessages');
@@ -569,10 +628,11 @@
         if (snapshot.exists()) {
             const messages = snapshot.val();
             for (const messageId in messages) {
-                if (messages[messageId].type === 'image') {
-                    displayImageMessage(messages[messageId].url);
+                const message = messages[messageId];
+                if (message.type === 'image') {
+                    displayImageMessage(message.url, message.userId, message.userName);
                 } else {
-                    displayMessage(messages[messageId].text);
+                    displayMessage(message.text, message.userId, message.userName);
                 }
             }
         } else {
@@ -580,9 +640,43 @@
         }
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+  function displayImageMessage(imageUrl, userId, userName) {
+    const messageContainer = document.createElement('div');
+    messageContainer.classList.add('message');
+
+    // Cria um elemento para exibir o nome do usuário (se fornecido)
+    if (userName) {
+        const userNameElement = document.createElement('div');
+        userNameElement.classList.add('username');
+        userNameElement.innerText = userName;
+        messageContainer.appendChild(userNameElement);
+    }
+
+    messageContainer.innerHTML += `<img src="${imageUrl}" alt="Imagem enviada">`;
+    document.getElementById('chatMessages').appendChild(messageContainer);
+    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+}
+
+function displayMessage(message, userId, userName) {
+    const messageContainer = document.createElement('div');
+    messageContainer.classList.add('message');
+
+    // Cria um elemento para exibir o nome do usuário (se fornecido)
+    if (userName) {
+        const userNameElement = document.createElement('div');
+        userNameElement.classList.add('username');
+        userNameElement.innerText = userName;
+        messageContainer.appendChild(userNameElement);
+    }
+
+    messageContainer.innerText = message;
+    document.getElementById('chatMessages').appendChild(messageContainer);
+    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+}
 
     window.openGroupSettingsModal = function() {
         document.getElementById('groupSettingsModal').style.display = 'block';
+          loadUserCover()
     };
 
     window.closeGroupSettingsModal = function() {
@@ -620,6 +714,8 @@
             alert("Erro ao atualizar os dados do grupo.");
         }
     };
+    loadGroupData(groupId)
+    loadUserCover();
 
 </script>
 </body>
