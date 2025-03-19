@@ -38,6 +38,7 @@
             padding: 10px;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
@@ -47,10 +48,20 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
+            cursor: pointer;
         }
 
         header h1 {
             margin: 0;
+            font-size: 1.2em;
+            flex-grow: 1;
+        }
+
+        header button {
+            background-color: transparent;
+            color: var(--white);
+            border: none;
+            cursor: pointer;
             font-size: 1.2em;
         }
 
@@ -61,7 +72,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Mantenha o alinhamento no topo */
+            justify-content: flex-start;
         }
 
         /* Input de Mensagem */
@@ -70,9 +81,8 @@
             padding: 10px;
             display: flex;
             align-items: center;
-             /* Adiciona um pouco de espaço ao redor do input e do botão */
             padding: 5px;
-            gap: 5px; /* Espaçamento entre o input e o botão */
+            gap: 5px;
         }
 
         .message-input-container input {
@@ -91,9 +101,9 @@
             border-radius: 5px;
             padding: 8px 16px;
             cursor: pointer;
-             /* Alinha o botão verticalmente */
             align-self: center;
         }
+
         .message {
             background-color: var(--primary-color);
             color: var(--white);
@@ -103,16 +113,102 @@
             word-wrap: break-word;
         }
 
-        /* Ajuste para o teclado */
-        @media (max-height: 600px) {
-            .chat-container {
-                height: auto; /* Permite que o contêiner se ajuste ao teclado */
-            }
+        /* Grupo Settings Modal */
+        #groupSettingsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
 
-            #chatMessages {
-                flex-grow: 0; /* Impede que as mensagens ocupem todo o espaço disponível */
-                height: 300px; /* Define uma altura máxima para as mensagens */
-            }
+        #groupSettingsModal .modal-content {
+            background-color: var(--panel-color);
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 90%;
+            overflow-y: auto;
+        }
+
+        #groupSettingsModal h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        #groupSettingsModal img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        #groupSettingsModal input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a3942;
+            color: var(--white);
+        }
+
+        #groupSettingsModal button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #groupSettingsModal .participants-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+        #groupSettingsModal .participants-list li {
+            padding: 10px;
+            border-bottom: 1px solid #2a3942;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #groupSettingsModal .participants-list li img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        /* Adjustments for group settings modal for full-screen coverage */
+        #groupSettingsModal .modal-content {
+            max-width: 100%;
+            margin: 0;
+            height: 100%;
+            border-radius: 0;
+        }
+
+        #groupSettingsModal .modal-content .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--white);
         }
     </style>
 </head>
@@ -121,6 +217,7 @@
         <header>
             <img id="groupImage" src="https://via.placeholder.com/40" alt="Imagem do Grupo">
             <h1 id="groupName">Nome do Grupo</h1>
+            <button onclick="openGroupSettingsModal()"><i class="fas fa-cog"></i></button>
         </header>
 
         <div id="chatMessages">
@@ -133,13 +230,28 @@
         </div>
     </div>
 
+    <!-- Grupo Settings Modal -->
+    <div id="groupSettingsModal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeGroupSettingsModal()">×</span>
+            <h2>Dados do Grupo</h2>
+            <img id="groupImageSettings" src="https://via.placeholder.com/100" alt="Imagem do Grupo">
+            <input type="text" id="groupNameSettings" placeholder="Nome do Grupo">
+            <button onclick="updateGroupNameAndImage()">Salvar Alterações</button>
+
+            <h3>Participantes</h3>
+            <ul class="participants-list" id="participantsList">
+                <!-- Lista de participantes aqui -->
+            </ul>
+        </div>
+    </div>
+
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
-        import { getDatabase, ref, get, push, set } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+        import { getDatabase, ref, get, push, set, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
-        // Firebase configuration (substitua com suas credenciais)
+      // Firebase configuration (substitua com suas credenciais)
         const firebaseConfig = {
             apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
             authDomain: "banco-5a678.firebaseapp.com",
@@ -151,45 +263,87 @@
             measurementId: "G-DEER2QFNXL"
           };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const database = getDatabase(app);
 
-        // Carregar o ID do grupo do localStorage
         const groupId = localStorage.getItem('currentGroupId');
         let user;
+        let groupData; // Armazena os dados do grupo
+
         async function loadGroupData(groupId) {
             if (groupId) {
-                const groupRef = ref(database, `groups/${groupId}`); // Referência ao nó do grupo específico
-                const snapshot = await get(groupRef); // Busca os dados
+                const groupRef = ref(database, `groups/${groupId}`);
+                const snapshot = await get(groupRef);
+
                 if (snapshot.exists()) {
-                    const groupData = snapshot.val(); // Extrai os dados
+                    groupData = snapshot.val(); // Armazena os dados do grupo
                     document.getElementById('groupName').innerText = groupData.name || 'Nome do Grupo';
                     document.getElementById('groupImage').src = groupData.image || 'https://via.placeholder.com/40';
+                    document.getElementById('groupImageSettings').src = groupData.image || 'https://via.placeholder.com/100';
+                    document.getElementById('groupNameSettings').value = groupData.name || '';
+                    user = JSON.parse(localStorage.getItem("userProfile"));
+
+                     loadParticipants(groupId);
                 } else {
                     console.log("No data available for this group ID.");
                 }
-                // Recuperar o objeto do localStorage
-                 user = JSON.parse(localStorage.getItem("userProfile"));
             }
             loadMessages(groupId)
         }
 
         loadGroupData(groupId);
+
+       async function loadParticipants(groupId) {
+            const participantsList = document.getElementById('participantsList');
+            participantsList.innerHTML = ''; // Limpa a lista existente
+            const groupRef = ref(database, `groups/${groupId}`);
+            const snapshot = await get(groupRef);
+              if (snapshot.exists()) {
+                groupData = snapshot.val(); // Armazena os dados do grupo
+                    const participantsRef = ref(database, `groups/${groupId}/participants`);
+                    const snapshot = await get(participantsRef);
+                   if (snapshot.exists()) {
+                    const participants = snapshot.val();
+                    for (const userId in participants) {
+                        const userRef = ref(database, `users/${userId}`);
+                         get(userRef).then((userSnapshot) => {
+                                if (userSnapshot.exists()) {
+                                    const userData = userSnapshot.val();
+                                    addParticipantToList(userData);
+                                } else {
+                                    console.log(`User with ID ${userId} not found.`);
+                                }
+                            }).catch((error) => {
+                                console.error("Erro ao obter os dados do usuário:", error);
+                            });
+                    }
+                }
+             }
+        }
+
+        function addParticipantToList(user) {
+            const participantsList = document.getElementById('participantsList');
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <img src="${user.image || 'https://via.placeholder.com/30'}" alt="Foto de ${user.name}">
+                <span>${user.name}</span>
+            `;
+            participantsList.appendChild(listItem);
+        }
+
         function displayMessage(message) {
              const messageContainer = document.createElement('div');
             messageContainer.classList.add('message');
             messageContainer.innerText = message;
 
             document.getElementById('chatMessages').appendChild(messageContainer);
+             document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }
            async function loadMessages(groupId) {
-             const messagesRef = ref(database, `groups/${groupId}/messages`);
-
-            // Limpa as mensagens existentes antes de carregar novas
-            document.getElementById('chatMessages').innerHTML = '';
-
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = ''; // Limpa as mensagens existentes antes de carregar
+            const messagesRef = ref(database, `groups/${groupId}/messages`);
             const snapshot = await get(messagesRef);
 
             if (snapshot.exists()) {
@@ -200,7 +354,7 @@
             } else {
                 console.log("No messages available for this group.");
             }
-            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+              chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         window.sendMessage = async function() {
@@ -216,10 +370,54 @@
                    // userId: user.id // caso vc queira criar usuario id no perfil  
                 });
                 document.getElementById('messageInput').value = '';
-                loadMessages(groupId)
+               loadMessages(groupId)
             }
-               document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }
+
+        window.openGroupSettingsModal = function() {
+            document.getElementById('groupSettingsModal').style.display = 'block';
+        };
+
+        window.closeGroupSettingsModal = function() {
+            document.getElementById('groupSettingsModal').style.display = 'none';
+        };
+
+         window.updateGroupNameAndImage = async function() {
+            const newGroupName = document.getElementById('groupNameSettings').value;
+            // Adicione lógica para pegar a nova imagem do campo apropriado
+            // const newGroupImage = document.getElementById('groupImageSettingsInput').files[0];
+
+            if (!groupData) {
+                console.error("Dados do grupo não carregados.");
+                alert("Erro: Dados do grupo não carregados.");
+                return;
+            }
+           if (groupData.creator !== user.name) {
+               alert("Você não tem permissão para alterar os dados do grupo.");
+                closeGroupSettingsModal();
+               return;
+            }
+
+            const groupRef = ref(database, `groups/${groupId}`);
+            try {
+                await set(groupRef, {
+                    ...groupData, // Mantém os dados existentes
+                    name: newGroupName,
+                   // image: newGroupImage // Salva a nova imagem
+                });
+
+                // Atualiza a interface
+                document.getElementById('groupName').innerText = newGroupName;
+                document.getElementById('groupImage').src = newGroupImage || 'https://via.placeholder.com/40';
+
+                // Fechar o modal
+                closeGroupSettingsModal();
+
+            } catch (error) {
+                console.error("Erro ao atualizar os dados do grupo:", error);
+                alert("Erro ao atualizar os dados do grupo.");
+            }
+        };
     </script>
 </body>
 </html>
