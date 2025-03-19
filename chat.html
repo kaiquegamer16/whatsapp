@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat do Grupo</title>
+    <title>WhatsApp (Mockup)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         /* Cores e Fontes */
@@ -19,17 +19,17 @@
         body {
             font-family: var(--font-family);
             margin: 0;
-            padding: 0;
             background-color: var(--bg-color);
-            color: white;
+            color: var(--white);
         }
 
-        .chat-container {
+        .container {
             max-width: 600px;
             margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            height: 90vh;
+            padding: 0;
+            display: grid;
+            grid-template-rows: auto auto auto 1fr auto;
+            height: 100vh;
         }
 
         /* Header */
@@ -37,56 +37,36 @@
             background-color: var(--panel-color);
             padding: 10px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        header img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
+            align-items: center;
         }
 
         header h1 {
             margin: 0;
             font-size: 1.2em;
-            flex-grow: 1;
+            font-weight: normal;
         }
 
-        header button {
-            background-color: transparent;
-            color: var(--white);
-            border: none;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-
-        /* Chat Messages */
-        #chatMessages {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto;
+        header .icons {
             display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            gap: 15px;
+            font-size: 1.3em;
+            align-items: center;
         }
 
-        /* Input de Mensagem */
-        .message-input-container {
+        /* Search Bar */
+        .search-bar {
             background-color: var(--panel-color);
-            padding: 10px;
+            padding: 20px;
             display: flex;
             align-items: center;
-            padding: 5px;
-            gap: 5px;
+            /* Reduz a largura e centraliza */
+            width: 92%;
+            margin: 0;
         }
 
-        .message-input-container input {
-            flex-grow: 1;
+        .search-bar input {
+            flex: 1; /* Permite que o input preencha o espaço restante */
             padding: 8px;
             border: none;
             border-radius: 5px;
@@ -94,27 +74,106 @@
             color: var(--white);
         }
 
-        .message-input-container button {
-            background-color: var(--primary-color);
-            color: var(--white);
+        /* Tab Bar */
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--panel-color);
+            border-bottom: 1px solid #2a3942;
+        }
+
+        .tab-bar button {
+            background-color: transparent;
             border: none;
-            border-radius: 5px;
-            padding: 8px 16px;
+            color: var(--secondary-text);
+            padding: 12px 16px;
             cursor: pointer;
-            align-self: center;
+            font-size: 0.9em;
         }
 
-        .message {
+        .tab-bar button.active {
+            color: var(--white);
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        /* Chat List */
+        .chat-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #2a3942;
+            cursor: pointer;
+        }
+
+        .chat-item:hover {
+            background-color: #202c33;
+        }
+
+        .chat-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .chat-item .chat-details {
+            flex-grow: 1;
+        }
+
+        .chat-item .chat-details .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .chat-item .chat-details .message {
+            color: var(--secondary-text);
+            font-size: 0.9em;
+        }
+
+        .chat-item .time {
+            font-size: 0.8em;
+            color: var(--secondary-text);
+            margin-left: auto;
+        }
+
+        .chat-item .delete-group {
+            margin-left: auto;
+            color: var(--secondary-text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        footer button {
             background-color: var(--primary-color);
             color: var(--white);
-            border-radius: 5px;
-            padding: 8px;
-            margin-bottom: 8px;
-            word-wrap: break-word;
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Grupo Settings Modal */
-        #groupSettingsModal {
+        /* Novo Grupo */
+        #newGroupModal {
             display: none;
             position: fixed;
             top: 0;
@@ -122,37 +181,26 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
-            z-index: 10;
+            z-index: 1;
         }
 
-        #groupSettingsModal .modal-content {
+        #newGroupModal .modal-content {
             background-color: var(--panel-color);
-            max-width: 600px;
+            max-width: 400px;
             margin: 50px auto;
             padding: 20px;
             border-radius: 5px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 90%;
-            overflow-y: auto;
         }
 
-        #groupSettingsModal h2 {
+        #newGroupModal h2 {
             margin-top: 0;
-            margin-bottom: 20px;
-        }
-
-        #groupSettingsModal img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
             margin-bottom: 10px;
-            cursor: pointer;
         }
 
-        #groupSettingsModal input[type="text"] {
+        #newGroupModal input[type="text"] {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -162,262 +210,389 @@
             color: var(--white);
         }
 
-        #groupSettingsModal button {
+        #newGroupModal button {
             background-color: var(--primary-color);
             color: var(--white);
             border: none;
             border-radius: 5px;
             padding: 10px 20px;
             cursor: pointer;
-            margin-top: 10px;
         }
 
-        #groupSettingsModal .participants-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        #newGroupModal #groupImagePreview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid var(--secondary-text);
+        }
+
+        #newGroupModal #groupImageInput {
+            display: none;
+        }
+
+        /* User Creation */
+        #userCreationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-        }
-
-        #groupSettingsModal .participants-list li {
-            padding: 10px;
-            border-bottom: 1px solid #2a3942;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 4;
             display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
         }
 
-        #groupSettingsModal .participants-list li img {
-            width: 30px;
-            height: 30px;
+        #userCreationModal .modal-content {
+            background-color: var(--panel-color);
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        #userCreationModal h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        #userCreationModal input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a3942;
+            color: var(--white);
+        }
+
+        #userCreationModal img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        #userCreationModal input[type="file"] {
+            display: none;
+        }
+
+        #userCreationModal button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        /* User Image Display */
+        #userImageDisplay {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             object-fit: cover;
             margin-right: 10px;
         }
-        /* Adjustments for group settings modal for full-screen coverage */
-        #groupSettingsModal .modal-content {
-            max-width: 100%;
-            margin: 0;
-            height: 100%;
-            border-radius: 0;
-        }
-
-        #groupSettingsModal .modal-content .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--white);
-        }
     </style>
 </head>
 <body>
-    <div class="chat-container">
+    <div class="container">
         <header>
-            <img id="groupImage" src="https://via.placeholder.com/40" alt="Imagem do Grupo">
-            <h1 id="groupName">Nome do Grupo</h1>
-            <button onclick="openGroupSettingsModal()"><i class="fas fa-cog"></i></button>
+            <h1>WhatsApp</h1>
+            <div class="icons">
+                <i class="fas fa-camera"></i>
+                <i class="fas fa-search"></i>
+                <div id="userInfo" style="display: flex; align-items: center;">
+                    <img id="userImageDisplay" src="https://via.placeholder.com/40" alt="Imagem do Usuário" style="border-radius: 50%;">
+                </div>
+            </div>
         </header>
 
-        <div id="chatMessages">
-            <!-- Mensagens do chat aqui -->
+        <div class="search-bar">
+            <input type="text" placeholder="Pesquisar...">
         </div>
 
-        <div class="message-input-container">
-            <input type="text" id="messageInput" placeholder="Mensagem">
-            <button onclick="sendMessage()">Enviar</button>
+        <div class="tab-bar">
+            <button class="active">Conversas</button>
+            <button>Status</button>
+            <button>Chamadas</button>
         </div>
+
+        <ul class="chat-list" id="chatList">
+            <!-- Lista de chats aqui -->
+        </ul>
+
+        <footer>
+            <button onclick="openNewGroupModal()">+</button>
+        </footer>
     </div>
 
-    <!-- Grupo Settings Modal -->
-    <div id="groupSettingsModal">
+    <!-- Modal para criar novo grupo -->
+    <div id="newGroupModal">
         <div class="modal-content">
-            <span class="close-button" onclick="closeGroupSettingsModal()">×</span>
-            <h2>Dados do Grupo</h2>
-            <img id="groupImageSettings" src="https://via.placeholder.com/100" alt="Imagem do Grupo">
-            <input type="text" id="groupNameSettings" placeholder="Nome do Grupo">
-            <button onclick="updateGroupNameAndImage()">Salvar Alterações</button>
+            <span class="close-button" onclick="closeNewGroupModal()">×</span>
+            <h2>Criar novo grupo</h2>
 
-            <h3>Participantes</h3>
-            <ul class="participants-list" id="participantsList">
-                <!-- Lista de participantes aqui -->
-            </ul>
+            <!-- Imagem do Grupo -->
+            <img id="groupImagePreview" src="https://via.placeholder.com/100" alt="Imagem do Grupo" onclick="document.getElementById('groupImageInput').click()">
+            <input type="file" id="groupImageInput" accept="image/*" onchange="previewGroupImage(this)">
+
+            <!-- Nome do Grupo -->
+            <input type="text" id="groupName" placeholder="Nome do grupo (opcional)">
+            
+            <!-- Aqui você adicionaria a lógica para adicionar participantes, etc. -->
+
+            <button onclick="createNewGroup()">Criar grupo</button>
         </div>
     </div>
 
-    <script type="module">
+    <!-- Modal para criação de usuário -->
+    <div id="userCreationModal">
+        <div class="modal-content">
+            <h2>Criar Perfil</h2>
+            <img id="userImagePreview" src="https://via.placeholder.com/100" alt="Imagem do Perfil" onclick="document.getElementById('userImageInput').click()">
+            <input type="file" id="userImageInput" accept="image/*" onchange="previewUserImage(this)">
+            <input type="text" id="userNameInput" placeholder="Nome de usuário">
+            <button onclick="createUserProfile()">Criar Perfil</button>
+        </div>
+    </div>
+      <script type="module">
+        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
-        import { getDatabase, ref, get, push, set, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+        import { getDatabase, ref, push, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
-      // Firebase configuration (substitua com suas credenciais)
         const firebaseConfig = {
-            apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
-            authDomain: "banco-5a678.firebaseapp.com",
-            databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
-            projectId: "banco-5a678",
-            storageBucket: "banco-5a678.firebasestorage.app",
-            messagingSenderId: "943801310064",
-            appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
-            measurementId: "G-DEER2QFNXL"
-          };
-
+    apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
+    authDomain: "banco-5a678.firebaseapp.com",
+    databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
+    projectId: "banco-5a678",
+    storageBucket: "banco-5a678.firebasestorage.app",
+    messagingSenderId: "943801310064",
+    appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+    measurementId: "G-DEER2QFNXL"
+  };
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const database = getDatabase(app);
 
-        const groupId = localStorage.getItem('currentGroupId');
-        let user;
-        let groupData; // Armazena os dados do grupo
-
-        async function loadGroupData(groupId) {
-            if (groupId) {
-                const groupRef = ref(database, `groups/${groupId}`);
-                const snapshot = await get(groupRef);
-
-                if (snapshot.exists()) {
-                    groupData = snapshot.val(); // Armazena os dados do grupo
-                    document.getElementById('groupName').innerText = groupData.name || 'Nome do Grupo';
-                    document.getElementById('groupImage').src = groupData.image || 'https://via.placeholder.com/40';
-                    document.getElementById('groupImageSettings').src = groupData.image || 'https://via.placeholder.com/100';
-                    document.getElementById('groupNameSettings').value = groupData.name || '';
-                    user = JSON.parse(localStorage.getItem("userProfile"));
-
-                     loadParticipants(groupId);
-                } else {
-                    console.log("No data available for this group ID.");
-                }
-            }
-            loadMessages(groupId)
-        }
-
-        loadGroupData(groupId);
-
-       async function loadParticipants(groupId) {
-            const participantsList = document.getElementById('participantsList');
-            participantsList.innerHTML = ''; // Limpa a lista existente
-            const groupRef = ref(database, `groups/${groupId}`);
-            const snapshot = await get(groupRef);
-              if (snapshot.exists()) {
-                groupData = snapshot.val(); // Armazena os dados do grupo
-                    const participantsRef = ref(database, `groups/${groupId}/participants`);
-                    const snapshot = await get(participantsRef);
-                   if (snapshot.exists()) {
-                    const participants = snapshot.val();
-                    for (const userId in participants) {
-                        const userRef = ref(database, `users/${userId}`);
-                         get(userRef).then((userSnapshot) => {
-                                if (userSnapshot.exists()) {
-                                    const userData = userSnapshot.val();
-                                    addParticipantToList(userData);
-                                } else {
-                                    console.log(`User with ID ${userId} not found.`);
-                                }
-                            }).catch((error) => {
-                                console.error("Erro ao obter os dados do usuário:", error);
-                            });
-                    }
-                }
-             }
-        }
-
-        function addParticipantToList(user) {
-            const participantsList = document.getElementById('participantsList');
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <img src="${user.image || 'https://via.placeholder.com/30'}" alt="Foto de ${user.name}">
-                <span>${user.name}</span>
-            `;
-            participantsList.appendChild(listItem);
-        }
-
-        function displayMessage(message) {
-             const messageContainer = document.createElement('div');
-            messageContainer.classList.add('message');
-            messageContainer.innerText = message;
-
-            document.getElementById('chatMessages').appendChild(messageContainer);
-             document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-        }
-           async function loadMessages(groupId) {
-            const chatMessages = document.getElementById('chatMessages');
-            chatMessages.innerHTML = ''; // Limpa as mensagens existentes antes de carregar
-            const messagesRef = ref(database, `groups/${groupId}/messages`);
-            const snapshot = await get(messagesRef);
-
-            if (snapshot.exists()) {
-                const messages = snapshot.val();
-                for (const messageId in messages) {
-                    displayMessage(messages[messageId].text);
-                }
-            } else {
-                console.log("No messages available for this group.");
-            }
-              chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        window.sendMessage = async function() {
-            const message = document.getElementById('messageInput').value;
-            if (message) {
-                 if (!groupId || !user) {
-                    console.error("Grupo ou usuário não encontrados!");
-                    return;
-                }
-            const messagesRef = ref(database, `groups/${groupId}/messages`);
-             await push(messagesRef, {
-                    text: message,
-                   // userId: user.id // caso vc queira criar usuario id no perfil  
-                });
-                document.getElementById('messageInput').value = '';
-               loadMessages(groupId)
-            }
-        }
-
-        window.openGroupSettingsModal = function() {
-            document.getElementById('groupSettingsModal').style.display = 'block';
-        };
-
-        window.closeGroupSettingsModal = function() {
-            document.getElementById('groupSettingsModal').style.display = 'none';
-        };
-
-         window.updateGroupNameAndImage = async function() {
-            const newGroupName = document.getElementById('groupNameSettings').value;
-            // Adicione lógica para pegar a nova imagem do campo apropriado
-            // const newGroupImage = document.getElementById('groupImageSettingsInput').files[0];
-
-            if (!groupData) {
-                console.error("Dados do grupo não carregados.");
-                alert("Erro: Dados do grupo não carregados.");
-                return;
-            }
-           if (groupData.creator !== user.name) {
-               alert("Você não tem permissão para alterar os dados do grupo.");
-                closeGroupSettingsModal();
-               return;
-            }
-
-            const groupRef = ref(database, `groups/${groupId}`);
+        let newGroup; // Armazenar informações do novo grupo
+        let userProfile = null; // Armazenar informações do usuário
+          // Função auxiliar para salvar dados no localStorage
+        function saveLocalStorage(key, value) {
             try {
-                await set(groupRef, {
-                    ...groupData, // Mantém os dados existentes
-                    name: newGroupName,
-                   // image: newGroupImage // Salva a nova imagem
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (e) {
+                console.error("Erro ao salvar no localStorage", e);
+            }
+        }
+
+           // Função auxiliar para carregar dados do localStorage
+        function loadLocalStorage(key) {
+            try {
+                const storedValue = localStorage.getItem(key);
+                return storedValue ? JSON.parse(storedValue) : null;
+            } catch (e) {
+                console.error("Erro ao carregar do localStorage", e);
+                return null;
+            }
+        }
+        window.openNewGroupModal = function () {
+            document.getElementById("newGroupModal").style.display = "block";
+            newGroup = {
+                name: null,
+                image: null,
+                participants: [] // Por exemplo
+            };
+        }
+
+        window.closeNewGroupModal = function () {
+            document.getElementById("newGroupModal").style.display = "none";
+        }
+
+        window.previewGroupImage = function (input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById("groupImagePreview").src = e.target.result;
+                    if (!newGroup) {
+                        newGroup = {}; // Inicializa newGroup se for nulo
+                    }
+                    newGroup.image = e.target.result;  //Salva a imagem para uso futuro
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        window.createNewGroup = async function () {
+            const groupName = document.getElementById("groupName").value;
+
+             if (!newGroup) {
+                newGroup = {}; // Inicializa newGroup se for nulo
+            }
+
+            newGroup.name = groupName;
+             // Salvar as informações do criador do grupo
+            newGroup.creator = userProfile.name; // Usando o nome do usuário como identificador
+
+            // Salvar no Firebase
+            const groupRef = ref(database, 'groups'); // Referência ao nó "groups"
+            const newGroupRef = push(groupRef); // Cria um novo nó com um ID único
+            const newGroupId = newGroupRef.key;
+
+            // Salvar os dados do grupo
+            try {
+                await set(newGroupRef, {
+                    id: newGroupId, // Salva o ID
+                    name: newGroup.name,
+                    image: newGroup.image,
+                    creator: newGroup.creator  // Salva o criador
                 });
+                newGroup.id = newGroupId;  // Salva o ID gerado pelo Firebase
 
-                // Atualiza a interface
-                document.getElementById('groupName').innerText = newGroupName;
-                document.getElementById('groupImage').src = newGroupImage || 'https://via.placeholder.com/40';
-
-                // Fechar o modal
-                closeGroupSettingsModal();
+                console.log("Grupo criado com ID:", newGroupId);
 
             } catch (error) {
-                console.error("Erro ao atualizar os dados do grupo:", error);
-                alert("Erro ao atualizar os dados do grupo.");
+                console.error("Erro ao salvar o grupo no Firebase:", error);
+                alert("Erro ao criar o grupo. Verifique o console."); // Feedback ao usuário
+                return; // Aborta a criação do grupo
             }
-        };
-    </script>
+            // SIMULAÇÃO: Crie o grupo e adiciona à lista de chats
+            addGroupToChatList(newGroup);
+            closeNewGroupModal();
+            loadGroupsFromFirebase(); // Recarrega os grupos após a criação
+        }
+function addGroupToChatList(group) {
+        const chatList = document.getElementById("chatList");
+        const listItem = document.createElement("li");
+        listItem.className = "chat-item";
+        listItem.innerHTML = `
+            <img src="${group.image || 'https://via.placeholder.com/60'}" alt="Imagem do Grupo">
+            <div class="chat-details">
+                <div class="name">${group.name || 'Novo Grupo'}</div>
+                <div class="message">Grupo criado!</div>
+            </div>
+            <span class="time">Agora</span>
+              ${userProfile && userProfile.name === group.creator ? `<i class="fas fa-trash delete-group" onclick="deleteGroup('${group.id}')"></i>` : ''}
+        `;
+        // Adiciona um evento de clique para abrir chat.html
+        listItem.addEventListener('click', (event) => {
+            if (!event.target.classList.contains('delete-group')) {
+                openChatPage(group.id); // Passa o ID do grupo
+            }
+        });
+        chatList.appendChild(listItem);
+    }
+
+    window.openChatPage = function (groupId) {
+        // Salvar o ID do grupo no localStorage (usaremos para buscar os dados no chat.html)
+        localStorage.setItem('currentGroupId', groupId);
+
+        // Abrir o chat.html em uma nova janela
+        window.open('chat.html', '_blank');
+    }
+
+    window.openGroupSettingsModal = function() {
+        document.getElementById("groupSettingsModal").style.display = "block";
+    }
+
+    window.closeGroupSettingsModal = function() {
+        document.getElementById("groupSettingsModal").style.display = "none";
+    }
+
+    async function loadGroupsFromFirebase() {
+        const chatList = document.getElementById("chatList");
+        chatList.innerHTML = ""; // Limpa a lista de chats existente
+
+        const groupsRef = ref(database, 'groups');
+        try {
+            const snapshot = await get(groupsRef);
+
+            if (snapshot.exists()) {
+                const groups = snapshot.val();
+                for (const groupId in groups) {
+                    const group = {
+                        id: groupId,
+                        name: groups[groupId].name,
+                        image: groups[groupId].image,
+                        creator: groups[groupId].creator // Carrega o criador
+                    };
+                    addGroupToChatList(group);
+                }
+            } else {
+                console.log("No groups found in Firebase.");
+            }
+        } catch (error) {
+            console.error("Erro ao carregar grupos do Firebase:", error);
+        }
+    }
+
+    window.deleteGroup = async function (groupId) {
+        const groupRef = ref(database, `groups/${groupId}`);
+        try {
+            await remove(groupRef);
+            loadGroupsFromFirebase(); // Recarrega a lista após a exclusão
+        } catch (error) {
+            console.error("Erro ao excluir o grupo:", error);
+            alert("Erro ao excluir o grupo. Verifique o console.");
+        }
+    }
+
+     window.previewUserImage = function (input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                document.getElementById("userImagePreview").src = e.target.result;
+                userProfile = userProfile || {};
+                userProfile.image = e.target.result; // Salva a imagem do usuário
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+      function updateUserDisplay() {
+        if (userProfile && userProfile.image) {
+            document.getElementById("userImageDisplay").src = userProfile.image;
+        }
+    }
+
+    window.createUserProfile = function() {
+        const userName = document.getElementById("userNameInput").value;
+        userProfile = userProfile || {};
+        userProfile.name = userName;
+
+        saveLocalStorage("userProfile", userProfile)
+        // Aqui você pode salvar os dados do perfil do usuário no Firebase ou localStorage
+        document.getElementById("userCreationModal").style.display = "none";
+        // Atualizar interface
+         loadUserProfile()
+    }
+
+        function loadUserProfile() {
+        userProfile = loadLocalStorage("userProfile")
+        updateUserDisplay();
+    }
+       function checkIfuserCreated() {
+          if( loadLocalStorage("userProfile")) {
+            document.getElementById("userCreationModal").style.display = "none";
+          }
+          loadUserProfile()
+        loadGroupsFromFirebase();
+    }
+    // Exibir o modal de criação de usuário ao carregar a página
+    document.addEventListener("DOMContentLoaded", function() {
+      checkIfuserCreated()
+    });
+</script>
 </body>
 </html>
