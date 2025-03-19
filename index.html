@@ -1,127 +1,160 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ativar Push Notifications</title>
+    <title>Ativar Notificações</title>
     <style>
         body {
             font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
         }
 
         button {
-            padding: 15px 30px;
-            font-size: 1.2em;
+            padding: 10px 20px;
+            font-size: 16px;
             background-color: #4CAF50;
             color: white;
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            transition: background-color 0.3s;
         }
 
         button:hover {
             background-color: #3e8e41;
         }
 
-        #notificationStatus {
+        #notification-status {
             margin-top: 20px;
-            font-size: 1.1em;
-            color: #555;
+            font-weight: bold;
+        }
+
+        .input-container {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 250px;
         }
     </style>
-
-    <!-- Progressier Manifest and Script -->
-    <link rel="manifest" href="https://progressier.app/8tECdmQEWhNZZFkhRoc8/progressier.json"/>
-    <script defer src="https://progressier.app/8tECdmQEWhNZZFkhRoc8/script.js"></script>
-
-    <!-- Global site titanpush (tpush.js) - TITANPush -- v2.1.0a -->
-    <script>
-        if(!window['_WPN']) {
-            (function(j,l,p,v,n,t,pu){j['_WPN']=n;j[n]=j[n]||function(){(j[n].q=j[n].q
-            ||[]).push(arguments)},j[n].l=1*new
-            Date();t=l.createElement(p),pu=l.getElementsByTagName(p)[0];t.async=1;
-            t.src=v;pu.parentNode.insertBefore(t,pu);})(window,document,'script',
-            'https://d12zyq17vm1xwx.cloudfront.net/v2/wpn.min.js','wpn');
-
-            wpn('initialize', 60276); // Substitua pelo seu ID real
-            wpn('checkSubscription'); // Verifica se já está inscrito
-            wpn('pageView');
-        }
-    </script>
 </head>
 <body>
 
-    <h1>Clique para Ativar as Notificações Push</h1>
+    <h1>Ativar Notificações Push</h1>
 
-    <button id="enablePush">Ativar Notificações</button>
+    <button id="enable-notifications">Habilitar Notificações</button>
+    <p id="notification-status"></p>
 
-    <p id="notificationStatus"></p>
+    <h2>Enviar Notificação de Teste</h2>
+
+    <div class="input-container">
+        <label for="notification-title">Título:</label>
+        <input type="text" id="notification-title" value="Olá!">
+    </div>
+
+    <div class="input-container">
+        <label for="notification-body">Mensagem:</label>
+        <input type="text" id="notification-body" value="Teste de notificação!">
+    </div>
+
+    <button id="send-notification">Enviar Notificação</button>
 
     <script>
-        const enablePushButton = document.getElementById('enablePush');
-        const notificationStatus = document.getElementById('notificationStatus');
+        const enableNotificationsButton = document.getElementById('enable-notifications');
+        const sendNotificationButton = document.getElementById('send-notification');
+        const notificationStatus = document.getElementById('notification-status');
+        const notificationTitleInput = document.getElementById('notification-title');
+        const notificationBodyInput = document.getElementById('notification-body');
 
-        enablePushButton.addEventListener('click', () => {
-            // Use a função do TITANPush para solicitar a permissão
-            wpn('subscribe', function(result) { // Adiciona um callback para a função 'subscribe'
-                if (result && result.success) {
-                    notificationStatus.textContent = "Notificações ativadas!";
-                    enablePushButton.disabled = true; // Desativa o botão após a inscrição
-                } else {
-                    notificationStatus.textContent = "Permissão negada ou ocorreu um erro.";
-                    console.error("Erro ao ativar as notificações:", result ? result.error : "Desconhecido");
-                }
-            });
+        const apiKey = 'SUA_CHAVE_API'; // Substitua pela sua chave API do Progressier
+        const email = 'brmllteste@gmail.com';  // Substitua pelo email do usuário
 
-            notificationStatus.textContent = "Solicitando permissão..."; // Mensagem inicial
-        });
-
-
-        // Verificação inicial do status
-        wpn('isSubscribed', function(isSubscribed) {
-            if (isSubscribed) {
-                notificationStatus.textContent = "Notificações já ativadas!";
-                enablePushButton.disabled = true;
+        enableNotificationsButton.addEventListener('click', () => {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        notificationStatus.textContent = 'Notificações habilitadas!';
+                        console.log('Permissão de notificação concedida.');
+                    } else if (permission === 'denied') {
+                        notificationStatus.textContent = 'Permissão de notificação negada.';
+                        console.warn('Permissão de notificação negada.');
+                    } else {
+                        notificationStatus.textContent = 'Permissão de notificação pendente.';
+                        console.log('Permissão de notificação pendente.');
+                    }
+                });
             } else {
-                notificationStatus.textContent = "Notificações desativadas.";
+                notificationStatus.textContent = 'Notificações não suportadas neste navegador.';
+                console.warn('Notificações não suportadas neste navegador.');
             }
         });
 
-        // Função para mostrar uma notificação de teste (depois que as permissões forem concedidas)
-        function showTestNotification() {
-          if (Notification.permission === 'granted') {
-            new Notification("Teste de Notificação!", {
-              body: "Esta é uma notificação de teste para confirmar que as notificações estão funcionando.",
-              icon: 'URL_DO_SEU_ICONE.png' // Substitua pela URL do seu ícone
-            });
-          } else if (Notification.permission !== 'denied') {
-              Notification.requestPermission().then(function (permission) {
-                  if (permission === "granted") {
-                      new Notification("Teste de Notificação!", {
-                          body: "Esta é uma notificação de teste para confirmar que as notificações estão funcionando.",
-                          icon: 'URL_DO_SEU_ICONE.png' // Substitua pela URL do seu ícone
-                      });
-                  }
-              });
-          } else {
-            console.log('Permissão de notificação negada pelo usuário.');
-          }
+        sendNotificationButton.addEventListener('click', () => {
+            const title = notificationTitleInput.value;
+            const body = notificationBodyInput.value;
+
+            // Simulação do envio da notificação via API (substitua com sua lógica real)
+            sendPushNotification(title, body);
+        });
+
+        async function sendPushNotification(title, body) {
+            const apiUrl = 'https://progressier.com/send-push-notification';
+
+            const notificationData = {
+                "recipients": {
+                    "email": email // Use o email preenchido
+                },
+                "title": title,
+                "body": body,
+                "url": "https://seusite.com", // Substitua pela URL desejada
+                // Outros parâmetros opcionais (icon, badge, image, schedule)
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(notificationData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    alert('Notificação enviada com sucesso!');
+                } else {
+                    alert(`Erro ao enviar notificação: ${data.error || 'Erro desconhecido'}`);
+                    console.error('Erro ao enviar notificação:', data);
+                }
+            } catch (error) {
+                alert('Erro ao enviar notificação: ' + error);
+                console.error('Erro ao enviar notificação:', error);
+            }
         }
 
-        //Adiciona um botão para testar a notificação
-        const testNotificationButton = document.createElement('button');
-        testNotificationButton.textContent = 'Testar Notificação';
-        testNotificationButton.addEventListener('click', showTestNotification);
-        document.body.appendChild(testNotificationButton);
-
+        // Verificar se o navegador suporta notificações
+        if ('Notification' in window) {
+            // Verificar o status da permissão
+            if (Notification.permission === 'granted') {
+                notificationStatus.textContent = 'Notificações habilitadas!';
+            } else if (Notification.permission === 'denied') {
+                notificationStatus.textContent = 'Notificações negadas.';
+            } else {
+                notificationStatus.textContent = 'Clique em "Habilitar Notificações" para permitir.';
+            }
+        } else {
+            notificationStatus.textContent = 'Notificações não suportadas neste navegador.';
+        }
     </script>
 
 </body>
