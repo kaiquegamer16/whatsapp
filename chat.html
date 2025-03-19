@@ -199,11 +199,22 @@
     <button onclick="closeFullscreen()">Voltar</button>
 </div>
 
+    <!-- PushAlert -->
+    <script type="text/javascript">
+            (function(d, t) {
+                    var g = d.createElement(t),
+                    s = d.getElementsByTagName(t)[0];
+                    g.src = "https://cdn.pushalert.co/integrate_545242bd33624aa0d96902030facd4f9.js";
+                    s.parentNode.insertBefore(g, s);
+            }(document, "script"));
+    </script>
+    <!-- End PushAlert -->
+
 <script type="module">
     // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
-    import { getDatabase, ref, get, push, set } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+    import { getDatabase, ref, get, push, set, onChildAdded } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "SUA_API_KEY",
@@ -264,6 +275,7 @@
             }
         }
         loadMessages(groupId);
+        setupMessageListener(groupId); // Inicia a escuta por novas mensagens
     }
 
     loadGroupData(groupId);
@@ -323,6 +335,7 @@
         await push(messagesRef, {
             text: messageText,
             type: 'text',
+            userId: user.id, // Adiciona o ID do usuário
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) // Adiciona o timestamp
         });
 
@@ -343,6 +356,7 @@
             await push(messagesRef, {
                 type: 'image',
                 url: imageUrl,
+                userId: user.id, // Adiciona o ID do usuário
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })  // Adiciona o timestamp
             });
 
@@ -397,6 +411,7 @@
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+
     // Funções para tela cheia
     window.openFullscreen = function(img) {
         const modal = document.getElementById('fullscreenImageModal');
@@ -409,7 +424,6 @@
         const modal = document.getElementById('fullscreenImageModal');
         modal.style.display = 'none';
     }
-
 </script>
 </body>
 </html>
