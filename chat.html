@@ -241,7 +241,10 @@
             push,
             set,
             onChildAdded,
-            onValue
+            onValue,
+            query,
+            startAfter,
+
         } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
         const firebaseConfig = {
@@ -305,7 +308,7 @@
                 }
             }
             loadMessages(groupId);
-            setupMessageListener(groupId); // Inicia a escuta por novas mensagens
+
         }
 
         loadGroupData(groupId);
@@ -433,7 +436,7 @@
             document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
         }
 
-        async function loadMessages(groupId) {
+       async function loadMessages(groupId) {
             const chatMessages = document.getElementById('chatMessages');
             chatMessages.innerHTML = '';
             const messagesRef = ref(database, `groups/${groupId}/messages`);
@@ -441,31 +444,43 @@
 
             if (snapshot.exists()) {
                 const messages = snapshot.val();
+                // MODIFICATION: Instead of immediately displaying messages, store the last key
+                let lastKey = null;
                 for (const messageId in messages) {
                     const message = messages[messageId];
-                    const isOut = user && message.userId === user.name; // Verifica se a mensagem é do usuário atual
+                    const isOut = user && message.userId === user.name;
 
                     if (message.type === 'image') {
                         displayImageMessage(message.url, isOut, message.timestamp);
                     } else {
                         displayMessage(message.text, isOut, message.timestamp);
                     }
+                    lastKey = messageId;  // Keep track of the last message ID
                 }
+               // MODIFICATION:  Set the starting point for the listener to the next message after the last one loaded
+                setupMessageListener(groupId, lastKey);
+
             } else {
                 console.log("No messages available for this group.");
+                setupMessageListener(groupId, null); // Start listener from the beginning if no messages exist
             }
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        function setupMessageListener(groupId) {
+        function setupMessageListener(groupId, startAfterKey) {
             if (!groupId) {
                 console.error("Group ID is not defined. Cannot set up message listener.");
                 return;
             }
 
             const messagesRef = ref(database, `groups/${groupId}/messages`);
+            let queryRef = messagesRef;
 
-            onChildAdded(messagesRef, (data) => {
+            // MODIFICATION: Only listen for new messages *after* the last loaded message
+            if (startAfterKey) {
+                queryRef = query(messagesRef, startAfter(startAfterKey));
+            }
+           onChildAdded(queryRef, (data) => {
                 const message = data.val();
                 if (message) {
                     const isOut = user && message.userId === user.name;
@@ -474,9 +489,38 @@
                     } else {
                         displayMessage(message.text, isOut, message.timestamp);
                     }
+                       // Show push notification
+                       showNotification(message.userId, message.text);
                 }
             });
         }
+
+        function showNotification(user, message) {
+        if (Notification.permission === 'granted') {
+            const notification = new Notification(`New message from ${user}`, {
+                body: message,
+                icon: 'https://via.placeholder.com/40' // Replace with your app icon
+            });
+
+            notification.onclick = () => {
+                window.focus();  // Bring the window to the front
+            };
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                     const notification = new Notification(`New message from ${user}`, {
+                        body: message,
+                        icon: 'https://via.placeholder.com/40' // Replace with your app icon
+                    });
+
+                    notification.onclick = () => {
+                        window.focus();  // Bring the window to the front
+                    };
+                }
+            });
+        }
+    }
+
 
         // Funções para tela cheia
         window.openFullscreen = function (img) {
