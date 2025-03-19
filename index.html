@@ -361,6 +361,16 @@
             <button onclick="createUserProfile()">Criar Perfil</button>
         </div>
     </div>
+   <!-- PushAlert -->
+<script type="text/javascript">
+        (function(d, t) {
+                var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+                g.src = "https://cdn.pushalert.co/integrate_545242bd33624aa0d96902030facd4f9.js";
+                s.parentNode.insertBefore(g, s);
+        }(document, "script"));
+</script>
+<!-- End PushAlert -->
       <script type="module">
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
@@ -412,7 +422,7 @@
             };
         }
 
-        window.closeNewGroupModal = function () {
+         window.closeNewGroupModal = function () {
             document.getElementById("newGroupModal").style.display = "none";
         }
 
