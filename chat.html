@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat do Grupo</title>
+    <title>Chat do Grupo (WhatsApp Mockup)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         /* Cores e Fontes */
         :root {
-            --primary-color: #128C7E;
-            --bg-color: #121b22;
-            --panel-color: #202c33;
-            --secondary-text: #8696A0;
+            --bg-color: #E5DDD5; /* Cor de fundo do WhatsApp */
+            --panel-color: #075E54; /* Cor do cabeçalho do WhatsApp */
+            --message-out-bg: #DCF8C6; /* Cor do balão de mensagem enviada */
+            --message-in-bg: #FFFFFF; /* Cor do balão de mensagem recebida */
+            --secondary-text: #666; /* Cor do texto secundário */
             --white: #fff;
             --font-family: sans-serif;
         }
@@ -21,7 +22,6 @@
             margin: 0;
             padding: 0;
             background-color: var(--bg-color);
-            color: white;
         }
 
         .chat-container {
@@ -32,13 +32,13 @@
             height: 90vh;
         }
 
-        /* Header */
+        /* Header (WhatsApp Style) */
         header {
             background-color: var(--panel-color);
+            color: var(--white);
             padding: 10px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
@@ -48,7 +48,6 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            cursor: pointer;
         }
 
         header h1 {
@@ -57,35 +56,57 @@
             flex-grow: 1;
         }
 
-        header button {
-            background-color: transparent;
-            color: var(--white);
-            border: none;
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-
-        /* Chat Messages */
+        /* Chat Messages (WhatsApp Style) */
         #chatMessages {
             flex-grow: 1;
             padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            background-image: url('');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
+        }
+
+        .message {
+            padding: 8px 12px;
+            border-radius: 7px;
+            margin-bottom: 8px;
+            word-wrap: break-word;
+            max-width: 80%;
+            display: inline-block;
+            font-size: 0.9em;
+            position: relative; /* Para o posicionamento do timestamp */
+        }
+
+        /* Mensagens enviadas pelo usuário (lado direito) */
+        .message.out {
+            background-color: var(--message-out-bg);
+            align-self: flex-end; /* Alinha à direita */
+            color: #000;
+        }
+
+        /* Mensagens recebidas (lado esquerdo) */
+        .message.in {
+            background-color: var(--message-in-bg);
+            align-self: flex-start; /* Alinha à esquerda */
+            color: #000;
+        }
+
+        /* Estilos para imagens */
+        .message img {
+            max-width: 100%;
+            max-height: 200px;
+            width: auto;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 5px;
+            cursor: pointer;
         }
 
         /* Input de Mensagem */
         .message-input-container {
-            background-color: var(--panel-color);
+            background-color: #f0f0f0; /* Cor de fundo do input */
             padding: 10px;
             display: flex;
             align-items: center;
-            padding: 5px;
             gap: 5px;
         }
 
@@ -93,177 +114,59 @@
             flex-grow: 1;
             padding: 8px;
             border: none;
-            border-radius: 5px;
-            background-color: #2a3942;
-            color: var(--white);
+            border-radius: 15px; /* Bordas arredondadas */
+            background-color: var(--white);
+            color: #000;
+            font-size: 0.9em;
         }
 
         .message-input-container button {
-            background-color: var(--primary-color);
-            color: var(--white);
+            background-color: transparent;
+            color: var(--panel-color);
             border: none;
-            border-radius: 5px;
-            padding: 8px 16px;
             cursor: pointer;
-            align-self: center;
+            font-size: 1.3em; /* Aumenta o tamanho do ícone */
+            padding: 0;
         }
 
-        .message {
-            background-color: rgba(18, 140, 126, 0.8);
-            color: var(--white);
-            border-radius: 5px;
-            padding: 8px;
-            margin-bottom: 8px;
-            word-wrap: break-word;
-        }
-
-        .message img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-            margin-top: 5px;
-        }
-
-        /* Grupo Settings Modal */
-        #groupSettingsModal {
+        /* Estilos para a visualização em tela cheia */
+        #fullscreenImageModal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 10;
-            overflow-y: auto;
-        }
-
-        #groupSettingsModal .modal-content {
-            background-color: var(--panel-color);
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            border-radius: 0;
-            display: flex;
-            flex-direction: column;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 20;
+            justify-content: center;
             align-items: center;
-            height: auto;
-            min-height: 100vh;
         }
 
-        #groupSettingsModal .modal-content > * {
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 400px;
+        #fullscreenImageModal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
         }
 
-        #groupSettingsModal h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        #groupSettingsModal img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-            margin: 0 auto;
-            display: block;
-        }
-            /* Garante que a imagem do grupo seja redonda */
-        #groupSettingsModal #groupImageSettings {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        #groupSettingsModal input[type="text"] {
-            padding: 8px;
-            border: none;
-            border-radius: 5px;
-            background-color: #2a3942;
-            color: var(--white);
-            display: block;
-            margin: 0 auto;
-        }
-
-        #groupSettingsModal button {
-            background-color: var(--primary-color);
-            color: var(--white);
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-            display: block;
-            margin: 0 auto;
-        }
-
-        #groupSettingsModal .participants-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
-
-        #groupSettingsModal .participants-list li {
-            padding: 10px;
-            border-bottom: 1px solid #2a3942;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        #groupSettingsModal .participants-list li img {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 10px;
-        }
-              /* Estilo para a capa do usuário */
-        .user-cover {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-
-        /* Estilos para Upload de Imagem */
-        .upload-container {
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .upload-container label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        #backgroundImageInput {
-            display: none;
-        }
-
-        .upload-button {
-            background-color: var(--primary-color);
-            color: var(--white);
-            border: none;
-            border-radius: 5px;
-            padding: 8px 16px;
-            cursor: pointer;
-            display: inline-block;
-            margin: 0 auto;
-        }
-
-        /* Posicionamento do botão de fechar */
-        #groupSettingsModal .modal-content .close-button {
+        #fullscreenImageModal button {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
-            color: var(--white);
+        }
+        /* Estilo para o timestamp */
+        .timestamp {
+            position: absolute;
+            bottom: 3px; /* Ajusta a distância da parte inferior */
+            right: 5px; /* Ajusta a distância da borda direita */
+            font-size: 0.7em; /* Tamanho da fonte menor */
+            color: var(--secondary-text); /* Cor cinza claro */
         }
     </style>
 </head>
@@ -272,7 +175,6 @@
     <header>
         <img id="groupImage" src="https://via.placeholder.com/40" alt="Imagem do Grupo">
         <h1 id="groupName">Nome do Grupo</h1>
-        <button onclick="openGroupSettingsModal()"><i class="fas fa-cog"></i></button>
     </header>
 
     <div id="chatMessages">
@@ -287,44 +189,21 @@
         <button onclick="document.getElementById('imageInput').click()">
             <i class="fas fa-image"></i>
         </button>
-        <button onclick="sendMessage()">Enviar</button>
+        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
 
-<!-- Grupo Settings Modal -->
-<div id="groupSettingsModal">
-    <div class="modal-content">
-        <span class="close-button" onclick="closeGroupSettingsModal()">×</span>
-        <h2>Dados do Grupo</h2>
-
-          <img id="groupImageSettings" src="https://via.placeholder.com/100" alt="Imagem do Grupo">
-        <input type="text" id="groupNameSettings" placeholder="Nome do Grupo">
-        <div class="upload-container">
-            <label for="backgroundImageInput">Imagem de Fundo do Chat:</label>
-            <input type="file" id="backgroundImageInput" accept="image/*" style="display: none;" onchange="uploadBackgroundImage(this)">
-            <label for="backgroundImageInput" class="upload-button">Selecionar Imagem</label>
-        </div>
-        <button onclick="updateGroupNameAndImage()">Salvar Alterações</button>
-             <!-- Capa do usuário -->
-             <img id="userCover" class="user-cover" src="https://via.placeholder.com/600x150" alt="Capa do Usuário">
-            <div class="upload-container">
-                <label for="userCoverInput">Capa do Perfil:</label>
-                <input type="file" id="userCoverInput" accept="image/*" style="display: none;" onchange="uploadUserCover(this)">
-                <label for="userCoverInput" class="upload-button">Selecionar Imagem</label>
-            </div>
-        <h3>Participantes</h3>
-        <ul class="participants-list" id="participantsList">
-            <!-- Lista de participantes aqui -->
-        </ul>
-
-    </div>
+<!-- Modal para visualização em tela cheia -->
+<div id="fullscreenImageModal">
+    <img src="" alt="Imagem em Tela Cheia">
+    <button onclick="closeFullscreen()">Voltar</button>
 </div>
 
 <script type="module">
     // Importações do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
-    import { getDatabase, ref, get, push, set, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+    import { getDatabase, ref, get, push, set } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "SUA_API_KEY",
@@ -343,9 +222,7 @@
 
     const groupId = localStorage.getItem('currentGroupId');
     let user;
-    let groupData;
-     const imageBBApiKey = '835a6a9a4193a5b6db165edcea73e014';
-      let typingUsers = {}; // Objeto para rastrear usuários digitando
+    const imageBBApiKey = '835a6a9a4193a5b6db165edcea73e014';
 
     // Funções auxiliares para salvar e carregar dados do localStorage
     function saveLocalStorage(key, value) {
@@ -372,129 +249,24 @@
 
     loadUserProfile();
 
-     async function loadGroupData(groupId) {
+    async function loadGroupData(groupId) {
         if (groupId) {
             const groupRef = ref(database, `groups/${groupId}`);
-            try {
-                const snapshot = await get(groupRef); // Use await aqui
-                if (snapshot.exists()) {
-                    groupData = snapshot.val();
-                    document.getElementById('groupName').innerText = groupData.name || 'Nome do Grupo';
-                    document.getElementById('groupImage').src = groupData.image || 'https://via.placeholder.com/40';
-                    document.getElementById('groupImageSettings').src = groupData.image || 'https://via.placeholder.com/100';
-                    document.getElementById('groupNameSettings').value = groupData.name || '';
-                    setBackgroundImage(groupData.backgroundImage);
+            const snapshot = await get(groupRef);
 
-                    loadParticipants(groupId);
-                } else {
-                    console.log("No data available for this group ID.");
-                }
-            } catch (error) {
-                console.error("Erro ao obter os dados do grupo:", error);
+            if (snapshot.exists()) {
+                const groupData = snapshot.val();
+                document.getElementById('groupName').innerText = groupData.name || 'Nome do Grupo';
+                document.getElementById('groupImage').src = groupData.image || 'https://via.placeholder.com/40';
+                document.getElementById('chatMessages').style.backgroundImage = groupData.backgroundImage ? `url('${groupData.backgroundImage}')` : '';
+            } else {
+                console.log("No data available for this group ID.");
             }
         }
         loadMessages(groupId);
     }
-    // Carrega a capa do usuário do Firebase
-    async function loadUserCover() {
-        if (user) {
-            const userRef = ref(database, `users/${user.id}`);
-            try {
-                const snapshot = await get(userRef);
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    const coverImage = userData.coverImage || 'https://via.placeholder.com/600x150';
-                    document.getElementById('userCover').src = coverImage;
-                }
-            } catch (error) {
-                console.error("Erro ao carregar a capa do usuário:", error);
-            }
-        }
-    }
-    // Salva a capa do usuário no Firebase
-      window.uploadUserCover = async function (input) {
-        if (input.files && input.files[0]) {
-            const imageFile = input.files[0];
-            const imageUrl = await uploadImageToImageBB(imageFile);
 
-            if (imageUrl) {
-                // Salva a URL da capa no perfil do usuário no Firebase
-                const userRef = ref(database, `users/${user.id}`); // Assumindo que você tem um ID de usuário
-                try {
-                    await set(userRef, {
-                        ...user, // Mantém os outros dados do usuário
-                        coverImage: imageUrl // Salva a URL da capa
-                    });
-                      document.getElementById('userCover').src = imageUrl;
-                } catch (error) {
-                    console.error("Erro ao salvar a capa do usuário:", error);
-                    alert("Erro ao salvar a capa do usuário.");
-                }
-            }
-        }
-    };
-      function setTypingStatus(userId, isTyping) {
-        typingUsers[userId] = isTyping;
-        displayTypingUsers();
-    }
-        // Envia o status de digitação para o Firebase
-    function sendTypingStatus(isTyping) {
-        const typingRef = ref(database, `groups/${groupId}/typing/${user.id}`);
-        set(typingRef, isTyping);
-    }
-        // Exibe os usuários que estão digitando
-    function displayTypingUsers() {
-        const typingList = document.getElementById('typingUsers');
-        typingList.innerHTML = ''; // Limpa a lista anterior
-
-        for (const userId in typingUsers) {
-            if (typingUsers[userId]) {
-                const listItem = document.createElement('li');
-                listItem.innerText = `${userId} está digitando...`; // Adapte para exibir o nome do usuário
-                typingList.appendChild(listItem);
-            }
-        }
-    }
-
-      async function loadParticipants(groupId) {
-            const participantsList = document.getElementById('participantsList');
-            participantsList.innerHTML = ''; // Limpa a lista existente
-
-            const participantsRef = ref(database, `groups/${groupId}/participants`);
-            try {
-                const snapshot = await get(participantsRef);
-
-                if (snapshot.exists()) {
-                    const participants = snapshot.val();
-                    for (const userId in participants) {
-                        const userRef = ref(database, `users/${userId}`);
-                        try {
-                            const userSnapshot = await get(userRef);
-                            if (userSnapshot.exists()) {
-                                const userData = userSnapshot.val();
-                                addParticipantToList(userData);
-                            } else {
-                                console.log(`User with ID ${userId} not found.`);
-                            }
-                        } catch (error) {
-                            console.error("Erro ao obter os dados do usuário:", error);
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error("Erro ao obter a lista de participantes:", error);
-            }
-        }
-
-        function addParticipantToList(user) {
-            const participantsList = document.getElementById('participantsList');
-            const listItem = document.createElement('li');
-            listItem.innerHTML = `
-                <img src="${user.image || 'https://via.placeholder.com/30'}" alt="Foto de ${user.name}">
-                <span>${user.name}</span>
-            `;
-            participantsList.appendChild(listItem);
-        }
+    loadGroupData(groupId);
 
     async function uploadImageToImageBB(imageFile) {
         const formData = new FormData();
@@ -551,8 +323,7 @@
         await push(messagesRef, {
             text: messageText,
             type: 'text',
-            userId: user.id, // Adiciona o ID do usuário
-            userName: user.name // Adiciona o nome do usuário
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) // Adiciona o timestamp
         });
 
         document.getElementById('messageInput').value = '';
@@ -572,8 +343,7 @@
             await push(messagesRef, {
                 type: 'image',
                 url: imageUrl,
-                userId: user.id, // Adiciona o ID do usuário
-                userName: user.name // Adiciona o nome do usuário
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })  // Adiciona o timestamp
             });
 
             loadMessages(groupId);
@@ -581,43 +351,27 @@
         }
     }
 
-    window.uploadBackgroundImage = async function (input) {
-        if (input.files && input.files[0]) {
-            const imageFile = input.files[0];
-            const imageUrl = await uploadImageToImageBB(imageFile);
+    function displayImageMessage(imageUrl, isOut, timestamp) {
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add('message');
+        messageContainer.classList.add(isOut ? 'out' : 'in');  // Aplica a classe 'out' ou 'in'
+        messageContainer.innerHTML = `<img src="${imageUrl}" alt="Imagem enviada" onclick="openFullscreen(this)">
+         <span class="timestamp">${timestamp}</span>`;
 
-            if (imageUrl) {
-                const groupRef = ref(database, `groups/${groupId}`);
-                try {
-                    await set(groupRef, {
-                        ...groupData,
-                        backgroundImage: imageUrl
-                    });
-
-                    setBackgroundImage(imageUrl);
-                    groupData.backgroundImage = imageUrl;
-
-                } catch (error) {
-                    console.error("Erro ao atualizar a imagem de fundo:", error);
-                    alert("Erro ao atualizar a imagem de fundo.");
-                }
-            }
-        }
-    };
-
-    function setBackgroundImage(imageUrl) {
-        const chatMessages = document.getElementById('chatMessages');
-        if (imageUrl) {
-            chatMessages.style.backgroundImage = `url('${imageUrl}')`;
-        } else {
-            chatMessages.style.backgroundImage = '';
-        }
+        document.getElementById('chatMessages').appendChild(messageContainer);
+        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
     }
-        // Ouvinte para o campo de texto de mensagem
-    document.getElementById('messageInput').addEventListener('input', (event) => {
-        const isTyping = event.target.value.length > 0;
-        sendTypingStatus(isTyping); // Envia o status de digitação
-    });
+
+    function displayMessage(message, isOut, timestamp) {
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add('message');
+        messageContainer.classList.add(isOut ? 'out' : 'in');  // Aplica a classe 'out' ou 'in'
+        messageContainer.innerText = message;
+         messageContainer.innerHTML += `<span class="timestamp">${timestamp}</span>`;  // Adiciona o timestamp
+
+        document.getElementById('chatMessages').appendChild(messageContainer);
+        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+    }
 
     async function loadMessages(groupId) {
         const chatMessages = document.getElementById('chatMessages');
@@ -629,10 +383,12 @@
             const messages = snapshot.val();
             for (const messageId in messages) {
                 const message = messages[messageId];
+                 const isOut = user && message.userId === user.id;  // Verifica se a mensagem é do usuário atual
+
                 if (message.type === 'image') {
-                    displayImageMessage(message.url, message.userId, message.userName);
+                    displayImageMessage(message.url, isOut, message.timestamp);
                 } else {
-                    displayMessage(message.text, message.userId, message.userName);
+                    displayMessage(message.text, isOut, message.timestamp);
                 }
             }
         } else {
@@ -640,82 +396,19 @@
         }
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
-  function displayImageMessage(imageUrl, userId, userName) {
-    const messageContainer = document.createElement('div');
-    messageContainer.classList.add('message');
 
-    // Cria um elemento para exibir o nome do usuário (se fornecido)
-    if (userName) {
-        const userNameElement = document.createElement('div');
-        userNameElement.classList.add('username');
-        userNameElement.innerText = userName;
-        messageContainer.appendChild(userNameElement);
+    // Funções para tela cheia
+    window.openFullscreen = function(img) {
+        const modal = document.getElementById('fullscreenImageModal');
+        const modalImg = modal.querySelector('img');
+        modalImg.src = img.src;
+        modal.style.display = 'flex';
     }
 
-    messageContainer.innerHTML += `<img src="${imageUrl}" alt="Imagem enviada">`;
-    document.getElementById('chatMessages').appendChild(messageContainer);
-    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-}
-
-function displayMessage(message, userId, userName) {
-    const messageContainer = document.createElement('div');
-    messageContainer.classList.add('message');
-
-    // Cria um elemento para exibir o nome do usuário (se fornecido)
-    if (userName) {
-        const userNameElement = document.createElement('div');
-        userNameElement.classList.add('username');
-        userNameElement.innerText = userName;
-        messageContainer.appendChild(userNameElement);
+    window.closeFullscreen = function() {
+        const modal = document.getElementById('fullscreenImageModal');
+        modal.style.display = 'none';
     }
-
-    messageContainer.innerText = message;
-    document.getElementById('chatMessages').appendChild(messageContainer);
-    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-}
-
-    window.openGroupSettingsModal = function() {
-        document.getElementById('groupSettingsModal').style.display = 'block';
-          loadUserCover()
-    };
-
-    window.closeGroupSettingsModal = function() {
-        document.getElementById('groupSettingsModal').style.display = 'none';
-    };
-
-    window.updateGroupNameAndImage = async function() {
-        const newGroupName = document.getElementById('groupNameSettings').value;
-
-        if (!groupData) {
-            console.error("Dados do grupo não carregados.");
-            alert("Erro: Dados do grupo não carregados.");
-            return;
-        }
-
-        if (groupData.creator !== user.name) {
-            alert("Você não tem permissão para alterar os dados do grupo.");
-            closeGroupSettingsModal();
-            return;
-        }
-
-        const groupRef = ref(database, `groups/${groupId}`);
-        try {
-            await set(groupRef, {
-                ...groupData,
-                name: newGroupName
-            });
-
-            document.getElementById('groupName').innerText = newGroupName;
-
-            closeGroupSettingsModal();
-
-        } catch (error) {
-            console.error("Erro ao atualizar os dados do grupo:", error);
-            alert("Erro ao atualizar os dados do grupo.");
-        }
-    };
-    loadGroupData(groupId)
-    loadUserCover();
 
 </script>
 </body>
