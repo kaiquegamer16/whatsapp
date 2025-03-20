@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Integrando PushAlert com JavaScript</title>
+    <title>Notificações Desktop com JavaScript</title>
     <style>
         body {
             font-family: sans-serif;
@@ -23,68 +23,79 @@
             background-color: #3e8e41;
         }
     </style>
-
-    <!-- PushAlert (Coloque este código antes da tag </head>) -->
-    <script type="text/javascript">
-        (function(d, t) {
-                var g = d.createElement(t),
-                s = d.getElementsByTagName(t)[0];
-                g.src = "https://cdn.pushalert.co/integrate_545242bd33624aa0d96902030facd4f9.js";
-                s.parentNode.insertBefore(g, s);
-        }(document, "script"));
-    </script>
-    <!-- End PushAlert -->
 </head>
 <body>
 
-    <h1>Notificações Push com PushAlert</h1>
+    <h1>Notificações Desktop com JavaScript</h1>
 
     <button id="enviarNotificacao">Enviar Notificação de Teste</button>
 
     <script>
-        // JavaScript para enviar a notificação PushAlert
-        async function sendPushAlertNotification(title, message, url) {
-          const apiKey = 'SUA_CHAVE_API_PUSH_ALERT'; // Substitua com sua chave API real
-          const apiUrl = 'https://api.pushalert.co/rest/v1/send';
-
-          const notificationData = new URLSearchParams(); // Usar URLSearchParams para codificar os dados
-          notificationData.append('title', title);
-          notificationData.append('message', message);
-          notificationData.append('url', url);
-          // Adicione outros parâmetros opcionais (icon, large_image, actions, etc.) aqui, se necessário
-
-          try {
-            const response = await fetch(apiUrl, {
-              method: 'POST',
-              headers: {
-                'Authorization': `api_key=${apiKey}`, // Usar o formato de autenticação correto
-                'Content-Type': 'application/x-www-form-urlencoded', // Indicar o tipo de conteúdo
-              },
-              body: notificationData, // Enviar os dados como x-www-form-urlencoded
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-              console.log('Notificação PushAlert enviada com sucesso:', data);
-              alert('Notificação enviada com sucesso!');
+        // Verificação e solicitação de permissão
+        async function initNotifications() {
+            if (!("Notification" in navigator)) {
+                console.log('Este navegador não suporta notificações desktop');
+                alert('Este navegador não suporta notificações desktop');
+                return false; // Indicating that notifications are not supported
             } else {
-              console.error('Erro ao enviar notificação PushAlert:', data);
-              alert('Erro ao enviar notificação: ' + (data.error || 'Erro desconhecido'));
+                if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                    // Pede ao usuário para permitir a Notificação Desktop
+                    const permission = await Notification.requestPermission();
+
+                    if (permission === 'granted') {
+                        console.log('Permissão de notificação concedida.');
+                    } else {
+                        console.log('Permissão de notificação negada.');
+                        alert('Permissão de notificação negada.');
+                        return false; // Indicating that notifications are not allowed
+                    }
+                } else if (Notification.permission === 'denied') {
+                    console.log('Permissão de notificação já negada.');
+                    alert('Permissão de notificação já negada.');
+                    return false; // Indicating that notifications are not allowed
+                } else {
+                    console.log('Permissões de notificação já concedidas.');
+                    return true; // Indicating that notifications are allowed
+                }
             }
-          } catch (error) {
-            console.error('Erro ao enviar notificação PushAlert:', error);
-            alert('Erro ao enviar notificação: ' + error);
-          }
+
+            return Notification.permission === 'granted';
         }
 
-        // Evento de clique no botão
-        const botaoEnviar = document.getElementById('enviarNotificacao'); // Obtém uma referência ao botão
-        botaoEnviar.addEventListener('click', () => {
-            const titulo = 'Novo Conteúdo!';
-            const mensagem = 'Confira as últimas novidades no nosso site.';
-            const url = 'https://zapstore12.netlify.app/'; // URL para onde o usuário será redirecionado
-            sendPushAlertNotification(titulo, mensagem, url);
+        // Enviar a notificação
+        function sendNotification(title, body) {
+            if (Notification.permission === 'granted') {
+                const notification = new Notification(title, {
+                    body: body,
+                    icon: '/assets/icons/android-chrome-192x192.png' // Substitua pelo seu ícone
+                });
+
+                notification.onclick = (e) => {
+                    e.preventDefault();
+                    window.focus();
+                    notification.close();
+                }
+            } else {
+                console.warn('Permissão de notificação não concedida.');
+                alert('Permissão de notificação não concedida.');
+            }
+        }
+
+        // Inicializar notificações e configurar o botão
+        document.addEventListener('DOMContentLoaded', async () => {
+            const notificationsAllowed = await initNotifications();
+
+            const botaoEnviar = document.getElementById('enviarNotificacao');
+            if (notificationsAllowed) {
+                botaoEnviar.addEventListener('click', () => {
+                    const titulo = 'Novo Conteúdo!';
+                    const mensagem = 'Confira as últimas novidades no nosso site.';
+                    sendNotification(titulo, mensagem);
+                });
+            } else {
+                botaoEnviar.disabled = true;
+                botaoEnviar.innerText = 'Notificações Não Suportadas/Permitidas';
+            }
         });
     </script>
 
