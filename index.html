@@ -1,103 +1,608 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <title>Notificações Desktop com JavaScript</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp (Mockup)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Cores e Fontes */
+        :root {
+            --primary-color: #128C7E;
+            --bg-color: #121b22;
+            --panel-color: #202c33;
+            --secondary-text: #8696A0;
+            --white: #fff;
+            --font-family: sans-serif;
+        }
+
         body {
-            font-family: sans-serif;
-            text-align: center;
+            font-family: var(--font-family);
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--white);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0;
+            display: grid;
+            grid-template-rows: auto auto auto 1fr auto;
+            height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--panel-color);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: normal;
+        }
+
+        header .icons {
+            display: flex;
+            gap: 15px;
+            font-size: 1.3em;
+            align-items: center;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background-color: var(--panel-color);
             padding: 20px;
+            display: flex;
+            align-items: center;
+            /* Reduz a largura e centraliza */
+            width: 92%;
+            margin: 0;
         }
 
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
+        .search-bar input {
+            flex: 1; /* Permite que o input preencha o espaço restante */
+            padding: 8px;
             border: none;
-            cursor: pointer;
             border-radius: 5px;
+            background-color: #2a3942;
+            color: var(--white);
         }
 
-        button:hover {
-            background-color: #3e8e41;
+        /* Tab Bar */
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            background-color: var(--panel-color);
+            border-bottom: 1px solid #2a3942;
+        }
+
+        .tab-bar button {
+            background-color: transparent;
+            border: none;
+            color: var(--secondary-text);
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .tab-bar button.active {
+            color: var(--white);
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        /* Chat List */
+        .chat-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #2a3942;
+            cursor: pointer;
+        }
+
+        .chat-item:hover {
+            background-color: #202c33;
+        }
+
+        .chat-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        .chat-item .chat-details {
+            flex-grow: 1;
+        }
+
+        .chat-item .chat-details .name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .chat-item .chat-details .message {
+            color: var(--secondary-text);
+            font-size: 0.9em;
+        }
+
+        .chat-item .time {
+            font-size: 0.8em;
+            color: var(--secondary-text);
+            margin-left: auto;
+        }
+
+        .chat-item .delete-group {
+            margin-left: auto;
+            color: var(--secondary-text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        footer button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Novo Grupo */
+        #newGroupModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1;
+        }
+
+        #newGroupModal .modal-content {
+            background-color: var(--panel-color);
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #newGroupModal h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        #newGroupModal input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a3942;
+            color: var(--white);
+        }
+
+        #newGroupModal button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        #newGroupModal #groupImagePreview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid var(--secondary-text);
+        }
+
+        #newGroupModal #groupImageInput {
+            display: none;
+        }
+
+        /* User Creation */
+        #userCreationModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #userCreationModal .modal-content {
+            background-color: var(--panel-color);
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        #userCreationModal h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        #userCreationModal input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2a3942;
+            color: var(--white);
+        }
+
+        #userCreationModal img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        #userCreationModal input[type="file"] {
+            display: none;
+        }
+
+        #userCreationModal button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        /* User Image Display */
+        #userImageDisplay {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>WhatsApp</h1>
+            <div class="icons">
+                <i class="fas fa-camera"></i>
+                <i class="fas fa-search"></i>
+                <div id="userInfo" style="display: flex; align-items: center;">
+                    <img id="userImageDisplay" src="https://via.placeholder.com/40" alt="Imagem do Usuário" style="border-radius: 50%;">
+                </div>
+            </div>
+        </header>
 
-    <h1>Notificações Desktop com JavaScript</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Pesquisar...">
+        </div>
 
-    <button id="enviarNotificacao">Enviar Notificação de Teste</button>
+        <div class="tab-bar">
+            <button class="active">Conversas</button>
+            <button>Status</button>
+            <button>Chamadas</button>
+        </div>
 
-    <script>
-        // Verificação e solicitação de permissão
-        async function initNotifications() {
-            if (!("Notification" in navigator)) {
-                console.log('Este navegador não suporta notificações desktop');
-                alert('Este navegador não suporta notificações desktop');
-                return false; // Indicating that notifications are not supported
-            } else {
-                if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
-                    // Pede ao usuário para permitir a Notificação Desktop
-                    const permission = await Notification.requestPermission();
+        <ul class="chat-list" id="chatList">
+            <!-- Lista de chats aqui -->
+        </ul>
 
-                    if (permission === 'granted') {
-                        console.log('Permissão de notificação concedida.');
-                    } else {
-                        console.log('Permissão de notificação negada.');
-                        alert('Permissão de notificação negada.');
-                        return false; // Indicating that notifications are not allowed
+        <footer>
+            <button onclick="openNewGroupModal()">+</button>
+        </footer>
+    </div>
+
+    <!-- Modal para criar novo grupo -->
+    <div id="newGroupModal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeNewGroupModal()">×</span>
+            <h2>Criar novo grupo</h2>
+
+            <!-- Imagem do Grupo -->
+            <img id="groupImagePreview" src="https://via.placeholder.com/100" alt="Imagem do Grupo" onclick="document.getElementById('groupImageInput').click()">
+            <input type="file" id="groupImageInput" accept="image/*" onchange="previewGroupImage(this)">
+
+            <!-- Nome do Grupo -->
+            <input type="text" id="groupName" placeholder="Nome do grupo (opcional)">
+            
+            <!-- Aqui você adicionaria a lógica para adicionar participantes, etc. -->
+
+            <button onclick="createNewGroup()">Criar grupo</button>
+        </div>
+    </div>
+
+    <!-- Modal para criação de usuário -->
+    <div id="userCreationModal">
+        <div class="modal-content">
+            <h2>Criar Perfil</h2>
+            <img id="userImagePreview" src="https://via.placeholder.com/100" alt="Imagem do Perfil" onclick="document.getElementById('userImageInput').click()">
+            <input type="file" id="userImageInput" accept="image/*" onchange="previewUserImage(this)">
+            <input type="text" id="userNameInput" placeholder="Nome de usuário">
+            <button onclick="createUserProfile()">Criar Perfil</button>
+        </div>
+    </div>
+   <!-- PushAlert -->
+<script type="text/javascript">
+        (function(d, t) {
+                var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+                g.src = "https://cdn.pushalert.co/integrate_545242bd33624aa0d96902030facd4f9.js";
+                s.parentNode.insertBefore(g, s);
+        }(document, "script"));
+</script>
+<!-- End PushAlert -->
+      <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+        import { getDatabase, ref, push, set, get, remove } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+        const firebaseConfig = {
+    apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
+    authDomain: "banco-5a678.firebaseapp.com",
+    databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
+    projectId: "banco-5a678",
+    storageBucket: "banco-5a678.firebasestorage.app",
+    messagingSenderId: "943801310064",
+    appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+    measurementId: "G-DEER2QFNXL"
+  };
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+
+        let newGroup; // Armazenar informações do novo grupo
+        let userProfile = null; // Armazenar informações do usuário
+          // Função auxiliar para salvar dados no localStorage
+        function saveLocalStorage(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (e) {
+                console.error("Erro ao salvar no localStorage", e);
+            }
+        }
+
+           // Função auxiliar para carregar dados do localStorage
+        function loadLocalStorage(key) {
+            try {
+                const storedValue = localStorage.getItem(key);
+                return storedValue ? JSON.parse(storedValue) : null;
+            } catch (e) {
+                console.error("Erro ao carregar do localStorage", e);
+                return null;
+            }
+        }
+        window.openNewGroupModal = function () {
+            document.getElementById("newGroupModal").style.display = "block";
+            newGroup = {
+                name: null,
+                image: null,
+                participants: [] // Por exemplo
+            };
+        }
+
+         window.closeNewGroupModal = function () {
+            document.getElementById("newGroupModal").style.display = "none";
+        }
+
+        window.previewGroupImage = function (input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    document.getElementById("groupImagePreview").src = e.target.result;
+                    if (!newGroup) {
+                        newGroup = {}; // Inicializa newGroup se for nulo
                     }
-                } else if (Notification.permission === 'denied') {
-                    console.log('Permissão de notificação já negada.');
-                    alert('Permissão de notificação já negada.');
-                    return false; // Indicating that notifications are not allowed
-                } else {
-                    console.log('Permissões de notificação já concedidas.');
-                    return true; // Indicating that notifications are allowed
+                    newGroup.image = e.target.result;  //Salva a imagem para uso futuro
                 }
-            }
 
-            return Notification.permission === 'granted';
-        }
-
-        // Enviar a notificação
-        function sendNotification(title, body) {
-            if (Notification.permission === 'granted') {
-                const notification = new Notification(title, {
-                    body: body,
-                    icon: '/assets/icons/android-chrome-192x192.png' // Substitua pelo seu ícone
-                });
-
-                notification.onclick = (e) => {
-                    e.preventDefault();
-                    window.focus();
-                    notification.close();
-                }
-            } else {
-                console.warn('Permissão de notificação não concedida.');
-                alert('Permissão de notificação não concedida.');
+                reader.readAsDataURL(input.files[0]);
             }
         }
 
-        // Inicializar notificações e configurar o botão
-        document.addEventListener('DOMContentLoaded', async () => {
-            const notificationsAllowed = await initNotifications();
+        window.createNewGroup = async function () {
+            const groupName = document.getElementById("groupName").value;
 
-            const botaoEnviar = document.getElementById('enviarNotificacao');
-            if (notificationsAllowed) {
-                botaoEnviar.addEventListener('click', () => {
-                    const titulo = 'Novo Conteúdo!';
-                    const mensagem = 'Confira as últimas novidades no nosso site.';
-                    sendNotification(titulo, mensagem);
+             if (!newGroup) {
+                newGroup = {}; // Inicializa newGroup se for nulo
+            }
+
+            newGroup.name = groupName;
+             // Salvar as informações do criador do grupo
+            newGroup.creator = userProfile.name; // Usando o nome do usuário como identificador
+
+            // Salvar no Firebase
+            const groupRef = ref(database, 'groups'); // Referência ao nó "groups"
+            const newGroupRef = push(groupRef); // Cria um novo nó com um ID único
+            const newGroupId = newGroupRef.key;
+
+            // Salvar os dados do grupo
+            try {
+                await set(newGroupRef, {
+                    id: newGroupId, // Salva o ID
+                    name: newGroup.name,
+                    image: newGroup.image,
+                    creator: newGroup.creator  // Salva o criador
                 });
-            } else {
-                botaoEnviar.disabled = true;
-                botaoEnviar.innerText = 'Notificações Não Suportadas/Permitidas';
+                newGroup.id = newGroupId;  // Salva o ID gerado pelo Firebase
+
+                console.log("Grupo criado com ID:", newGroupId);
+
+            } catch (error) {
+                console.error("Erro ao salvar o grupo no Firebase:", error);
+                alert("Erro ao criar o grupo. Verifique o console."); // Feedback ao usuário
+                return; // Aborta a criação do grupo
+            }
+            // SIMULAÇÃO: Crie o grupo e adiciona à lista de chats
+            addGroupToChatList(newGroup);
+            closeNewGroupModal();
+            loadGroupsFromFirebase(); // Recarrega os grupos após a criação
+        }
+function addGroupToChatList(group) {
+        const chatList = document.getElementById("chatList");
+        const listItem = document.createElement("li");
+        listItem.className = "chat-item";
+        listItem.innerHTML = `
+            <img src="${group.image || 'https://via.placeholder.com/60'}" alt="Imagem do Grupo">
+            <div class="chat-details">
+                <div class="name">${group.name || 'Novo Grupo'}</div>
+                <div class="message">Grupo criado!</div>
+            </div>
+            <span class="time">Agora</span>
+              ${userProfile && userProfile.name === group.creator ? `<i class="fas fa-trash delete-group" onclick="deleteGroup('${group.id}')"></i>` : ''}
+        `;
+        // Adiciona um evento de clique para abrir chat.html
+        listItem.addEventListener('click', (event) => {
+            if (!event.target.classList.contains('delete-group')) {
+                openChatPage(group.id); // Passa o ID do grupo
             }
         });
-    </script>
+        chatList.appendChild(listItem);
+    }
 
+    window.openChatPage = function (groupId) {
+        // Salvar o ID do grupo no localStorage (usaremos para buscar os dados no chat.html)
+        localStorage.setItem('currentGroupId', groupId);
+
+        // Abrir o chat.html em uma nova janela
+        window.open('chat.html', '_blank');
+    }
+
+    window.openGroupSettingsModal = function() {
+        document.getElementById("groupSettingsModal").style.display = "block";
+    }
+
+    window.closeGroupSettingsModal = function() {
+        document.getElementById("groupSettingsModal").style.display = "none";
+    }
+
+    async function loadGroupsFromFirebase() {
+        const chatList = document.getElementById("chatList");
+        chatList.innerHTML = ""; // Limpa a lista de chats existente
+
+        const groupsRef = ref(database, 'groups');
+        try {
+            const snapshot = await get(groupsRef);
+
+            if (snapshot.exists()) {
+                const groups = snapshot.val();
+                for (const groupId in groups) {
+                    const group = {
+                        id: groupId,
+                        name: groups[groupId].name,
+                        image: groups[groupId].image,
+                        creator: groups[groupId].creator // Carrega o criador
+                    };
+                    addGroupToChatList(group);
+                }
+            } else {
+                console.log("No groups found in Firebase.");
+            }
+        } catch (error) {
+            console.error("Erro ao carregar grupos do Firebase:", error);
+        }
+    }
+
+    window.deleteGroup = async function (groupId) {
+        const groupRef = ref(database, `groups/${groupId}`);
+        try {
+            await remove(groupRef);
+            loadGroupsFromFirebase(); // Recarrega a lista após a exclusão
+        } catch (error) {
+            console.error("Erro ao excluir o grupo:", error);
+            alert("Erro ao excluir o grupo. Verifique o console.");
+        }
+    }
+
+     window.previewUserImage = function (input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                document.getElementById("userImagePreview").src = e.target.result;
+                userProfile = userProfile || {};
+                userProfile.image = e.target.result; // Salva a imagem do usuário
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+      function updateUserDisplay() {
+        if (userProfile && userProfile.image) {
+            document.getElementById("userImageDisplay").src = userProfile.image;
+        }
+    }
+
+    window.createUserProfile = function() {
+        const userName = document.getElementById("userNameInput").value;
+        userProfile = userProfile || {};
+        userProfile.name = userName;
+
+        saveLocalStorage("userProfile", userProfile)
+        // Aqui você pode salvar os dados do perfil do usuário no Firebase ou localStorage
+        document.getElementById("userCreationModal").style.display = "none";
+        // Atualizar interface
+         loadUserProfile()
+    }
+
+        function loadUserProfile() {
+        userProfile = loadLocalStorage("userProfile")
+        updateUserDisplay();
+    }
+       function checkIfuserCreated() {
+          if( loadLocalStorage("userProfile")) {
+            document.getElementById("userCreationModal").style.display = "none";
+          }
+          loadUserProfile()
+        loadGroupsFromFirebase();
+    }
+    // Exibir o modal de criação de usuário ao carregar a página
+    document.addEventListener("DOMContentLoaded", function() {
+      checkIfuserCreated()
+    });
+</script>
 </body>
 </html>
