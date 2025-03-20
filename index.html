@@ -1,4 +1,9 @@
+Claro! Vamos adicionar um botão na página `index.html` para que, após salvar um arquivo, o usuário possa ir diretamente para a página `armazenamento.html` e visualizar a lista dos arquivos salvos. 
 
+### 1. `armazenamento.html`
+Este arquivo permanece o mesmo, exibindo a lista dos arquivos salvos.
+
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -71,3 +76,98 @@
     </script>
 </body>
 </html>
+```
+
+### 2. `index.html`
+Agora, este arquivo incluirá um botão para redirecionar para a página de armazenamento após salvar um arquivo.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Arquivo .TXT</title>
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin: 10px 0;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px;
+            background-color: #444;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Criar Arquivo .TXT</h1>
+    <input type="text" id="fileName" placeholder="Nome do arquivo (ex: texto.txt)" />
+    <textarea id="fileContent" placeholder="Digite o conteúdo do arquivo .TXT aqui..."></textarea>
+    <button onclick="createFile()">Salvar como .TXT</button>
+    <button onclick="goToStorage()">Ver Armazenamento</button>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
+            authDomain: "banco-5a678.firebaseapp.com",
+            databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
+            projectId: "banco-5a678",
+            storageBucket: "banco-5a678.firebasestorage.app",
+            messagingSenderId: "943801310064",
+            appId: "1:943801310064:web:50534c4cdaa459a7b74db5",
+            measurementId: "G-DEER2QFNXL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        function createFile() {
+            const fileName = document.getElementById('fileName').value;
+            const content = document.getElementById('fileContent').value;
+
+            // Verifica se o nome do arquivo termina com .txt
+            if (!fileName.endsWith('.txt')) {
+                alert('O nome do arquivo deve terminar com .txt');
+                return;
+            }
+
+            const fileRef = ref(database, 'files/' + fileName);
+            set(fileRef, { content });
+            document.getElementById('fileName').value = '';
+            document.getElementById('fileContent').value = '';
+        }
+
+        function goToStorage() {
+            window.location.href = 'armazenamento.html';
+        }
+    </script>
+</body>
+</html>
+```
+
+### Modificações Realizadas:
+- Adicionei um botão "Ver Armazenamento" no `index.html`, que redireciona o usuário para a página `armazenamento.html` quando clicado.
+- O restante do código permanece o mesmo, permitindo que os usuários salvem arquivos e visualizem a lista de arquivos armazenados.
+
+Agora, após salvar um arquivo, o usuário pode facilmente acessar a lista de arquivos armazenados!
