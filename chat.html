@@ -3,29 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Arquivo .TXT</title>
+    <title>Armazenamento de Arquivos</title>
     <style>
         body {
             background-color: #222;
             color: #fff;
             font-family: Arial, sans-serif;
         }
-        textarea {
-            width: 100%;
-            height: 200px;
-            margin: 10px 0;
-        }
-        input {
-            width: 100%;
+        #fileList {
+            margin: 20px 0;
             padding: 10px;
-            margin: 10px 0;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
         }
         button {
+            margin: 5px;
             padding: 10px;
-            background-color: #444;
-            color: white;
             border: none;
             border-radius: 5px;
+            background-color: #444;
+            color: white;
             cursor: pointer;
         }
         button:hover {
@@ -34,15 +32,12 @@
     </style>
 </head>
 <body>
-    <h1>Criar Arquivo .TXT</h1>
-    <input type="text" id="fileName" placeholder="Nome do arquivo (ex: texto.txt)" />
-    <textarea id="fileContent" placeholder="Digite o conteúdo do arquivo .TXT aqui..."></textarea>
-    <button onclick="createFile()">Salvar como .TXT</button>
-    <button onclick="goToStorage()">Ver Armazenamento</button>
+    <h1>Armazenamento de Arquivos</h1>
+    <div id="fileList"></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
@@ -58,25 +53,20 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
-        function createFile() {
-            const fileName = document.getElementById('fileName').value;
-            const content = document.getElementById('fileContent').value;
-
-            // Verifica se o nome do arquivo termina com .txt
-            if (!fileName.endsWith('.txt')) {
-                alert('O nome do arquivo deve terminar com .txt');
-                return;
+        onValue(ref(database, 'files'), (snapshot) => {
+            const data = snapshot.val();
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            if (data) {
+                for (const key in data) {
+                    const fileName = key;
+                    const content = data[key].content;
+                    fileList.innerHTML += `<p><strong>${fileName}</strong>: ${content}</p>`;
+                }
+            } else {
+                fileList.innerHTML = '<p>Nenhum arquivo encontrado.</p>';
             }
-
-            const fileRef = ref(database, 'files/' + fileName);
-            set(fileRef, { content });
-            document.getElementById('fileName').value = '';
-            document.getElementById('fileContent').value = '';
-        }
-
-        function goToStorage() {
-            window.location.href = 'index.html';
-        }
+        });
     </script>
 </body>
 </html>
