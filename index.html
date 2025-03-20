@@ -1,8 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Seu Site</title>
-    <!-- PushAlert -->
+    <title>Integrando PushAlert com JavaScript</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
+
+    <!-- PushAlert (Coloque este código antes da tag </head>) -->
     <script type="text/javascript">
         (function(d, t) {
                 var g = d.createElement(t),
@@ -12,10 +34,59 @@
         }(document, "script"));
     </script>
     <!-- End PushAlert -->
-    </head>
+</head>
 <body>
 
-    <!-- Seu conteúdo aqui -->
+    <h1>Notificações Push com PushAlert</h1>
+
+    <button id="enviarNotificacao">Enviar Notificação de Teste</button>
+
+    <script>
+        // JavaScript para enviar a notificação PushAlert
+        async function sendPushAlertNotification(title, message, url) {
+          const apiKey = 'SUA_CHAVE_API_PUSH_ALERT'; // Substitua com sua chave API real
+          const apiUrl = 'https://api.pushalert.co/rest/v1/send';
+
+          const notificationData = new URLSearchParams(); // Usar URLSearchParams para codificar os dados
+          notificationData.append('title', title);
+          notificationData.append('message', message);
+          notificationData.append('url', url);
+          // Adicione outros parâmetros opcionais (icon, large_image, actions, etc.) aqui, se necessário
+
+          try {
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: {
+                'Authorization': `api_key=${apiKey}`, // Usar o formato de autenticação correto
+                'Content-Type': 'application/x-www-form-urlencoded', // Indicar o tipo de conteúdo
+              },
+              body: notificationData, // Enviar os dados como x-www-form-urlencoded
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+              console.log('Notificação PushAlert enviada com sucesso:', data);
+              alert('Notificação enviada com sucesso!');
+            } else {
+              console.error('Erro ao enviar notificação PushAlert:', data);
+              alert('Erro ao enviar notificação: ' + (data.error || 'Erro desconhecido'));
+            }
+          } catch (error) {
+            console.error('Erro ao enviar notificação PushAlert:', error);
+            alert('Erro ao enviar notificação: ' + error);
+          }
+        }
+
+        // Evento de clique no botão
+        const botaoEnviar = document.getElementById('enviarNotificacao'); // Obtém uma referência ao botão
+        botaoEnviar.addEventListener('click', () => {
+            const titulo = 'Novo Conteúdo!';
+            const mensagem = 'Confira as últimas novidades no nosso site.';
+            const url = 'https://zapstore12.netlify.app/'; // URL para onde o usuário será redirecionado
+            sendPushAlertNotification(titulo, mensagem, url);
+        });
+    </script>
 
 </body>
 </html>
