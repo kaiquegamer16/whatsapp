@@ -1,166 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Ativar Notificações</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            text-align: center;
-            padding: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #3e8e41;
-        }
-
-        #notification-status {
-            margin-top: 20px;
-            font-weight: bold;
-        }
-
-        .input-container {
-            margin-bottom: 10px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            font-size: 14px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 250px;
-        }
-    </style>
-</head>
+    <title>Seu Site</title>
+    <!-- PushAlert -->
+    <script type="text/javascript">
+        (function(d, t) {
+                var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+                g.src = "https://cdn.pushalert.co/integrate_545242bd33624aa0d96902030facd4f9.js";
+                s.parentNode.insertBefore(g, s);
+        }(document, "script"));
+    </script>
+    <!-- End PushAlert -->
+    </head>
 <body>
 
-    <h1>Ativar Notificações Push</h1>
-
-    <button id="enable-notifications">Habilitar Notificações</button>
-    <p id="notification-status"></p>
-
-    <h2>Enviar Notificação de Teste</h2>
-
-    <div class="input-container">
-        <label for="notification-title">Título:</label>
-        <input type="text" id="notification-title" value="Olá!">
-    </div>
-
-    <div class="input-container">
-        <label for="notification-body">Mensagem:</label>
-        <input type="text" id="notification-body" value="Teste de notificação!">
-    </div>
-
-    <button id="send-notification">Enviar Notificação</button>
-
-    <script>
-        const enableNotificationsButton = document.getElementById('enable-notifications');
-        const sendNotificationButton = document.getElementById('send-notification');
-        const notificationStatus = document.getElementById('notification-status');
-        const notificationTitleInput = document.getElementById('notification-title');
-        const notificationBodyInput = document.getElementById('notification-body');
-
-        const apiKey = 'SUA_CHAVE_API'; // Substitua pela sua chave API do Progressier
-        const email = 'brmllteste@gmail.com';  // Substitua pelo email do usuário
-
-        enableNotificationsButton.addEventListener('click', () => {
-            if ('Notification' in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        notificationStatus.textContent = 'Notificações habilitadas!';
-                        console.log('Permissão de notificação concedida.');
-                    } else if (permission === 'denied') {
-                        notificationStatus.textContent = 'Permissão de notificação negada.';
-                        console.warn('Permissão de notificação negada.');
-                    } else {
-                        notificationStatus.textContent = 'Permissão de notificação pendente.';
-                        console.log('Permissão de notificação pendente.');
-                    }
-                });
-            } else {
-                notificationStatus.textContent = 'Notificações não suportadas neste navegador.';
-                console.warn('Notificações não suportadas neste navegador.');
-            }
-        });
-
-        sendNotificationButton.addEventListener('click', () => {
-            const title = notificationTitleInput.value;
-            const body = notificationBodyInput.value;
-
-            // Simulação do envio da notificação via API (substitua com sua lógica real)
-            sendPushNotification(title, body);
-        });
-
-        async function sendPushNotification(title, body) {
-            const apiUrl = 'https://progressier.com/send-push-notification';
-
-            const notificationData = {
-                "recipients": {
-                    "email": email // Use o email preenchido
-                },
-                "title": title,
-                "body": body,
-                "url": "https://seusite.com", // Substitua pela URL desejada
-                // Outros parâmetros opcionais (icon, badge, image, schedule)
-            };
-
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(notificationData)
-                });
-
-                console.log('Resposta da API:', response); // Log da resposta completa
-
-                const data = await response.json();
-
-                console.log('Dados da resposta da API:', data); // Log dos dados JSON
-
-                if (response.ok && data.status === 'success') {
-                    alert('Notificação enviada com sucesso!');
-                } else {
-                    alert(`Erro ao enviar notificação: ${data.error || 'Erro desconhecido'}`);
-                    console.error('Erro ao enviar notificação:', data);
-                }
-            } catch (error) {
-                console.error('Erro no fetch:', error); // Log do erro de fetch
-                alert('Erro ao enviar notificação: ' + error);
-                console.error('Erro ao enviar notificação:', error);
-            }
-        }
-
-        // Verificar se o navegador suporta notificações
-        if ('Notification' in window) {
-            // Verificar o status da permissão
-            if (Notification.permission === 'granted') {
-                notificationStatus.textContent = 'Notificações habilitadas!';
-            } else if (Notification.permission === 'denied') {
-                notificationStatus.textContent = 'Notificações negadas.';
-            } else {
-                notificationStatus.textContent = 'Clique em "Habilitar Notificações" para permitir.';
-            }
-        } else {
-            notificationStatus.textContent = 'Notificações não suportadas neste navegador.';
-        }
-    </script>
+    <!-- Seu conteúdo aqui -->
 
 </body>
 </html>
