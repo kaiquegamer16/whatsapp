@@ -1,46 +1,254 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Armazenamento de Arquivos</title>
+    <title>Chat do Grupo (WhatsApp Mockup)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        /* Cores e Fontes */
+        :root {
+            --bg-color: #E5DDD5;
+            /* Cor de fundo do WhatsApp */
+            --panel-color: #075E54;
+            /* Cor do cabeçalho do WhatsApp */
+            --message-out-bg: #DCF8C6;
+            /* Cor do balão de mensagem enviada */
+            --message-in-bg: #FFFFFF;
+            /* Cor do balão de mensagem recebida */
+            --secondary-text: #666;
+            /* Cor do texto secundário */
+            --white: #fff;
+            --font-family: sans-serif;
+        }
+
         body {
-            background-color: #222;
-            color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
         }
-        #fileList {
-            margin: 20px 0;
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 5px;
-            background-color: #333;
+
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
         }
-        button {
-            margin: 5px;
+
+        /* Header (WhatsApp Style) */
+        header {
+            background-color: var(--panel-color);
+            color: var(--white);
             padding: 10px;
-            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.2em;
+            flex-grow: 1;
+        }
+
+        /* Chat Messages (WhatsApp Style) */
+        #chatMessages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            padding: 8px 12px;
+            border-radius: 7px;
+            margin-bottom: 8px;
+            word-wrap: break-word;
+            max-width: 80%;
+            display: inline-block;
+            font-size: 0.9em;
+            position: relative;
+            /* Para o posicionamento do timestamp */
+        }
+
+        /* Mensagens enviadas pelo usuário (lado direito) */
+        .message.out {
+            background-color: var(--message-out-bg);
+            align-self: flex-end;
+            /* Alinha à direita */
+            color: #000;
+        }
+
+        /* Mensagens recebidas (lado esquerdo) */
+        .message.in {
+            background-color: var(--message-in-bg);
+            align-self: flex-start;
+            /* Alinha à esquerda */
+            color: #000;
+        }
+
+        /* Estilos para imagens */
+        .message img {
+            max-width: 100%;
+            max-height: 200px;
+            width: auto;
+            height: auto;
             border-radius: 5px;
-            background-color: #444;
-            color: white;
+            margin-top: 5px;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #555;
+
+        /* Input de Mensagem */
+        .message-input-container {
+            background-color: #f0f0f0;
+            /* Cor de fundo do input */
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .message-input-container input {
+            flex-grow: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 15px;
+            /* Bordas arredondadas */
+            background-color: var(--white);
+            color: #000;
+            font-size: 0.9em;
+        }
+
+        .message-input-container button {
+            background-color: transparent;
+            color: var(--panel-color);
+            border: none;
+            cursor: pointer;
+            font-size: 1.3em;
+            /* Aumenta o tamanho do ícone */
+            padding: 0;
+        }
+
+        /* Estilos para a visualização em tela cheia */
+        #fullscreenImageModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 20;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #fullscreenImageModal img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        #fullscreenImageModal button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Estilo para o timestamp */
+        .timestamp {
+            position: absolute;
+            bottom: 3px;
+            /* Ajusta a distância da parte inferior */
+            right: 5px;
+            /* Ajusta a distância da borda direita */
+            font-size: 0.7em;
+            /* Tamanho da fonte menor */
+            color: var(--secondary-text);
+            /* Cor cinza claro */
         }
     </style>
 </head>
+
 <body>
-    <h1>Armazenamento de Arquivos</h1>
-    <div id="fileList"></div>
+    <div class="chat-container">
+        <header>
+            <img id="groupImage" src="https://via.placeholder.com/40" alt="Imagem do Grupo">
+            <h1 id="groupName">Nome do Grupo</h1>
+        </header>
+
+        <div id="chatMessages">
+            <!-- Mensagens do chat aqui -->
+        </div>
+
+        <div class="message-input-container">
+            <input type="text" id="messageInput" placeholder="Mensagem">
+            <!-- Input para selecionar imagens (oculto) -->
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            <!-- Botão para ativar o input de imagem -->
+            <button onclick="document.getElementById('imageInput').click()">
+                <i class="fas fa-image"></i>
+            </button>
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Modal para visualização em tela cheia -->
+    <div id="fullscreenImageModal">
+        <img src="" alt="Imagem em Tela Cheia">
+        <button onclick="closeFullscreen()">Voltar</button>
+    </div>
+
+    <!-- PushAlert -->
+    <script type="text/javascript">
+        (function (d, t) {
+            var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+            g.src = "https://cdn.pushalert.co/integrate_545242bd33624aa0d96902030facd4f9.js";
+            s.parentNode.insertBefore(g, s);
+        }(document, "script"));
+    </script>
+    <!-- End PushAlert -->
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+        // Importações do Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+        import {
+            getDatabase,
+            ref,
+            get,
+            push,
+            set,
+            onChildAdded,
+            onValue,
+            query,
+            startAfter,
+
+        } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBuj2PUWB6YHaE5DPrWnE34NGUGnZDYvDE",
+            apiKey: "SUA_API_KEY", // Substitua pela sua API Key
             authDomain: "banco-5a678.firebaseapp.com",
             databaseURL: "https://banco-5a678-default-rtdb.firebaseio.com",
             projectId: "banco-5a678",
@@ -51,22 +259,282 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         const database = getDatabase(app);
 
-        onValue(ref(database, 'files'), (snapshot) => {
-            const data = snapshot.val();
-            const fileList = document.getElementById('fileList');
-            fileList.innerHTML = '';
-            if (data) {
-                for (const key in data) {
-                    const fileName = key;
-                    const content = data[key].content;
-                    fileList.innerHTML += `<p><strong>${fileName}</strong>: ${content}</p>`;
-                }
-            } else {
-                fileList.innerHTML = '<p>Nenhum arquivo encontrado.</p>';
+        const groupId = localStorage.getItem('currentGroupId');
+        let user;
+        const imageBBApiKey = '835a6a9a4193a5b6db165edcea73e014';
+
+        // Funções auxiliares para salvar e carregar dados do localStorage
+        function saveLocalStorage(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (e) {
+                console.error("Erro ao salvar no localStorage", e);
             }
-        });
+        }
+
+        function loadLocalStorage(key) {
+            try {
+                const storedValue = localStorage.getItem(key);
+                return storedValue ? JSON.parse(storedValue) : null;
+            } catch (e) {
+                console.error("Erro ao carregar do localStorage", e);
+                return null;
+            }
+        }
+
+        function loadUserProfile() {
+            user = loadLocalStorage("userProfile");
+        }
+
+        loadUserProfile();
+
+        async function loadGroupData(groupId) {
+            if (groupId) {
+                const groupRef = ref(database, `groups/${groupId}`);
+                const snapshot = await get(groupRef);
+
+                if (snapshot.exists()) {
+                    const groupData = snapshot.val();
+                    document.getElementById('groupName').innerText = groupData.name || 'Nome do Grupo';
+                    document.getElementById('groupImage').src = groupData.image || 'https://via.placeholder.com/40';
+                    document.getElementById('chatMessages').style.backgroundImage = groupData.backgroundImage ?
+                        `url('${groupData.backgroundImage}')` :
+                        '';
+                } else {
+                    console.log("No data available for this group ID.");
+                }
+            }
+            loadMessages(groupId);
+
+        }
+
+        loadGroupData(groupId);
+
+        async function uploadImageToImageBB(imageFile) {
+            const formData = new FormData();
+            formData.append('image', imageFile);
+
+            try {
+                const response = await fetch(`https://api.imgbb.com/1/upload?key=${imageBBApiKey}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    return data.data.url;
+                } else {
+                    console.error('Erro ao fazer upload da imagem no ImageBB:', data.error.message);
+                    alert('Erro ao enviar a imagem. Por favor, tente novamente.');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Erro ao enviar a imagem:', error);
+                alert('Erro ao enviar a imagem. Por favor, tente novamente.');
+                return null;
+            }
+        }
+
+        window.sendMessage = async function () {
+            const messageText = document.getElementById('messageInput').value;
+            const imageInput = document.getElementById('imageInput');
+            const imageFile = imageInput.files[0];
+
+            if ((!messageText || messageText.trim() === "") && !imageFile) {
+                alert("Por favor, escreva uma mensagem ou selecione uma imagem para enviar.");
+                return;
+            }
+
+            if (messageText && messageText.trim() !== "") {
+                await sendTextMessage(messageText);
+            }
+
+            if (imageFile) {
+                await sendImageMessage(imageFile);
+            }
+        };
+
+        async function sendTextMessage(messageText) {
+            if (!groupId || !user) {
+                console.error("Grupo ou usuário não encontrados!");
+                return;
+            }
+
+            const messagesRef = ref(database, `groups/${groupId}/messages`);
+            push(messagesRef, {
+                    text: messageText,
+                    type: 'text',
+                    userId: user.name, // Use user.name instead of user.id
+                    timestamp: new Date().toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                })
+                .then(() => {
+                    document.getElementById('messageInput').value = ''; // Limpa o campo após o envio
+                })
+                .catch(error => {
+                    console.error("Erro ao enviar mensagem:", error);
+                });
+        }
+
+
+        async function sendImageMessage(imageFile) {
+            if (!groupId || !user) {
+                console.error("Grupo ou usuário não encontrados!");
+                return;
+            }
+
+            const imageUrl = await uploadImageToImageBB(imageFile);
+
+            if (imageUrl) {
+                const messagesRef = ref(database, `groups/${groupId}/messages`);
+                push(messagesRef, {
+                        type: 'image',
+                        url: imageUrl,
+                        userId: user.name, // Use user.name instead of user.id
+                        timestamp: new Date().toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        })
+                    })
+                    .then(() => {
+                        document.getElementById('imageInput').value = '';
+                    })
+                    .catch(error => {
+                        console.error("Erro ao enviar imagem:", error);
+                    });
+
+
+                document.getElementById('imageInput').value = '';
+            }
+        }
+
+        function displayImageMessage(imageUrl, isOut, timestamp) {
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message');
+            messageContainer.classList.add(isOut ? 'out' : 'in'); // Aplica a classe 'out' ou 'in'
+            messageContainer.innerHTML = `<img src="${imageUrl}" alt="Imagem enviada" onclick="openFullscreen(this)">
+         <span class="timestamp">${timestamp}</span>`;
+
+            document.getElementById('chatMessages').appendChild(messageContainer);
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }
+
+        function displayMessage(message, isOut, timestamp) {
+            const messageContainer = document.createElement('div');
+            messageContainer.classList.add('message');
+            messageContainer.classList.add(isOut ? 'out' : 'in'); // Aplica a classe 'out' ou 'in'
+            messageContainer.innerText = message;
+            messageContainer.innerHTML += `<span class="timestamp">${timestamp}</span>`; // Adiciona o timestamp
+
+            document.getElementById('chatMessages').appendChild(messageContainer);
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+        }
+
+       async function loadMessages(groupId) {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            const messagesRef = ref(database, `groups/${groupId}/messages`);
+            const snapshot = await get(messagesRef);
+
+            if (snapshot.exists()) {
+                const messages = snapshot.val();
+                // MODIFICATION: Instead of immediately displaying messages, store the last key
+                let lastKey = null;
+                for (const messageId in messages) {
+                    const message = messages[messageId];
+                    const isOut = user && message.userId === user.name;
+
+                    if (message.type === 'image') {
+                        displayImageMessage(message.url, isOut, message.timestamp);
+                    } else {
+                        displayMessage(message.text, isOut, message.timestamp);
+                    }
+                    lastKey = messageId;  // Keep track of the last message ID
+                }
+               // MODIFICATION:  Set the starting point for the listener to the next message after the last one loaded
+                setupMessageListener(groupId, lastKey);
+
+            } else {
+                console.log("No messages available for this group.");
+                setupMessageListener(groupId, null); // Start listener from the beginning if no messages exist
+            }
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function setupMessageListener(groupId, startAfterKey) {
+            if (!groupId) {
+                console.error("Group ID is not defined. Cannot set up message listener.");
+                return;
+            }
+
+            const messagesRef = ref(database, `groups/${groupId}/messages`);
+            let queryRef = messagesRef;
+
+            // MODIFICATION: Only listen for new messages *after* the last loaded message
+            if (startAfterKey) {
+                queryRef = query(messagesRef, startAfter(startAfterKey));
+            }
+           onChildAdded(queryRef, (data) => {
+                const message = data.val();
+                if (message) {
+                    const isOut = user && message.userId === user.name;
+                    if (message.type === 'image') {
+                        displayImageMessage(message.url, isOut, message.timestamp);
+                    } else {
+                        displayMessage(message.text, isOut, message.timestamp);
+                    }
+                       // Show push notification
+                       showNotification(message.userId, message.text);
+                }
+            });
+        }
+
+        function showNotification(user, message) {
+        if (Notification.permission === 'granted') {
+            const notification = new Notification(`New message from ${user}`, {
+                body: message,
+                icon: 'https://via.placeholder.com/40' // Replace with your app icon
+            });
+
+            notification.onclick = () => {
+                window.focus();  // Bring the window to the front
+            };
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                     const notification = new Notification(`New message from ${user}`, {
+                        body: message,
+                        icon: 'https://via.placeholder.com/40' // Replace with your app icon
+                    });
+
+                    notification.onclick = () => {
+                        window.focus();  // Bring the window to the front
+                    };
+                }
+            });
+        }
+    }
+
+
+        // Funções para tela cheia
+        window.openFullscreen = function (img) {
+            const modal = document.getElementById('fullscreenImageModal');
+            const modalImg = modal.querySelector('img');
+            modalImg.src = img.src;
+            modal.style.display = 'flex';
+        }
+
+        window.closeFullscreen = function () {
+            const modal = document.getElementById('fullscreenImageModal');
+            modal.style.display = 'none';
+        }
     </script>
 </body>
+
 </html>
